@@ -1,2 +1,1 @@
-# data_science
-data science toolkit
+# Data Science, Machine Learning, AI Engineering
