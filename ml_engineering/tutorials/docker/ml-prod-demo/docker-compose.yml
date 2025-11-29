@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  train:
+    build: ./train
+    volumes:
+      - model_store:/models
+
+  api:
+    build: ./serve
+    ports:
+      - "8000:8000"
+    volumes:
+      - model_store:/models
+    depends_on:
+      - train
+    entrypoint: >
+      sh -c "while [ ! -f /models/iris_logreg.joblib ]; do echo 'Waiting for model...'; sleep 2; done; exec uvicorn app:app --host 0.0.0.0 --port 8000"
+
+volumes:
+  model_store:

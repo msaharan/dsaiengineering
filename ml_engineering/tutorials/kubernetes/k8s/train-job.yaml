@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: iris-train-job
+  namespace: ml-course
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: iris-train
+          image: iris-ml:latest
+          imagePullPolicy: IfNotPresent
+          command: ["python", "train.py"]
+          env:
+            - name: MODEL_PATH
+              value: /models/model.joblib
+          volumeMounts:
+            - name: model-storage
+              mountPath: /models
+      volumes:
+        - name: model-storage
+          persistentVolumeClaim:
+            claimName: ml-model-pvc
+  backoffLimit: 2

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iris-api-config
+  namespace: ml-course
+data:
+  MODEL_PATH: "/models/model.joblib"
+  LOG_LEVEL: "info"
