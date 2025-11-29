@@ -3,6 +3,7 @@
 *.sql
 *.json
 *.terraform/*
+.DS_Store
 
 
 
