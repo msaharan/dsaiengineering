@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: iris-batch-predict
+  namespace: ml-course
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: iris-batch-predict
+              image: iris-ml:latest
+              imagePullPolicy: IfNotPresent
+              command: ["python", "batch_predict.py"]
+              env:
+                - name: MODEL_PATH
+                  value: /models/model.joblib
+              volumeMounts:
+                - name: model-storage
+                  mountPath: /models
+          volumes:
+            - name: model-storage
+              persistentVolumeClaim:
+                claimName: ml-model-pvc
