@@ -1,6 +1,9 @@
 # Ignore databases
 *.db
 
+# Ignore DS_Store
+*.DS_Store
+
 # Ignore environment variables
 *.env
 *.env.local
