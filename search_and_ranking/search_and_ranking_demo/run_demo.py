@@ -45,10 +45,7 @@ def train_pipeline(enable_semantic: bool = False):
     lexical = LexicalRetriever(catalog)
     semantic = None
     if enable_semantic:
-        try:
-            semantic = SemanticRetriever(catalog, use_ann=True)
-        except ImportError:
-            print("Semantic retrieval not available; falling back to lexical only.")
+        semantic = SemanticRetriever(catalog, use_ann=True)
     hybrid = HybridRetriever(lexical, semantic)
 
     user_profiles = UserProfiles(labeled_pairs, catalog)

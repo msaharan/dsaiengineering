@@ -6,16 +6,14 @@
 - `run_demo.py`: trains the pipeline, evaluates on held-out queries, and prints ranked results for sample queries.
 - `pyproject.toml`: dependency spec (optional extra `semantic` for sentence-transformers + XGBRanker).
 
-## Quickstart
-Install [uv](https://github.com/astral-sh/uv) if you don’t already have it, then:
+## Quickstart (Docker-only)
+This project is intended to run in Docker with the semantic stack baked in:
 ```bash
 cd DSAIE/search_and_ranking/search_and_ranking_demo
-uv venv .venv && source .venv/bin/activate
-uv sync                                        # base stack from pyproject
-# uv sync --extra semantic                     # optional: semantic retrieval + XGBRanker + dual encoder stubs
-
-python run_demo.py              # lexical-only pipeline
-python run_demo.py --semantic   # enable semantic retrieval if sentence-transformers is installed
+docker build -t search-ranking-demo .
+docker run --rm -it search-ranking-demo        # runs semantic pipeline by default
+# Override command if you want lexical-only:
+# docker run --rm -it search-ranking-demo python run_demo.py
 ```
 
 The script will:
@@ -29,9 +27,7 @@ The script will:
 - Swap the synthetic data for your own catalog and query logs (keep the same CSV schemas).
 - Add real spell-correction dictionaries or plug a stronger intent model.
 - Try new features in `search/ranking.py` (e.g., distance, freshness) or new reranking rules in `search/business_rules.py`.
-- Replace the fallback regressor with `XGBRanker` by installing with `uv sync --extra semantic`.
-- Enable semantic ANN retrieval (faiss if available; otherwise fallback) via `--semantic`.
-- Fine-tune a dual encoder using the stub in `search/dual_encoder.py` (requires `--extra semantic`).
+- Fine-tune a dual encoder using the stub in `search/dual_encoder.py` (requires transformer deps).
 
 ## Data schema
 - `catalog.csv`: `item_id,name,description,cuisine,price_range,rating,popularity,is_vegan_friendly,delivery_time_minutes`
