@@ -8,7 +8,11 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 
 from .personalization import price_bucket, UserProfiles
-from .query_understanding import extract_cuisine_entities
+from .query_understanding import (
+    extract_cuisine_entities,
+    extract_dietary_tags,
+    extract_price_range,
+)
 from .retrieval import HybridRetriever
 
 
@@ -23,6 +27,9 @@ FEATURE_COLUMNS = [
     "user_pref_score",
     "price_affinity",
     "user_item_bias",
+    "ontology_dietary_match",
+    "ontology_category_match",
+    "price_hint_match",
     "cuisine_match",
     "intent_code",
 ]
@@ -59,10 +66,25 @@ def build_feature_rows(
             row["user_id"], price_bucket(item["price_range"])
         )
         bias = user_profiles.item_bias(row["user_id"], int(row["item_id"]))
+        diet_tags = extract_dietary_tags(row["query"])
+        price_hint = extract_price_range(row["query"])
         intent = intent_predictor.predict([row["query"]])[0]
         intent_code = INTENT_MAP.get(intent, 0)
         cuisines_in_query = extract_cuisine_entities(row["query"], cuisines)
         cuisine_match = 1.0 if item["cuisine"].lower() in cuisines_in_query else 0.0
+        ontology = {}
+        if hasattr(item, "get"):
+            ontology = item.get("ontology_attrs", {}) or {}
+        dietary_attr = False
+        category_attr = None
+        if isinstance(ontology, dict):
+            dietary_attr = bool(ontology.get("is_vegan_friendly", False)) or (
+                ontology.get("dietary") in diet_tags if diet_tags else False
+            )
+            category_attr = ontology.get("category")
+        ontology_dietary_match = 1.0 if dietary_attr or (diet_tags and bool(item.get("is_vegan_friendly", False))) else 0.0
+        ontology_category_match = 1.0 if category_attr and category_attr.lower() in cuisines_in_query else 0.0
+        price_hint_match = 1.0 if price_hint and price_hint.lower() == str(item["price_range"]).lower() else 0.0
 
         features = {
             "lexical_score": float(lexical_score),
@@ -75,6 +97,9 @@ def build_feature_rows(
             "user_pref_score": float(user_pref),
             "price_affinity": float(price_affinity),
             "user_item_bias": float(bias),
+            "ontology_dietary_match": float(ontology_dietary_match),
+            "ontology_category_match": float(ontology_category_match),
+            "price_hint_match": float(price_hint_match),
             "cuisine_match": float(cuisine_match),
             "intent_code": float(intent_code),
         }
