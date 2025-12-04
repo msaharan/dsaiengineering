@@ -1,0 +1,24 @@
+[project]
+name = "search-ranking-demo"
+version = "0.1.0"
+description = "Mini search & ranking stack with query understanding, retrieval, LTR, and evaluation."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.23",
+    "pandas>=1.5",
+    "scikit-learn>=1.2",
+]
+
+[project.optional-dependencies]
+semantic = [
+    "xgboost>=1.7.0",
+    "sentence-transformers>=2.2.0",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["search"]

@@ -1,0 +1,13 @@
+item_id,name,description,cuisine,price_range,rating,popularity,is_vegan_friendly,delivery_time_minutes
+1,Sakura Sushi Bar,"Fresh sushi and sashimi with vegan options",Japanese,medium,4.7,120,True,15
+2,Golden Dragon Noodles,"Dim sum, dumplings, and handmade noodles",Chinese,medium,4.5,90,False,20
+3,Pasta Fresca,"Homemade pasta, seasonal sauces, focaccia",Italian,medium,4.6,110,False,25
+4,Green Garden,"Plant-based bowls, salads, and smoothies",Vegetarian,cheap,4.8,130,True,12
+5,Burger Forge,"Smash burgers, fries, milkshakes",American,cheap,4.4,200,False,15
+6,Curry Palace,"North Indian curries, tandoor, naan",Indian,medium,4.5,95,False,22
+7,Trattoria Roma,"Wood-fired pizza, antipasti, tiramisu",Italian,medium,4.7,150,False,20
+8,Tokyo Express,"Sushi to-go, poke bowls, quick rolls",Japanese,cheap,4.3,170,True,10
+9,Seaside Grill,"Grilled fish, lobster rolls, seafood platters",Seafood,expensive,4.6,80,False,30
+10,Vegan Bites Bakery,"Gluten-free vegan cakes, cookies, and coffee",Vegan,cheap,4.9,140,True,18
+11,Fast Taco,"Street tacos, burritos, and salsa bar",Mexican,cheap,4.2,160,False,12
+12,Spice Route Thai,"Thai curries, stir fry, and noodle bowls",Thai,medium,4.6,100,False,16

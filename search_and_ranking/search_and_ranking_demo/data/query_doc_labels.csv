@@ -1,0 +1,31 @@
+query_id,query,user_id,item_id,relevance
+q1,sushi,u1,1,3
+q1,sushi,u1,8,2
+q1,sushi,u1,9,1
+q2,vegan sushi,u2,1,3
+q2,vegan sushi,u2,4,2
+q2,vegan sushi,u2,10,1
+q3,pizza,u3,7,3
+q3,pizza,u3,3,2
+q3,pizza,u3,5,1
+q4,cheap burgers,u4,5,3
+q4,cheap burgers,u4,11,2
+q4,cheap burgers,u4,3,1
+q5,thai curry,u1,12,3
+q5,thai curry,u1,6,2
+q5,thai curry,u1,2,1
+q6,vegan bakery,u2,10,3
+q6,vegan bakery,u2,4,2
+q6,vegan bakery,u2,1,1
+q7,seafood dinner,u3,9,3
+q7,seafood dinner,u3,1,1
+q7,seafood dinner,u3,6,1
+q8,fast lunch,u4,8,3
+q8,fast lunch,u4,11,2
+q8,fast lunch,u4,5,1
+q9,dim sum,u1,2,3
+q9,dim sum,u1,6,1
+q9,dim sum,u1,3,1
+q10,gluten free dessert,u2,10,3
+q10,gluten free dessert,u2,4,2
+q10,gluten free dessert,u2,3,1
