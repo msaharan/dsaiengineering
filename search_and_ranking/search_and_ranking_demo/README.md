@@ -22,7 +22,7 @@ The script will:
 2) Expand queries with synonyms, extract dietary/price hints, and build lexical + optional semantic retrieval (with ANN). Ontology hints are heuristic (from descriptions), not a full ontology.
 3) Create simple user profiles (cuisine + price affinity + per-item bias) from `data/query_doc_labels.csv`.
 4) Train a learning-to-rank model (XGBRanker if installed, else RandomForest) on synthetic grouped relevance labels.
-5) Apply lightweight business rules (vegan boost, cuisine diversity) and report offline metrics (NDCG, MRR) on held-out queries.
+5) Apply lightweight business rules (vegan boost, cuisine diversity) and report offline metrics (NDCG, MRR) on held-out queries. Demo scores printed are min–max normalized for display only; ranking uses raw model scores.
 
 ## How to extend
 - Swap the synthetic data for your own catalog and query logs (keep the same CSV schemas).
