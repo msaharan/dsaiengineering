@@ -1,0 +1,64 @@
+(base) ➜  search_and_ranking_demo git:(main) docker run --rm -it search-ranking-demo
+
+
+Offline evaluation (held-out queries)
+- mean_ndcg: 0.9907
+- mean_mrr: 1.0000
+
+---
+Query: vegan sushi
+Normalized/Corrected: 'vegan sushi' | Intent: product_search
+#1: Sakura Sushi Bar (score=1.000)
+  cuisine=Japanese | price=medium | rating=4.7
+  description=Fresh sushi and sashimi with vegan options
+#2: Vegan Bites Bakery (score=0.805)
+  cuisine=Vegan | price=cheap | rating=4.9
+  description=Gluten-free vegan cakes, cookies, and coffee
+#3: Tokyo Express (score=0.568)
+  cuisine=Japanese | price=cheap | rating=4.3
+  description=Sushi to-go, poke bowls, quick rolls
+#4: Green Garden (score=0.505)
+  cuisine=Vegetarian | price=cheap | rating=4.8
+  description=Plant-based bowls, salads, and smoothies
+#5: Fast Taco (score=0.219)
+  cuisine=Mexican | price=cheap | rating=4.2
+  description=Street tacos, burritos, and salsa bar
+
+---
+Query: fast lunch
+Normalized/Corrected: 'fast lunch' | Intent: product_search
+#1: Tokyo Express (score=1.000)
+  cuisine=Japanese | price=cheap | rating=4.3
+  description=Sushi to-go, poke bowls, quick rolls
+#2: Fast Taco (score=0.948)
+  cuisine=Mexican | price=cheap | rating=4.2
+  description=Street tacos, burritos, and salsa bar
+#3: Green Garden (score=0.797)
+  cuisine=Vegetarian | price=cheap | rating=4.8
+  description=Plant-based bowls, salads, and smoothies
+#4: Vegan Bites Bakery (score=0.548)
+  cuisine=Vegan | price=cheap | rating=4.9
+  description=Gluten-free vegan cakes, cookies, and coffee
+#5: Trattoria Roma (score=0.123)
+  cuisine=Italian | price=medium | rating=4.7
+  description=Wood-fired pizza, antipasti, tiramisu
+
+---
+Query: seafood dinner
+Normalized/Corrected: 'seafood dinner' | Intent: product_search
+#1: Seaside Grill (score=1.000)
+  cuisine=Seafood | price=expensive | rating=4.6
+  description=Grilled fish, lobster rolls, seafood platters
+#2: Tokyo Express (score=0.543)
+  cuisine=Japanese | price=cheap | rating=4.3
+  description=Sushi to-go, poke bowls, quick rolls
+#3: Green Garden (score=0.442)
+  cuisine=Vegetarian | price=cheap | rating=4.8
+  description=Plant-based bowls, salads, and smoothies
+#4: Vegan Bites Bakery (score=0.318)
+  cuisine=Vegan | price=cheap | rating=4.9
+  description=Gluten-free vegan cakes, cookies, and coffee
+#5: Fast Taco (score=0.217)
+  cuisine=Mexican | price=cheap | rating=4.2
+  description=Street tacos, burritos, and salsa bar
+(base) ➜  search_and_ranking_demo git:(main) 
