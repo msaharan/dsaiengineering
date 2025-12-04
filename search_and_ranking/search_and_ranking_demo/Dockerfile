@@ -6,23 +6,20 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 # Install uv.
 RUN pip install --no-cache-dir uv
 
-# Install dependencies from project metadata and lockfile (cached layer).
-COPY pyproject.toml uv.lock README.md ./
-RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked --system --extra semantic
+# Copy project files and code before syncing so editable install can find the package.
+COPY pyproject.toml uv.lock README.md run_demo.py ./ 
+COPY search ./search
+COPY data ./data
+
+# Install dependencies from project metadata into .venv.
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --no-dev --extra semantic
+ENV PATH="/app/.venv/bin:${PATH}"
 
 # Pre-download the sentence-transformers model to avoid runtime fetch.
 ENV HF_HOME=/root/.cache/huggingface
-RUN python - <<'PY'
+RUN .venv/bin/python - <<'PY'
 from sentence_transformers import SentenceTransformer
 SentenceTransformer("all-MiniLM-L6-v2")
 PY
-
-# Copy application code.
-COPY search ./search
-COPY data ./data
-COPY run_demo.py ./run_demo.py
-
-# Install the package (no deps; already installed).
-RUN uv pip install --system --no-deps .
 
 CMD ["python", "run_demo.py", "--semantic"]
