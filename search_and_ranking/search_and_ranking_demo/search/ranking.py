@@ -61,6 +61,8 @@ def build_feature_rows(
     for _, row in labeled_data.iterrows():
         item = catalog_by_id.loc[row["item_id"]]
         lexical_score, semantic_score = retriever.pair_scores(row["query"], row["item_id"])
+        if retriever.semantic is None:
+            semantic_score = lexical_score  # fallback to lexical when semantic is disabled
         user_pref = user_profiles.score(row["user_id"], item["cuisine"])
         price_affinity = user_profiles.price_affinity(
             row["user_id"], price_bucket(item["price_range"])
