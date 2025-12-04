@@ -19,7 +19,7 @@ Dependencies are pinned via `uv.lock`; Docker builds consume the lockfile. No lo
 
 The script will:
 1) Train a TF-IDF + logistic intent classifier on `data/query_intents.csv`.
-2) Expand queries with synonyms, extract dietary/price hints, and build lexical + optional semantic retrieval (with ANN).
+2) Expand queries with synonyms, extract dietary/price hints, and build lexical + optional semantic retrieval (with ANN). Ontology hints are heuristic (from descriptions), not a full ontology.
 3) Create simple user profiles (cuisine + price affinity + per-item bias) from `data/query_doc_labels.csv`.
 4) Train a learning-to-rank model (XGBRanker if installed, else RandomForest) on synthetic grouped relevance labels.
 5) Apply lightweight business rules (vegan boost, cuisine diversity) and report offline metrics (NDCG, MRR) on held-out queries.
