@@ -22,11 +22,12 @@ from search.query_understanding import (
     understand_query,
 )
 from search.ranking import Ranker, build_feature_rows, build_matrices
-from search.retrieval import HybridRetriever, LexicalRetriever, SemanticRetriever
+from search.retrieval import HybridRetriever, LexicalRetriever, SemanticRetriever, DualEncoderRetriever
 from search.spell import SpellCorrector
+from search.dual_encoder import train_dual_encoder
 
 
-def train_pipeline(enable_semantic: bool = False):
+def train_pipeline(enable_semantic: bool = False, use_dual: bool = False):
     base_dir = Path(__file__).resolve().parent
     data_dir = get_data_dir(base_dir)
 
@@ -45,7 +46,11 @@ def train_pipeline(enable_semantic: bool = False):
     lexical = LexicalRetriever(catalog)
     semantic = None
     if enable_semantic:
-        semantic = SemanticRetriever(catalog, use_ann=False)
+        if use_dual:
+            semantic_model = train_dual_encoder(labeled_pairs, catalog, epochs=2, batch_size=8)
+            semantic = DualEncoderRetriever(catalog, semantic_model, use_ann=True)
+        else:
+            semantic = SemanticRetriever(catalog, use_ann=False)
     hybrid = HybridRetriever(lexical, semantic)
 
     user_profiles = UserProfiles(labeled_pairs, catalog)
@@ -161,5 +166,10 @@ if __name__ == "__main__":
         action="store_true",
         help="Enable semantic retrieval (requires sentence-transformers).",
     )
+    parser.add_argument(
+        "--dual",
+        action="store_true",
+        help="Train and use a dual-encoder with ANN retrieval (small demo training).",
+    )
     args = parser.parse_args()
-    train_pipeline(enable_semantic=args.semantic)
+    train_pipeline(enable_semantic=args.semantic, use_dual=args.dual)
