@@ -99,6 +99,48 @@ class SemanticRetriever:
         return float(self.util.cos_sim(q_emb, item_emb)[0])
 
 
+class DualEncoderRetriever:
+    """Dual-encoder semantic retriever with optional ANN index."""
+
+    def __init__(self, catalog: pd.DataFrame, model, use_ann: bool = True):
+        self.model = model
+        self.catalog = catalog
+        self.doc_embeddings = self.model.encode(
+            catalog["text"].tolist(), convert_to_tensor=False, show_progress_bar=False
+        )
+        self.id_to_idx = {item_id: idx for idx, item_id in enumerate(catalog["item_id"])}
+        self.ann = ANNIndex(np.array(self.doc_embeddings)) if use_ann else None
+
+    def query(self, text: str, top_k: int = 5) -> List[ScoredItem]:
+        q_emb = self.model.encode(text, convert_to_tensor=False, show_progress_bar=False)
+        if self.ann:
+            scores, indices = self.ann.search(np.array([q_emb]), top_k)
+            flat_scores = scores[0]
+            flat_indices = indices[0]
+        else:
+            doc_mat = np.stack(self.doc_embeddings)
+            scores = doc_mat @ np.array(q_emb)
+            flat_indices = scores.argsort()[::-1][:top_k]
+            flat_scores = scores[flat_indices]
+
+        results = []
+        for score, idx in zip(flat_scores, flat_indices):
+            results.append(
+                ScoredItem(
+                    item_id=int(self.catalog.iloc[int(idx)]["item_id"]),
+                    score=float(score),
+                    source="dual_encoder",
+                )
+            )
+        return results
+
+    def score_pair(self, text: str, item_id: int) -> float:
+        q_emb = self.model.encode(text, convert_to_tensor=False, show_progress_bar=False)
+        idx = self.id_to_idx[item_id]
+        item_emb = self.doc_embeddings[idx]
+        return float(np.dot(q_emb, item_emb))
+
+
 class HybridRetriever:
     """Combine lexical and semantic scores with a simple weighted sum."""
 
