@@ -7,6 +7,7 @@ from pathlib import Path
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+from search.business_rules import apply_business_rules
 from search.data_loader import (
     get_data_dir,
     load_catalog,
@@ -45,7 +46,7 @@ def train_pipeline(enable_semantic: bool = False):
     semantic = None
     if enable_semantic:
         try:
-            semantic = SemanticRetriever(catalog)
+            semantic = SemanticRetriever(catalog, use_ann=True)
         except ImportError:
             print("Semantic retrieval not available; falling back to lexical only.")
     hybrid = HybridRetriever(lexical, semantic)
@@ -106,7 +107,8 @@ def run_demo_query(
     print(f"Query: {query}")
     print(f"Normalized/Corrected: '{understood.corrected}' | Intent: {understood.intent}")
 
-    candidates = hybrid.retrieve(understood.corrected, top_k=6)
+    retrieval_text = understood.corrected + " " + " ".join(understood.expansions)
+    candidates = hybrid.retrieve(retrieval_text.strip(), top_k=8)
     feature_rows = []
     for scored in candidates:
         user_id = "u_demo"
@@ -128,15 +130,13 @@ def run_demo_query(
     demo_preds = ranker.predict(X_demo)
 
     scored_rows = sorted(
-        [
-            (pred, row)
-            for pred, row in zip(demo_preds, demo_rows)
-        ],
+        [(pred, row) for pred, row in zip(demo_preds, demo_rows)],
         key=lambda x: x[0],
         reverse=True,
     )
+    reranked = apply_business_rules(scored_rows, catalog, understood)
 
-    for rank, (pred, row) in enumerate(scored_rows[:5], start=1):
+    for rank, (pred, row) in enumerate(reranked[:5], start=1):
         item = catalog[catalog["item_id"] == row.item_id].iloc[0]
         print(
             textwrap.dedent(

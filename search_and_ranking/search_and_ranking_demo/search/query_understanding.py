@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Iterable, List, Sequence
+from typing import Dict, Iterable, List, Sequence
 
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -48,6 +48,46 @@ def build_cuisine_lexicon(catalog: pd.DataFrame) -> set[str]:
     return cuisines
 
 
+SYNONYMS: Dict[str, List[str]] = {
+    "vegan": ["plant based", "plant-based"],
+    "vegetarian": ["veggie"],
+    "cheap": ["budget", "affordable"],
+    "expensive": ["premium", "fancy"],
+}
+
+
+def expand_query_with_synonyms(query: str) -> List[str]:
+    expansions: List[str] = []
+    lowered = query.lower()
+    for term, syns in SYNONYMS.items():
+        if term in lowered:
+            expansions.extend(syns)
+    return expansions
+
+
+DIETARY_TAGS = {"vegan", "vegetarian", "gluten free", "gluten-free"}
+
+
+def extract_dietary_tags(query: str) -> List[str]:
+    tokens = normalize_query(query)
+    tags = []
+    for tag in DIETARY_TAGS:
+        if tag.replace("-", " ") in tokens:
+            tags.append(tag)
+    return tags
+
+
+def extract_price_range(query: str) -> str | None:
+    tokens = normalize_query(query).split()
+    if any(t in tokens for t in ["cheap", "budget", "affordable", "low"]):
+        return "cheap"
+    if any(t in tokens for t in ["expensive", "premium", "fancy", "high"]):
+        return "expensive"
+    if "medium" in tokens or "mid" in tokens:
+        return "medium"
+    return None
+
+
 def extract_cuisine_entities(query: str, cuisines: Iterable[str]) -> List[str]:
     tokens = set(normalize_query(query).split())
     return [c for c in cuisines if c in tokens]
@@ -60,6 +100,9 @@ class UnderstoodQuery:
     corrected: str
     intent: str
     cuisines: List[str]
+    expansions: List[str]
+    dietary_tags: List[str]
+    price_hint: str | None
 
 
 def understand_query(
@@ -72,10 +115,16 @@ def understand_query(
     corrected = spell_corrector.correct(normalized)
     intent = intent_classifier.predict([corrected])[0]
     entities = extract_cuisine_entities(corrected, cuisines)
+    expansions = expand_query_with_synonyms(corrected)
+    dietary_tags = extract_dietary_tags(corrected)
+    price_hint = extract_price_range(corrected)
     return UnderstoodQuery(
         raw=query,
         normalized=normalized,
         corrected=corrected,
         intent=intent,
         cuisines=entities,
+        expansions=expansions,
+        dietary_tags=dietary_tags,
+        price_hint=price_hint,
     )

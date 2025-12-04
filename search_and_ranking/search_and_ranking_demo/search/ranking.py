@@ -21,6 +21,8 @@ FEATURE_COLUMNS = [
     "delivery_time_minutes",
     "price_bucket",
     "user_pref_score",
+    "price_affinity",
+    "user_item_bias",
     "cuisine_match",
     "intent_code",
 ]
@@ -53,6 +55,10 @@ def build_feature_rows(
         item = catalog_by_id.loc[row["item_id"]]
         lexical_score, semantic_score = retriever.pair_scores(row["query"], row["item_id"])
         user_pref = user_profiles.score(row["user_id"], item["cuisine"])
+        price_affinity = user_profiles.price_affinity(
+            row["user_id"], price_bucket(item["price_range"])
+        )
+        bias = user_profiles.item_bias(row["user_id"], int(row["item_id"]))
         intent = intent_predictor.predict([row["query"]])[0]
         intent_code = INTENT_MAP.get(intent, 0)
         cuisines_in_query = extract_cuisine_entities(row["query"], cuisines)
@@ -67,6 +73,8 @@ def build_feature_rows(
             "delivery_time_minutes": float(item["delivery_time_minutes"]),
             "price_bucket": float(price_bucket(item["price_range"])),
             "user_pref_score": float(user_pref),
+            "price_affinity": float(price_affinity),
+            "user_item_bias": float(bias),
             "cuisine_match": float(cuisine_match),
             "intent_code": float(intent_code),
         }

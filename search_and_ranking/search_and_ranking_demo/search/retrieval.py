@@ -8,6 +8,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 
+from .ann_index import ANNIndex
 
 @dataclass
 class ScoredItem:
@@ -47,9 +48,9 @@ class LexicalRetriever:
 
 
 class SemanticRetriever:
-    """SentenceTransformer-based semantic retriever. Optional because it needs model downloads."""
+    """SentenceTransformer-based semantic retriever with optional ANN index."""
 
-    def __init__(self, catalog: pd.DataFrame, model_name: str = "all-MiniLM-L6-v2"):
+    def __init__(self, catalog: pd.DataFrame, model_name: str = "all-MiniLM-L6-v2", use_ann: bool = True):
         try:
             from sentence_transformers import SentenceTransformer, util  # type: ignore
         except ImportError as exc:
@@ -64,19 +65,31 @@ class SemanticRetriever:
             catalog["text"].tolist(), convert_to_tensor=True, show_progress_bar=False
         )
         self.id_to_idx = {item_id: idx for idx, item_id in enumerate(catalog["item_id"])}
+        self.ann = None
+        if use_ann:
+            self.ann = ANNIndex(self.doc_embeddings.cpu().numpy())
 
     def query(self, text: str, top_k: int = 5) -> List[ScoredItem]:
         q_emb = self.model.encode(text, convert_to_tensor=True, show_progress_bar=False)
-        scores = self.util.cos_sim(q_emb, self.doc_embeddings)[0]
-        top_k_scores, top_k_indices = scores.topk(k=top_k)
-        results = [
-            ScoredItem(
-                item_id=int(self.catalog.iloc[int(idx)]["item_id"]),
-                score=float(score),
-                source="semantic",
+        if self.ann:
+            scores, indices = self.ann.search(q_emb.cpu().numpy()[None, :], top_k)
+            flat_scores = scores[0]
+            flat_indices = indices[0]
+        else:
+            scores_tensor = self.util.cos_sim(q_emb, self.doc_embeddings)[0]
+            top_k_scores, top_k_indices = scores_tensor.topk(k=top_k)
+            flat_scores = top_k_scores
+            flat_indices = top_k_indices
+
+        results = []
+        for score, idx in zip(flat_scores, flat_indices):
+            results.append(
+                ScoredItem(
+                    item_id=int(self.catalog.iloc[int(idx)]["item_id"]),
+                    score=float(score),
+                    source="semantic",
+                )
             )
-            for score, idx in zip(top_k_scores, top_k_indices)
-        ]
         return results
 
     def score_pair(self, text: str, item_id: int) -> float:

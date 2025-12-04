@@ -1,10 +1,14 @@
 from pathlib import Path
 import pandas as pd
 
+from .ontology import extract_attributes
+
 
 def load_catalog(data_dir: Path) -> pd.DataFrame:
     """Load catalog and create a combined text field."""
     catalog = pd.read_csv(data_dir / "catalog.csv")
+    # Add simple attribute hints from descriptions to mimic ontology enrichment.
+    catalog["ontology_attrs"] = catalog["description"].fillna("").apply(extract_attributes)
     catalog["text"] = (
         catalog["name"].fillna("")
         + " "
