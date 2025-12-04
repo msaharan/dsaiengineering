@@ -4,6 +4,9 @@
 # Ignore DS_Store
 *.DS_Store
 
+# Ignore localfiles
+*localfiles/
+
 # Ignore environment variables
 *.env
 *.env.local
