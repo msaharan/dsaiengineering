@@ -80,8 +80,11 @@ def build_feature_rows(
         dietary_attr = False
         category_attr = None
         if isinstance(ontology, dict):
+            diet_field = ontology.get("dietary", [])
+            if isinstance(diet_field, str):
+                diet_field = [diet_field]
             dietary_attr = bool(ontology.get("is_vegan_friendly", False)) or (
-                ontology.get("dietary") in diet_tags if diet_tags else False
+                set(diet_field).intersection(set(diet_tags)) if diet_tags else False
             )
             category_attr = ontology.get("category")
         ontology_dietary_match = 1.0 if dietary_attr or (diet_tags and bool(item.get("is_vegan_friendly", False))) else 0.0

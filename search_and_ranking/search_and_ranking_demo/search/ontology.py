@@ -1,21 +1,60 @@
 from __future__ import annotations
 
-from typing import Dict
+from typing import Dict, List, Optional
+
+CATEGORY_KEYWORDS = {
+    "seafood": ["seafood", "fish", "lobster", "grill"],
+    "japanese": ["sushi", "japanese", "maki", "nigiri"],
+    "italian": ["pizza", "pasta", "italian", "trattoria"],
+    "mexican": ["taco", "burrito", "salsa", "mexican"],
+    "indian": ["curry", "tandoor", "naan", "indian"],
+    "thai": ["thai", "curry", "stir fry"],
+    "american": ["burger", "fries", "american"],
+    "vegan": ["vegan", "plant-based", "plant based"],
+    "vegetarian": ["vegetarian", "veggie"],
+}
+
+DIETARY_KEYWORDS = {
+    "vegan": ["vegan", "plant-based", "plant based"],
+    "vegetarian": ["vegetarian", "veggie"],
+    "gluten_free": ["gluten-free", "gluten free"],
+}
 
 
-def extract_attributes(description: str) -> Dict[str, str | bool]:
-    """Heuristic attribute extractor to mirror the ontology section (no external LLM)."""
-    text = description.lower()
-    attrs: Dict[str, str | bool] = {}
-    if any(k in text for k in ["vegan", "plant"]):
-        attrs["dietary"] = "vegan"
+def extract_attributes(
+    description: str, cuisine: Optional[str] = None, price_range: Optional[str] = None
+) -> Dict[str, str | bool | List[str]]:
+    """
+    Structured-ish attribute extractor to mirror an ontology/attribute pipeline (heuristic).
+    Returns a dict with category, cuisine, dietary tags, price_level, and boolean flags.
+    """
+    text = (description or "").lower()
+    attrs: Dict[str, str | bool | List[str]] = {}
+
+    # Cuisine/category from provided cuisine field.
+    if cuisine:
+        attrs["cuisine"] = cuisine.lower()
+
+    # Category from keywords.
+    for cat, keywords in CATEGORY_KEYWORDS.items():
+        if any(k in text for k in keywords) or (cuisine and cat in cuisine.lower()):
+            attrs["category"] = cat
+            break
+
+    # Dietary tags.
+    dietary_tags: List[str] = []
+    for tag, keywords in DIETARY_KEYWORDS.items():
+        if any(k in text for k in keywords):
+            dietary_tags.append(tag)
+    if dietary_tags:
+        attrs["dietary"] = dietary_tags
+    if "vegan" in dietary_tags:
         attrs["is_vegan_friendly"] = True
-    if "gluten" in text:
+    if "gluten_free" in dietary_tags:
         attrs["gluten_free"] = True
-    if any(k in text for k in ["seafood", "fish", "lobster"]):
-        attrs["category"] = "seafood"
-    if any(k in text for k in ["sushi", "japanese"]):
-        attrs["category"] = "japanese"
-    if any(k in text for k in ["pizza", "pasta", "italian"]):
-        attrs["category"] = "italian"
+
+    # Price level from price_range if available.
+    if price_range:
+        attrs["price_level"] = str(price_range).lower()
+
     return attrs
