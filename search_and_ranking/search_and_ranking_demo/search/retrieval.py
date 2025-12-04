@@ -50,7 +50,7 @@ class LexicalRetriever:
 class SemanticRetriever:
     """SentenceTransformer-based semantic retriever with optional ANN index."""
 
-    def __init__(self, catalog: pd.DataFrame, model_name: str = "all-MiniLM-L6-v2", use_ann: bool = True):
+    def __init__(self, catalog: pd.DataFrame, model_name: str = "all-MiniLM-L6-v2", use_ann: bool = False):
         try:
             from sentence_transformers import SentenceTransformer, util  # type: ignore
         except ImportError as exc:

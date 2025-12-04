@@ -45,7 +45,7 @@ def train_pipeline(enable_semantic: bool = False):
     lexical = LexicalRetriever(catalog)
     semantic = None
     if enable_semantic:
-        semantic = SemanticRetriever(catalog, use_ann=True)
+        semantic = SemanticRetriever(catalog, use_ann=False)
     hybrid = HybridRetriever(lexical, semantic)
 
     user_profiles = UserProfiles(labeled_pairs, catalog)

@@ -15,7 +15,7 @@ docker run --rm -it search-ranking-demo        # runs semantic pipeline by defau
 # Override command if you want lexical-only:
 # docker run --rm -it search-ranking-demo python run_demo.py
 ```
-Dependencies are pinned via `uv.lock`; Docker builds consume the lockfile. No local `uv sync` needed unless you want to run outside Docker.
+Dependencies are pinned via `uv.lock`; Docker builds consume the lockfile. No local `uv sync` needed unless you want to run outside Docker. ANN indexing is optional; the demo uses transformer dot-product retrieval by default. The dual-encoder training stub is provided but not wired into the demo run.
 
 The script will:
 1) Train a TF-IDF + logistic intent classifier on `data/query_intents.csv`.
