@@ -133,12 +133,20 @@ def run_demo_query(
     )
     reranked = apply_business_rules(scored_rows, catalog, understood)
 
-    for rank, (pred, row) in enumerate(reranked[:5], start=1):
+    # Normalize scores for display only.
+    display_rows = []
+    if reranked:
+        scores_only = [s for s, _ in reranked]
+        s_min, s_max = min(scores_only), max(scores_only)
+        denom = (s_max - s_min) or 1.0
+        display_rows = [((s - s_min) / denom, r) for s, r in reranked]
+
+    for rank, (disp, row) in enumerate(display_rows[:5], start=1):
         item = catalog[catalog["item_id"] == row.item_id].iloc[0]
         print(
             textwrap.dedent(
                 f"""
-                #{rank}: {item['name']} (score={pred:.3f})
+                #{rank}: {item['name']} (score={disp:.3f})
                   cuisine={item['cuisine']} | price={item['price_range']} | rating={item['rating']}
                   description={item['description']}
                 """
