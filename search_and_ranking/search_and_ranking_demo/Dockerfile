@@ -11,8 +11,8 @@ COPY pyproject.toml uv.lock README.md run_demo.py ./
 COPY search ./search
 COPY data ./data
 
-# Install dependencies from project metadata into .venv.
-RUN --mount=type=cache,target=/root/.cache/uv uv sync --no-dev --extra semantic
+# Install dependencies from project metadata/lockfile into .venv.
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked --no-dev --extra semantic
 ENV PATH="/app/.venv/bin:${PATH}"
 
 # Pre-download the sentence-transformers model to avoid runtime fetch.
