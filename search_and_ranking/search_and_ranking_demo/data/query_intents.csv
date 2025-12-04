@@ -1,0 +1,16 @@
+text,label
+sushi delivery,product_search
+vegan sushi,product_search
+cheap pizza,product_search
+refund policy,faq_search
+delivery running late,faq_search
+cancel my order,faq_search
+restaurants near me,local_search
+thai food near me,local_search
+book table in seattle,local_search
+track my order,faq_search
+gluten free dessert,product_search
+kid friendly restaurants,local_search
+burger coupons,product_search
+change payment method,faq_search
+best tacos,product_search
