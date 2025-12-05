@@ -2,6 +2,8 @@ FROM python:3.11-slim
 
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+# Keep dependency resolution in sync with the lockfile timestamp cutoff.
+ENV UV_EXCLUDE_NEWER=2024-12-31T23:00:00Z
 
 # Install uv.
 RUN pip install --no-cache-dir uv

@@ -19,6 +19,15 @@ docker run --rm -it search-ranking-demo        # runs semantic pipeline by defau
 ```
 Docker builds install with `uv sync --locked --extra semantic` (consuming `uv.lock`); torch may pull CUDA wheels. No local `uv sync` needed unless you want to run outside Docker. ANN indexing is optional; the demo uses transformer dot-product retrieval by default. The dual-encoder path (`--semantic --dual`) trains a small dual encoder and enables ANN (faiss required).
 
+If you do run `uv sync` locally, match the lockfile’s timestamp cutoff by exporting:
+
+```bash
+export UV_EXCLUDE_NEWER=2024-12-31T23:00:00Z
+uv sync --locked --extra semantic
+```
+
+Without that env var, `uv` will consider the lock stale and refuse to install. Alternatively, drop the cutoff from `uv.lock` and remove the Dockerfile `UV_EXCLUDE_NEWER` line, then regenerate the lock with `uv lock --python 3.11 --upgrade`.
+
 The script will:
 1) Train a TF-IDF + logistic intent classifier on `data/query_intents.csv`.
 2) Expand queries with synonyms, extract dietary/price hints, and build lexical + optional semantic retrieval (with ANN). Ontology enrichment derives structured dietary/category/price hints from catalog text/cuisine; it's still a lightweight heuristic, not a full ontology service.
