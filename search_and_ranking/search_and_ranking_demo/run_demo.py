@@ -28,6 +28,10 @@ from search.dual_encoder import train_dual_encoder
 
 
 def train_pipeline(enable_semantic: bool = False, use_dual: bool = False):
+    """
+    Train the full demo pipeline: query understanding, retrieval (lexical + optional semantic/dual),
+    personalization, feature building, learning-to-rank, offline eval, and sample queries.
+    """
     base_dir = Path(__file__).resolve().parent
     data_dir = get_data_dir(base_dir)
 
@@ -104,6 +108,10 @@ def run_demo_query(
     ranker: Ranker,
     user_profiles: UserProfiles,
 ):
+    """
+    Run a single query through understanding, retrieval, feature building, ranking, and rule-based rerank.
+    Prints top results with normalized display scores.
+    """
     understood = understand_query(query, spell_corrector, intent_classifier, cuisines)
     print("\n---")
     print(f"Query: {query}")

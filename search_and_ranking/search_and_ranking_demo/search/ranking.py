@@ -55,6 +55,7 @@ def build_feature_rows(
     intent_predictor,
     cuisines: Sequence[str],
 ) -> List[FeatureRow]:
+    """Assemble per-(query,item) feature rows from retrieval scores, user prefs, ontology cues, and labels."""
     feature_rows: List[FeatureRow] = []
     catalog_by_id = catalog.set_index("item_id")
 
@@ -122,6 +123,7 @@ def build_feature_rows(
 
 
 def build_matrices(rows: List[FeatureRow]) -> Tuple[np.ndarray, np.ndarray, List[int], List[FeatureRow]]:
+    """Convert feature rows into X, y, and group sizes (by query_id) for ranking models."""
     X = np.array([[row.features[col] for col in FEATURE_COLUMNS] for row in rows], dtype=float)
     y = np.array([row.label for row in rows], dtype=float)
     group_counts: Dict[str, int] = {}

@@ -8,6 +8,7 @@ from .ranking import FeatureRow
 
 
 def dcg_at_k(rels: List[float], k: int) -> float:
+    """Compute Discounted Cumulative Gain at rank k."""
     rels = np.asarray(rels)[:k]
     gains = 2 ** rels - 1
     discounts = np.log2(np.arange(2, len(rels) + 2))
@@ -15,6 +16,7 @@ def dcg_at_k(rels: List[float], k: int) -> float:
 
 
 def ndcg_at_k(rels: List[float], k: int) -> float:
+    """Compute Normalized DCG@k, returning 0.0 when ideal DCG is zero."""
     ideal = sorted(rels, reverse=True)
     idcg = dcg_at_k(ideal, k)
     if idcg == 0:
@@ -23,6 +25,7 @@ def ndcg_at_k(rels: List[float], k: int) -> float:
 
 
 def mrr_at_k(rels: List[float], k: int) -> float:
+    """Compute Mean Reciprocal Rank@k for a single ranked list of labels."""
     for idx, rel in enumerate(rels[:k], start=1):
         if rel > 0:
             return 1.0 / idx
@@ -30,6 +33,7 @@ def mrr_at_k(rels: List[float], k: int) -> float:
 
 
 def evaluate_predictions(rows: List[FeatureRow], preds: np.ndarray, k: int = 3) -> Dict[str, float]:
+    """Aggregate per-query NDCG@k and MRR@k over predicted scores and return the means."""
     per_query: Dict[str, List[tuple[float, float]]] = {}
     for row, pred in zip(rows, preds):
         per_query.setdefault(row.query_id, []).append((pred, row.label))
