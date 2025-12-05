@@ -71,13 +71,14 @@ class SemanticRetriever:
 
     def query(self, text: str, top_k: int = 5) -> List[ScoredItem]:
         q_emb = self.model.encode(text, convert_to_tensor=True, show_progress_bar=False)
+        k = min(top_k, len(self.catalog))
         if self.ann:
-            scores, indices = self.ann.search(q_emb.cpu().numpy()[None, :], top_k)
+            scores, indices = self.ann.search(q_emb.cpu().numpy()[None, :], k)
             flat_scores = scores[0]
             flat_indices = indices[0]
         else:
             scores_tensor = self.util.cos_sim(q_emb, self.doc_embeddings)[0]
-            top_k_scores, top_k_indices = scores_tensor.topk(k=top_k)
+            top_k_scores, top_k_indices = scores_tensor.topk(k=k)
             flat_scores = top_k_scores
             flat_indices = top_k_indices
 
@@ -113,14 +114,15 @@ class DualEncoderRetriever:
 
     def query(self, text: str, top_k: int = 5) -> List[ScoredItem]:
         q_emb = self.model.encode(text, convert_to_tensor=False, show_progress_bar=False)
+        k = min(top_k, len(self.catalog))
         if self.ann:
-            scores, indices = self.ann.search(np.array([q_emb]), top_k)
+            scores, indices = self.ann.search(np.array([q_emb]), k)
             flat_scores = scores[0]
             flat_indices = indices[0]
         else:
             doc_mat = np.stack(self.doc_embeddings)
             scores = doc_mat @ np.array(q_emb)
-            flat_indices = scores.argsort()[::-1][:top_k]
+            flat_indices = scores.argsort()[::-1][:k]
             flat_scores = scores[flat_indices]
 
         results = []

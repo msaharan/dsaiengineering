@@ -12,8 +12,7 @@ dependencies = [
 
 [project.optional-dependencies]
 semantic = [
-    # CPU-only torch to avoid CUDA pulls in the demo image.
-    "torch==2.2.2+cpu",
+    "torch==2.2.2",
     "xgboost>=1.7.0",
     "sentence-transformers>=2.2.0",
     "faiss-cpu",
