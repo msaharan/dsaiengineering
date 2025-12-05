@@ -17,7 +17,7 @@ docker run --rm -it search-ranking-demo        # runs semantic pipeline by defau
 # Train/use dual-encoder + ANN:
 # docker run --rm -it search-ranking-demo python run_demo.py --semantic --dual
 ```
-Dependencies are pinned via `uv.lock`; Docker builds consume the lockfile. No local `uv sync` needed unless you want to run outside Docker. ANN indexing is optional; the demo uses transformer dot-product retrieval by default. The dual-encoder training stub is provided but not wired into the demo run.
+Dependencies are pinned via `uv.lock`; Docker builds consume the lockfile. No local `uv sync` needed unless you want to run outside Docker. ANN indexing is optional; the demo uses transformer dot-product retrieval by default. The dual-encoder path (`--semantic --dual`) trains a small dual encoder and enables ANN (faiss required).
 
 The script will:
 1) Train a TF-IDF + logistic intent classifier on `data/query_intents.csv`.
