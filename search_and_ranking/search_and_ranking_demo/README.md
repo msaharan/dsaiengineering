@@ -1,15 +1,19 @@
 # Search & Ranking Demo
 
-## What's inside
-- `data/`: tiny catalog plus labeled query–document pairs and intent labels.
-- `search/`: modular code for spell correction, intent classification, retrieval, personalization, feature building, ranking, and evaluation.
-- `run_demo.py`: trains the pipeline, evaluates on held-out queries, and prints ranked results for sample queries.
-- `pyproject.toml`: dependency spec (optional extra `semantic` for sentence-transformers + XGBRanker).
+Hands-on, end-to-end mini stack for search and learning-to-rank on a tiny dataset. It is self-contained (no external services), CPU-friendly, and shows how query understanding, lexical + semantic retrieval, dual-encoder training, personalization, LTR, and business rules fit together. A longer blog post will follow; this README is enough to understand and run the project now.
 
-## Quickstart (Docker-only)
+## Overview
+- **Flow:** normalize/understand query → retrieve lexical + semantic candidates → personalize + featurize → train/eval LTR → apply business rules → display results.
+- **Retrievers:** TF-IDF lexical; optional SentenceTransformer semantic; optional dual-encoder + ANN stub.
+- **Ranking:** XGBRanker when available, else RandomForest; offline metrics (NDCG/MRR).
+- **Personalization:** simple cuisine/price affinities and user–item bias.
+- **Rules:** vegan boost + cuisine diversity; ontology-ish enrichment for dietary/category/price hints.
+- **Data:** small CSVs in `data/` so you can inspect everything.
+
+## Quickstart
 This project is intended to run in Docker with the semantic stack baked in:
 ```bash
-cd DSAIE/search_and_ranking/search_and_ranking_demo
+cd search_and_ranking/search_and_ranking_demo
 docker build -t search-ranking-demo .
 docker run --rm -it search-ranking-demo        # runs semantic pipeline by default
 # Override command if you want lexical-only:
@@ -17,7 +21,7 @@ docker run --rm -it search-ranking-demo        # runs semantic pipeline by defau
 # Train/use dual-encoder + ANN:
 # docker run --rm -it search-ranking-demo python run_demo.py --semantic --dual
 ```
-Docker builds install with `uv sync --locked --extra semantic` (consuming `uv.lock`); torch may pull CUDA wheels. No local `uv sync` needed unless you want to run outside Docker. ANN indexing is optional; the demo uses transformer dot-product retrieval by default. The dual-encoder path (`--semantic --dual`) trains a small dual encoder and enables ANN (faiss required).
+Docker builds install with `uv sync --locked --extra semantic` (consuming `uv.lock`); torch may pull CUDA wheels. No local `uv sync` needed unless you want to run outside Docker. ANN indexing is optional; the demo uses transformer dot-product retrieval by default. The dual-encoder path (`--semantic --dual`) trains a small dual encoder and enables ANN (faiss preferred; falls back to scikit-learn if faiss is missing).
 
 If you do run `uv sync` locally, match the lockfile’s timestamp cutoff by exporting:
 
