@@ -17,7 +17,7 @@ docker run --rm -it search-ranking-demo        # runs semantic pipeline by defau
 # Train/use dual-encoder + ANN:
 # docker run --rm -it search-ranking-demo python run_demo.py --semantic --dual
 ```
-Docker builds resolve from `pyproject.toml`; `uv.lock` is not used in the image to allow CPU-only wheels. No local `uv sync` needed unless you want to run outside Docker. ANN indexing is optional; the demo uses transformer dot-product retrieval by default. The dual-encoder path (`--semantic --dual`) trains a small dual encoder and enables ANN (faiss required).
+Docker builds install with `uv sync --locked --extra semantic` (consuming `uv.lock`); torch may pull CUDA wheels. No local `uv sync` needed unless you want to run outside Docker. ANN indexing is optional; the demo uses transformer dot-product retrieval by default. The dual-encoder path (`--semantic --dual`) trains a small dual encoder and enables ANN (faiss required).
 
 The script will:
 1) Train a TF-IDF + logistic intent classifier on `data/query_intents.csv`.
