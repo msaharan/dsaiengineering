@@ -1,6 +1,6 @@
 # Search & Ranking Demo
 
-Hands-on, end-to-end mini stack for search and learning-to-rank on a tiny dataset. It is self-contained (no external services), CPU-friendly, and shows how query understanding, lexical + semantic retrieval, dual-encoder training, personalization, LTR, and business rules fit together. A longer blog post will follow; this README is enough to understand and run the project now.
+Hands-on, end-to-end mini stack for search and learning-to-rank on a tiny dataset. It is self-contained (no external services), CPU-friendly, and shows how query understanding, lexical + semantic retrieval, dual-encoder training, personalization, LTR, and business rules fit together. A longer blog post is available on [dsaiengineering.substack.com](https://dsaiengineering.substack.com); this README provides everything you need to understand and run the project.
 
 ## Overview
 - **Flow:** normalize/understand query → retrieve lexical + semantic candidates → personalize + featurize → train/eval LTR → apply business rules → display results.
