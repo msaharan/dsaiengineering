@@ -22,7 +22,7 @@ from typing import List, Dict
 from openai import OpenAI
 
 
-DEFAULT_MODEL = "gpt-4o-mini"
+DEFAULT_MODEL = "gpt-4o"
 
 PROMPT = """You are given a photo of a stack of books. Extract a clean, ordered list of ALL visible books with fields:
 - title (full book title exactly as on the spine; fix casing/punctuation)
@@ -33,7 +33,7 @@ Return JSON only, shaped exactly like:
 
 Requirements:
 - Keep the list in physical top-to-bottom order.
-- Include every distinct book you can see; do not drop uncertain ones—provide your best guess.
+- Include every distinct spine you can see; do not drop uncertain ones—provide your best guess even if partially legible.
 - Exclude publishers/series words unless part of the main title.
 - Preserve edition words if on the spine (e.g., "Third Edition").
 - Do not add explanatory text outside the JSON.
@@ -64,7 +64,7 @@ def call_vision(model: str, image_path: Path) -> Dict:
         model=model,
         messages=messages,
         temperature=0,
-        max_tokens=800,
+        max_tokens=1200,
         response_format={"type": "json_object"},
     )
     content = resp.choices[0].message.content
