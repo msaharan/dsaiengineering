@@ -117,3 +117,20 @@ pip install ocrmypdf
 
 * **Scanned PDFs → searchable PDFs:**
   → `ocrmypdf` (internally uses Tesseract).
+
+---
+
+## 5. LLM-based OCR
+
+### OpenAI Vision API
+
+```bash
+pip install openai
+```
+
+```python
+import openai
+
+client = openai.OpenAI()
+```
+Read more [here](https://platform.openai.com/docs/guides/images-vision).
