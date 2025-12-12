@@ -1,0 +1,673 @@
+metadata:
+  createdAt: 2025-12-12T21:30:01.436Z
+project:
+  id: d1c9f918-7b4a-41d1-8323-1a8bcb555687
+  integrations: []
+  name: linear_optimization_for_resource_allocation_scipy
+  notebooks:
+    - blocks:
+        - blockGroup: 8982ad3a-fa60-440e-ab78-1829ac6e7b00
+          content: "# Exercise: Linear optimization for resource allocation"
+          id: 8759c0ae-0942-4329-bfb4-3208e0b10964
+          metadata: {}
+          sortingKey: "0"
+          type: markdown
+        - blockGroup: df83fd3f-1948-4f8a-9f28-cc818af04e89
+          content: "## Scenario"
+          id: 063db282-dea3-4240-a8b6-8da506dc1bb3
+          metadata: {}
+          sortingKey: "1"
+          type: markdown
+        - blockGroup: 8a59783d-61b5-4cbe-a176-79cf380298e6
+          content: >-
+            
+            A client wants to decide how many units of 3 products to produce.
+
+            Each product requires machine time on two machines.
+
+            Each product yields a profit.
+
+
+            You must build a linear programming model that determines the
+            optimal production plan.
+
+
+            ---
+
+
+            ### Input
+
+
+            You receive three Python dictionaries:
+
+
+            ```python   
+
+            machine_cap = {
+                "machine_1": 240,   # minutes available
+                "machine_2": 200
+            }
+
+
+            time_per_unit = {
+                "product_A": {"machine_1": 3, "machine_2": 4},
+                "product_B": {"machine_1": 2, "machine_2": 1},
+                "product_C": {"machine_1": 4, "machine_2": 2},
+            }
+
+
+            profit = {
+                "product_A": 40,
+                "product_B": 25,
+                "product_C": 30,
+            }
+
+            ```
+
+            ---
+
+
+            ### Task
+
+
+            Write a function 
+
+
+            ```python
+
+            def optimise_production(machine_cap, time_per_unit, profit):
+                ...
+            ```
+
+
+            ### Requirements
+
+
+            - Use scipy.optimize.linprog or OR-Tools' linear solver.
+
+
+            - Maximise total profit.
+
+
+            - Products must have non-negative production quantities.
+
+
+            - Return a dict:
+
+
+            ```python
+
+            {
+              "product_A": optimal_float,
+              "product_B": optimal_float,
+              "product_C": optimal_float,
+              "total_profit": float
+            }
+
+            ```
+
+            ### Evaluation Criteria
+
+
+            -  Correct LP formulation
+
+
+            - Clear structure
+
+
+            - Type hints
+
+
+            - Comments explaining constraints
+
+
+            ---
+          id: 0b7081cb-ec23-4882-8a4a-57568958348b
+          metadata: {}
+          sortingKey: "2"
+          type: markdown
+        - blockGroup: 867fde6f-7a0f-407d-a02c-23985b12600d
+          content: "## Thinking through the problem"
+          id: 9e833cde-0720-42bb-af49-3177749f7147
+          metadata: {}
+          sortingKey: "3"
+          type: markdown
+        - blockGroup: 0df0c5fc-fd6c-4d0b-a5c8-282233284906
+          content: "### 1. What are the decision variables?"
+          id: f3107ac2-e086-4c30-9c00-038043029b9d
+          metadata: {}
+          sortingKey: "4"
+          type: markdown
+        - blockGroup: 95882fec-da98-42df-a1b0-d88ba10cb1ac
+          content: >-
+            We want to decide how many units of each product to produce.
+
+
+            For products A, B, C:
+
+            - $x_A$ = units of product_A
+
+            - $x_B$ = units of product_B
+
+            - $x_C$ = units of product_C
+
+
+            All of these must be $\geq 0$ because we can't produce negative
+            units.
+
+
+            In vector form, if we fix the order `[product_A, product_B,
+            product_C]`, then:
+
+
+            $$ x = \left[ \begin{array}{c} x_A \\ x_B \\ x_C \end{array}
+            \right]$$
+
+
+            <!-- In the real function, the list of products will just be
+            whatever keys appear in `time_per_unit`/`profit`. -->
+          id: e0a9220f-9d72-4208-ba56-a078e493a09d
+          metadata: {}
+          sortingKey: "5"
+          type: markdown
+        - blockGroup: 041bea6a-b5fb-4bd3-beb9-e4e0c8ffd6dc
+          content: "### 2. What is the objective?"
+          id: bd8ab889-849b-469d-bd6f-479e1a5da418
+          metadata: {}
+          sortingKey: "6"
+          type: markdown
+        - blockGroup: 5d08e02e-38a7-4f19-8b90-d3f9d2e89dd5
+          content: >-
+            We want to maximise total profit.
+
+
+            Given:
+
+            ```python
+
+            profit = {
+                "product_A": 40,
+                "product_B": 25,
+                "product_C": 30,
+            }
+
+            ```
+
+            Total profit is:
+
+            $$
+
+            \text{profit} = 40x_A + 25x_B + 30x_C
+
+            $$
+
+
+            But `scipy.optimize.linprog` minimizes a linear function of the form
+            $c^T x$.
+
+
+            So to maximize profit, we minimize the negative profit:
+
+
+            $$
+
+            \text{minimize} \quad -40x_A - 25x_B - 30x_C
+
+            $$
+
+
+            So the objective coefficient vector `c` (in order `[A, B, C]`) is:
+
+
+            ```python
+
+            c =  [-40, -25, -30]
+
+            ````
+
+            In general:
+
+            - Choose an ordered list of products, e.g. `products =
+            list(profit.keys())`
+
+            - Build `c[i] = profit[products[i]]`
+
+
+            <!-- Later, after solving, $\text{total\_profit = - result.fun}$ -->
+          id: 1f0bcc7b-10a6-4b36-92c7-0d32a2dabc5f
+          metadata: {}
+          sortingKey: "7"
+          type: markdown
+        - blockGroup: 3bdd63f9-3b15-4264-be5f-c0a7db701e9e
+          content: "### 3. What are the constraints?"
+          id: 2072a5aa-9850-437a-9bfa-f85dddf75247
+          metadata: {}
+          sortingKey: "8"
+          type: markdown
+        - blockGroup: e2bcf603-f2c3-4e47-a81f-bd0510393871
+          content: >-
+            We have two machines, and each product takes a certain amount of
+            time on each machine.
+
+
+            Example:
+
+            ```python
+
+            machine_cap = {
+                "machine_1": 240,
+                "machine_2": 200
+            }
+
+            And each product uses machine time:
+
+            ```python
+
+
+            time_per_unit = {
+                "product_A": {"machine_1": 3, "machine_2": 4},
+                "product_B": {"machine_1": 2, "machine_2": 1},
+                "product_C": {"machine_1": 4, "machine_2": 2},
+            }
+
+            ```
+
+            For each machine, we constrain total time used
+
+
+            Machine 1:
+
+            - Time used by A = $3x_A$
+
+            - Time used by B = $2x_B$
+
+            - Time used by C = $4x_C$
+
+
+            Capacity constraint:
+
+
+            $$
+
+            3x_A + 2x_B + 4x_C \leq 240
+
+            $$
+
+
+            Machine 2:
+
+            - Time used by A = $4x_A$
+
+            - Time used by B = $1x_B$
+
+            - Time used by C = $2x_C$
+
+
+            Capacity constraint:
+
+
+            $$
+
+            4x_A + 1x_B + 2x_C \leq 200
+
+            $$
+
+
+            In matrix form $A_{ub}x \leq b_{ub}$:
+
+
+            $$
+
+            A_{ub} = \left[ \begin{array}{ccc} 3 & 2 & 4 \\ 4 & 1 & 2
+            \end{array} \right], b_{ub} = \left[ \begin{array}{c} 240 \\ 200
+            \end{array} \right]
+
+            $$
+
+
+            <!-- Generalizing:
+
+            - You'll have one row per machine in `A_ub`.
+
+            - For a given machine `m` and prodcuct `p`, 
+                - coefficient is `time_per_unit[p].get(m, 0.0)` (0 if not present).
+            - That row looks like:
+                - `[time_per_unit[product_1][m], time_per_unit[product_2][m], ...]`
+            - `b_ub` entry is `machine_cap[m]`.
+
+
+            So you'll:
+
+            1. Fix an order: `machines = list(machine_cap.keys())`
+
+            2. For each machine in that order, build a row of coefficients
+            across all products. -->
+          id: 04d1d59a-5fa0-4136-8cbf-9991eb4a69d3
+          metadata: {}
+          sortingKey: "9"
+          type: markdown
+        - blockGroup: f5935cbb-1d01-4d65-808f-c46b73f661f8
+          content: "### 4. Variables bounds"
+          id: e3f6b762-f191-44f9-9905-bf681f618082
+          metadata: {}
+          sortingKey: a
+          type: markdown
+        - blockGroup: cc3b58d1-c7bc-445b-8eea-ea74d161b9a6
+          content: >-
+            
+            We know units can't be negative; usually no explicit upper bounds is
+            given, so:
+
+            - `bounds[i] = (0, None)` for each product variable.
+
+
+            That's how you tell `linprog`
+
+            $$
+
+            x_i \geq 0
+
+            $$
+
+
+            If they ever extend the problem with max units per product, we can
+            add a `bounds[i] = (0, max_units[i])` for each product.
+          id: ef1e6bfe-937c-450c-86e7-c4e8e6359280
+          metadata: {}
+          sortingKey: b
+          type: markdown
+        - blockGroup: 9dd06524-e487-45f5-b416-29cd13746327
+          content: |
+            ### 5. Callineg `linprog`
+          id: a30847ef-9eab-4bdc-a626-2f91a1d355e4
+          metadata: {}
+          sortingKey: c
+          type: markdown
+        - blockGroup: 281735f9-2b3b-46cf-8936-63a0dd409c0f
+          content: >-
+            Conceptually, the call will look like:
+
+            - `c` = negative profit vector
+
+            - `A_ub`, `b_ub` = capacity constraints
+
+            - `bounds` = non-negative
+
+
+            The solver returns something like this:
+
+            - `res.x` $\rightarrow$ optimal values of `[x_A, x_B, x_C]`
+
+            - `res.success` $\rightarrow$ whether it found a solution
+
+            - `res.fun` $\rightarrow$ minimal value of the objective (`C^T x`),
+            so negative total profit
+
+
+            We then:
+
+            - Map `res.x` back to a dict `{product_name: value}`
+
+            - Compute `total_profit = -res.fun`
+          id: 5949f402-7f7c-4c4c-8774-6b1630cafdcc
+          metadata: {}
+          sortingKey: d
+          type: markdown
+        - blockGroup: 7b62d06a-2f26-48db-a2b5-0437994be586
+          content: "### 6. Building the result dictionary"
+          id: ba9823d2-8a70-4b30-9309-8103f45d9d47
+          metadata: {}
+          sortingKey: e
+          type: markdown
+        - blockGroup: 5a06be62-f327-4863-a136-68f2bd233b58
+          content: >-
+            Given:
+
+            - `products = ["product_A", "product_B", "product_C"]`
+
+            - `solution = res.x` (e.g. something like `[10.0, 5.0, 0.0]`)
+
+
+            We want:
+
+            ```python
+
+            {
+              "product_A": optimal_float,
+              "product_B": optimal_float,
+              "product_C": optimal_float,
+              "total_profit": float
+            }
+
+            ```
+
+
+            <!-- Optionally, you might:
+
+            - Clean tiny negative values due to numerical noise (e.g. `-1e-9`
+            $\rightarrow$ `0.0`). -->
+          id: f4c5cbfb-b934-4244-b46a-dbeddcae17fd
+          metadata: {}
+          sortingKey: f
+          type: markdown
+        - blockGroup: 19ead41f-d21f-47e0-9839-7bf73f6f8781
+          content: "### 7. Edge cases to keep in mind"
+          id: 21fe2f99-fdec-4323-a335-db3090ae866f
+          metadata: {}
+          sortingKey: g
+          type: markdown
+        - blockGroup: 54d342b1-e8db-4c07-9249-6713618aed64
+          content: >-
+            - Infeasible problem
+                If machine capacities are too small to even produce 0? (Actually 0 production always satisfies $\leq$ constraints, so infeasibility would more likely come from additional constraintsd -- here we don't have those, so it should be feasible.)
+            - Unbounded problem
+                If there were no capacity constraints and positive profit, solution would go to infinity. Here, capacities prevent that.
+            - Floating-point noise
+                Sometimes you might see `1.9999999998` instead of `2.0`. You can safely round small epsilons.
+          id: bebd0e8c-c2fc-4f5b-b8fb-d067d6898b54
+          metadata: {}
+          sortingKey: h
+          type: markdown
+        - blockGroup: cdc556cc-e1ef-4ade-8f31-4f1fc9c282ef
+          content: "### 8 Mental dry run with the demo data"
+          id: 378f3e35-437e-468f-9312-ad1ebaf79641
+          metadata: {}
+          sortingKey: i
+          type: markdown
+        - blockGroup: 5e8b1f65-565d-4024-ac89-691448581d5c
+          content: >
+            You don't need to actually solve it by hand, but it's useful to
+            reason about:
+
+            - Products consuming more time on the bottleneck machine but having
+            high profit might still be optimal.
+
+            - A simple sanity test after implementation:
+                - Units are non-negative
+                - For each machine, total time used `<=` capacity (within tiny numerical epsilon)
+                - Total profit is consistent with `sum(x_p * profit[p]).
+          id: dcb22a71-2fd4-4465-952e-8f36aa7cb3fe
+          metadata: {}
+          sortingKey: j
+          type: markdown
+        - blockGroup: 3a2fae62-f07f-427b-ba8f-8c0a0481a082
+          content: "## Code implementation"
+          id: 31a259af-9c15-434e-9b63-acc2f9df732f
+          metadata: {}
+          sortingKey: k
+          type: markdown
+        - blockGroup: 49542f1c-ac3b-4126-ac45-52fde175045c
+          content: >-
+            import math 
+
+            from typing import Dict, List
+
+            import numpy as np 
+
+            from scipy.optimize import linprog, linear_sum_assignment
+
+
+            def optimise_production(
+                machine_cap: Dict[str, float],
+                time_per_unit: Dict[str, Dict[str, float]],
+                profit: Dict[str, float],
+            ) -> Dict[str, float]:
+                """
+                Solve a linear program to maximise total profit subject to machine capacity constraints.
+                
+                This function demonstrates linear programming (LP) for resource allocation:
+                - Decision variables: how many units of each product to produce
+                - Objective: maximize total profit
+                - Constraints: machine time capacities cannot be exceeded
+                - Bounds: production quantities must be non-negative
+                
+                Linear programming is a powerful optimization technique for problems with
+                linear objectives and constraints. It's widely used in operations research,
+                supply chain management, and resource allocation.
+
+                Args:
+                    machine_cap: Dict mapping machine name -> available time (e.g., minutes)
+                    time_per_unit: Dict mapping product -> {machine: time_required}
+                    profit: Dict mapping product -> profit per unit
+                
+                Returns:
+                    Dict with optimal production per product and total profit
+                """
+                # STEP 1: Establish deterministic variable ordering
+                # We need a consistent order for decision variables to match coefficients
+                # in objective and constraint matrices. Using list() preserves insertion order
+                # (Python 3.7+), but explicit ordering makes the code more predictable
+                products = list(time_per_unit.keys())
+                machines = list(machine_cap.keys())
+                # Example: products = ["product_A", "product_B", "product_C"]
+                #          means x[0]=A, x[1]=B, x[2]=C in our decision vector
+
+                # STEP 2: Build objective function coefficients
+                # Mathematical objective: maximize profit = Σ(profit[p] * x[p])
+                # However, scipy.optimize.linprog MINIMIZES by default
+                # 
+                # To maximize, we minimize the negative: max(f) = -min(-f)
+                # So we negate all profit values: c = [-profit_A, -profit_B, -profit_C]
+                # 
+                # After solving, we'll negate the result: total_profit = -res.fun
+                c = np.array([-profit[p] for p in products], dtype=float)
+                # Example: profit = {"A": 40, "B": 25, "C": 30}
+                #          → c = [-40, -25, -30]
+
+                # STEP 3: Build inequality constraint matrices (machine capacity constraints)
+                # Constraint form: A_ub * x <= b_ub
+                # Each row of A_ub represents one machine's time constraint
+                # 
+                # For machine m: Σ(time_per_unit[p][m] * x[p]) <= machine_cap[m]
+                # 
+                # Example for machine_1: 3*x_A + 2*x_B + 4*x_C <= 240
+                # This becomes row [3, 2, 4] in A_ub, with b_ub entry 240
+                A_ub = []
+                b_ub = []
+                for m in machines:
+                    row = []
+                    for p in products:
+                        # Extract time required for product p on machine m
+                        # If product doesn't use machine, assume 0 time (defensive programming)
+                        row.append(float(time_per_unit.get(p, {}).get(m, 0.0)))
+                    A_ub.append(row)
+                    b_ub.append(float(machine_cap[m]))
+                
+                # Convert to NumPy arrays for linprog (more efficient)
+                # Handle edge case: if no machines, set to None (linprog will handle it)
+                A_ub = np.array(A_ub, dtype=float) if A_ub else None
+                b_ub = np.array(b_ub, dtype=float) if b_ub else None
+
+                # STEP 4: Set variable bounds (non-negativity constraints)
+                # Production quantities cannot be negative: x[p] >= 0 for all products
+                # No explicit upper bounds given, so use None (unbounded above)
+                # 
+                # bounds[i] = (lower, upper) for variable x[i]
+                # (0, None) means x[i] >= 0 with no upper limit
+                bounds = [[0, None] for _ in products]
+                # Example: bounds = [(0, None), (0, None), (0, None)]
+                #          means x_A >= 0, x_B >= 0, x_C >= 0
+
+                # STEP 5: Solve the linear program
+                # Call the solver with all parameters:
+                # - c: objective coefficients (minimizing -profit)
+                # - A_ub, b_ub: inequality constraints (machine capacities)
+                # - bounds: variable bounds (non-negativity)
+                # - method='highs': uses HiGHS solver (fast, reliable, open-source)
+                res = linprog(c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method='highs')
+
+                # Check solver success: handle infeasible or unbounded problems
+                # Infeasible: no solution satisfies all constraints
+                # Unbounded: objective can go to infinity (shouldn't happen with capacity constraints)
+                if not res.success:
+                    raise ValueError(f"Linear program did not converge: {res.message}")
+                
+                # STEP 6: Extract and format results
+                x = res.x  # Optimal decision variables: [x_A_opt, x_B_opt, x_C_opt]
+                
+                # Clean numerical noise: sometimes solver returns tiny negative values (e.g., -1e-10)
+                # due to floating-point precision. Round these to zero for cleaner output
+                x = np.where(x < 1e-9, 0.0, x)
+
+                # Remember: we minimized -profit, so res.fun = -actual_profit
+                # Therefore: actual_profit = -res.fun
+                total_profit = -float(res.fun)
+
+                # Build readable dictionary mapping product names to optimal production
+                # This makes the output intuitive and easy to use in downstream code
+                result: Dict[str, float] = {
+                    product: float(x[i]) for i, product in enumerate(products)
+                }
+                result["total_profit"] = total_profit
+
+                return result
+
+            # ============================================================
+
+            # test algorithm
+
+            # ============================================================
+
+
+            # if __name__ == "__main__":
+
+            machine_cap_demo = {
+                "machine_1": 240,
+                "machine_2": 200,
+            }
+
+            time_per_unit_demo = {
+                "product_A": {"machine_1": 3, "machine_2": 4},
+                "product_B": {"machine_1": 2, "machine_2": 1},
+                "product_C": {"machine_1": 4, "machine_2": 2},
+            }
+
+            profit_demo = {
+                "product_A": 40,
+                "product_B": 25,
+                "product_C": 30,
+            }
+
+
+            result1 = optimise_production(machine_cap_demo, time_per_unit_demo,
+            profit_demo)
+
+            print("Exercise result:", result1)
+          executionCount: 1
+          id: cae1f9c0-508f-436c-a500-6dd2eb1e3456
+          metadata: {}
+          outputs:
+            - name: stdout
+              output_type: stream
+              text:
+                - >
+                  Exercise result: {'product_A': 32.0, 'product_B': 72.0,
+                  'product_C': 0.0, 'total_profit': 3080.0}
+          sortingKey: l
+          type: code
+      executionMode: block
+      id: 9801bcad-b329-4d1a-af52-44c4b2d46fab
+      isModule: false
+      name: linear_optimization_for_resource_allocation_scipy
+  settings: {}
+version: 1.0.0

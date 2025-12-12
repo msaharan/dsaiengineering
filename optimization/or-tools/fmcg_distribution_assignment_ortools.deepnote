@@ -1,0 +1,292 @@
+metadata:
+  createdAt: 2025-12-12T21:29:30.395Z
+  modifiedAt: '2025-12-12T21:31:03.689Z'
+project:
+  id: cf9796a2-808a-4873-a4ed-41041339a893
+  integrations: []
+  name: fmcg_distribution_assignment_ortools
+  notebooks:
+    - blocks:
+        - blockGroup: 735259b3-cf79-4362-b62b-24c5bbacd82d
+          content: |-
+            # Exercise — FMCG Distribution Assignment using OR-Tools
+            Domain: FMCG (Fast-Moving Consumer Goods)
+
+            Theme: Assign warehouses to stores optimally (assignment problem).
+          id: d8c8542d-b7e7-4412-8f9e-88fb307e4930
+          metadata: {}
+          sortingKey: '0'
+          type: markdown
+        - blockGroup: 8583f9a4-dace-4156-9dfb-a31696b52d8c
+          content: |+
+            ## Scenario
+
+          id: 24d7d03d-4380-4ecd-9da3-f52296d8fa84
+          metadata: {}
+          sortingKey: '1'
+          type: markdown
+        - blockGroup: 9360d7c6-865f-47b8-99a7-e56c42197e13
+          content: |
+            A consumer goods company has 3 warehouses and 3 major retail stores. There is a pre-unit transportation cost from each warehouse to each store.
+
+            To design a reusable "distribution assignment" block, you must compute the minimum-cost assignment of warehouse to stores, assuming:
+            - Each warehouse served exactly one store.
+            - Each store is served by exactly one warehouse.
+
+            ### Input
+            A cost matrix:
+            ```python
+            import numpy as np
+
+            cost_matrix = np.array([
+                [8, 6, 7],  # Warehouse 0 to Stores 0,1,2
+                [5, 9, 3],  # Warehouse 1
+                [6, 4, 5],  # Warehouse 2
+            ])
+
+            ### Task
+            Implement:
+            ```python
+            from typing import Any, Dict, List, Tuple
+            import numpy as np
+
+            def assign_warehouses_to_stores(cost_matrix: np.ndarray) -> Dict[str, Any]:
+                """
+                Solve the warehouse-store assignment problem using the Hungarian algorithm.
+                """
+                ...
+            ```
+
+            ### Requirements
+            - Use OR-Tools (CP-SAT solver recommended) to solve the assignment problem.
+            - Return
+            ```python
+            {
+                "assignments": List[Tuple[int, int]], # (warehouse_index, store_index)
+                "total_cost": float, # total cost of the assignment
+            }
+            ```
+            - Make sure the function works for any square cost matrix (n x n), not just 3x3.
+          id: 98d72542-5748-470b-8ed6-68674312b694
+          metadata: {}
+          sortingKey: '2'
+          type: markdown
+        - blockGroup: d2b73211-e488-4cde-aa9d-bef6acee9bba
+          content: '## Code implementation'
+          id: 79794f01-d269-42b4-ba5b-2e969bcdff04
+          metadata: {}
+          sortingKey: '3'
+          type: markdown
+        - blockGroup: cedb82be-7d3f-4f9c-885b-99d29e415f67
+          content: |-
+            import numpy as np
+            from typing import Any, Dict, List, Tuple
+            from ortools.sat.python import cp_model
+
+            def assign_warehouses_to_stores(cost_matrix: np.ndarray) -> Dict[str, Any]:
+                """
+                Solve the warehouse-store assignment problem using OR-Tools CP-SAT solver.
+                
+                This function demonstrates the assignment problem: given N warehouses and N stores,
+                find the one-to-one assignment that minimizes total transportation cost.
+                
+                The assignment problem is a classic combinatorial optimization problem where we need
+                to assign each warehouse to exactly one store (and vice versa) such that the total
+                transportation cost is minimized. This is also known as the linear assignment problem
+                or bipartite matching problem.
+                
+                OR-Tools' CP-SAT (Constraint Programming - Satisfiability) solver models this as a
+                constraint satisfaction problem with boolean decision variables. CP-SAT is well-suited
+                for assignment problems and guarantees finding the optimal solution.
+
+                Args:
+                    cost_matrix: A square numpy array of shape (n, n) where
+                                 cost_matrix[i, j] is the cost of assigning
+                                 warehouse i to store j.
+                                 Lower values are better (minimization problem).
+
+                Returns:
+                    {
+                        "assignments": [(warehouse_index, store_index), ...],
+                        "total_cost": float
+                    }
+                    The assignments list contains tuples where each tuple (i, j) means
+                    warehouse i is assigned to store j.
+
+                Raises:
+                    ValueError: If the matrix is not 2D square, or if the solver cannot find an optimal solution.
+                """
+                # STEP 1: Validate input shape
+                # The assignment problem requires a square matrix (N warehouses, N stores)
+                # This ensures we can create a one-to-one assignment (each warehouse to one store)
+                if cost_matrix.ndim != 2 or cost_matrix.shape[0] != cost_matrix.shape[1]:
+                    raise ValueError("cost_matrix must be a square 2D array.")
+                
+                n_warehouses, n_stores = cost_matrix.shape
+                
+                # STEP 2: Create the CP-SAT model
+                # CP-SAT (Constraint Programming - Satisfiability) is OR-Tools' constraint programming
+                # solver. It works by:
+                # 1. Modeling the problem with decision variables (boolean, integer, or interval)
+                # 2. Adding constraints that must be satisfied
+                # 3. Defining an objective function to optimize
+                # 4. Using advanced search algorithms to find optimal solutions
+                # 
+                # Why CP-SAT for assignment problems?
+                # - Efficiently handles boolean variables (perfect for yes/no assignments)
+                # - Guarantees optimality (finds the best possible solution)
+                # - Handles integer costs natively (after scaling)
+                model = cp_model.CpModel()
+                
+                # STEP 3: Create decision variables
+                # We create a boolean variable x[i][j] for each warehouse-store pair.
+                # x[i][j] = 1 means "warehouse i is assigned to store j"
+                # x[i][j] = 0 means "warehouse i is NOT assigned to store j"
+                #
+                # Example: If we have 3 warehouses and 3 stores, we create 9 boolean variables:
+                # x[0][0], x[0][1], x[0][2]  (warehouse 0 can be assigned to store 0, 1, or 2)
+                # x[1][0], x[1][1], x[1][2]  (warehouse 1 can be assigned to store 0, 1, or 2)
+                # x[2][0], x[2][1], x[2][2]  (warehouse 2 can be assigned to store 0, 1, or 2)
+                x = []
+                for i in range(n_warehouses):
+                    row = []
+                    for j in range(n_stores):
+                        # NewBoolVar creates a boolean decision variable that the solver will determine
+                        # The name is optional but helpful for debugging
+                        row.append(model.NewBoolVar(f'warehouse_{i}_store_{j}'))
+                    x.append(row)
+                
+                # STEP 4: Add constraints
+                # Constraints ensure that our solution satisfies the problem requirements.
+                # Without constraints, the solver might assign multiple stores to one warehouse,
+                # or leave some warehouses unassigned.
+                
+                # Constraint 1: Each warehouse must be assigned to exactly one store
+                # For each warehouse i, the sum of x[i][j] over all stores j must equal 1.
+                # This means exactly one of x[i][0], x[i][1], ..., x[i][n_stores-1] must be 1.
+                #
+                # Example: For warehouse 0 with 3 stores: x[0][0] + x[0][1] + x[0][2] == 1
+                # This ensures warehouse 0 serves exactly one store (not zero, not two or more)
+                for i in range(n_warehouses):
+                    model.Add(sum(x[i][j] for j in range(n_stores)) == 1)
+                
+                # Constraint 2: Each store must be assigned to exactly one warehouse
+                # For each store j, the sum of x[i][j] over all warehouses i must equal 1.
+                # This means exactly one of x[0][j], x[1][j], ..., x[n_warehouses-1][j] must be 1.
+                #
+                # Example: For store 1 with 3 warehouses: x[0][1] + x[1][1] + x[2][1] == 1
+                # This ensures store 1 is served by exactly one warehouse (not zero, not two or more)
+                for j in range(n_stores):
+                    model.Add(sum(x[i][j] for i in range(n_warehouses)) == 1)
+                
+                # STEP 5: Define the objective function
+                # The objective is to minimize the total cost of all assignments.
+                # Total cost = sum over all (i,j) of: cost_matrix[i][j] * x[i][j]
+                #
+                # Why multiply by x[i][j]? 
+                # - If x[i][j] = 1 (warehouse i assigned to store j), we include cost_matrix[i][j]
+                # - If x[i][j] = 0 (not assigned), we don't include it (multiply by 0)
+                #
+                # Example: If warehouse 0 is assigned to store 1, then:
+                #   cost_matrix[0][1] * x[0][1] = cost_matrix[0][1] * 1 = cost_matrix[0][1]
+                # If warehouse 0 is NOT assigned to store 2, then:
+                #   cost_matrix[0][2] * x[0][2] = cost_matrix[0][2] * 0 = 0 (doesn't contribute)
+                
+                # CP-SAT requires integer coefficients, so we scale float costs to integers.
+                # We multiply by 1000 to preserve 3 decimal places of precision.
+                # Example: cost 2.456 becomes 2456, cost 9.0 becomes 9000
+                objective_terms = []
+                for i in range(n_warehouses):
+                    for j in range(n_stores):
+                        # Scale the cost to an integer (multiply by 1000 and round)
+                        scaled_cost = int(round(cost_matrix[i, j] * 1000))
+                        # Add the term: if x[i][j] is 1, this contributes scaled_cost to the objective
+                        objective_terms.append(x[i][j] * scaled_cost)
+                
+                # Tell the model to minimize the sum of all objective terms
+                model.Minimize(sum(objective_terms))
+                
+                # STEP 6: Solve the model
+                # The solver uses advanced algorithms (constraint propagation, search heuristics,
+                # branch-and-bound) to find the optimal assignment that satisfies all constraints
+                # and minimizes the objective function.
+                solver = cp_model.CpSolver()
+                status = solver.Solve(model)
+                
+                # STEP 7: Check if a solution was found
+                # The solver returns a status code indicating the result:
+                # - OPTIMAL: Found the best possible solution ✓
+                # - FEASIBLE: Found a valid solution, but might not be optimal
+                # - INFEASIBLE: No solution exists (shouldn't happen for assignment problems)
+                # - MODEL_INVALID: The model has errors
+                if status != cp_model.OPTIMAL:
+                    raise ValueError(
+                        f"Assignment problem could not be solved optimally. "
+                        f"Status: {status} (expected {cp_model.OPTIMAL})"
+                    )
+                
+                # STEP 8: Extract the solution
+                # Now that the solver has found the optimal assignment, we need to:
+                # 1. Find which x[i][j] variables are set to 1 (the actual assignments)
+                # 2. Calculate the total cost using the original (unscaled) cost values
+                assignments: List[Tuple[int, int]] = []
+                total_cost = 0.0
+                
+                # Iterate through all warehouse-store pairs
+                for i in range(n_warehouses):
+                    for j in range(n_stores):
+                        # solver.Value(x[i][j]) returns the value of the variable in the solution
+                        # It will be either 0 or 1 (since x[i][j] is a boolean variable)
+                        if solver.Value(x[i][j]) == 1:
+                            # This assignment is part of the optimal solution
+                            assignments.append((i, j))
+                            # Add the original cost (not the scaled version) to the total
+                            total_cost += float(cost_matrix[i, j])
+                
+                # STEP 9: Return the results
+                # We return a dictionary with:
+                # - assignments: A list of (warehouse_idx, store_idx) tuples showing which warehouse serves which store
+                # - total_cost: The sum of costs for this optimal assignment
+                #
+                # This format is easy to:
+                # - Display to users
+                # - Serialize to JSON for APIs
+                # - Use in downstream processing
+                return {
+                    "assignments": assignments,  # List of (warehouse_idx, store_idx) pairs
+                    "total_cost": total_cost,  # Sum of costs for all assignments
+                }
+
+            # ============================================================
+            # Test algorithm
+            # ============================================================
+            # if __name__ == "__main__":
+            cost_matrix_demo = np.array([
+                [8, 6, 7],
+                [5, 9, 3],
+                [6, 4, 5],
+            ])
+            assignment_result = assign_warehouses_to_stores(cost_matrix_demo)
+            print("Exercise 3 result:", assignment_result)
+          id: 52287328-df81-41cf-aaa7-54ea4e492b03
+          metadata: {}
+          sortingKey: '4'
+          type: code
+          executionCount: 1
+          outputs:
+            - name: stdout
+              output_type: stream
+              text: |
+                Exercise 3 result: {'assignments': [(0, 0), (1, 2), (2, 1)], 'total_cost': 15.0}
+        - blockGroup: 86c94714-fa2d-4bd3-9388-65d4f518ecda
+          content: ''
+          id: b66ef24ceb50160a881405ecc57237b1
+          metadata: {}
+          sortingKey: a5
+          type: code
+      executionMode: block
+      id: e8a8ad78-01c4-42c4-a27f-d4f0e945770b
+      isModule: false
+      name: fmcg_distribution_assignment_ortools
+  settings: {}
+version: 1.0.0

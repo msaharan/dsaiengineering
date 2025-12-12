@@ -1,0 +1,525 @@
+metadata:
+  createdAt: 2025-12-12T21:26:36.614Z
+project:
+  id: d6006c39-4733-4a1d-a780-bef733a3f897
+  integrations: []
+  name: hf-transformers-quickstart
+  notebooks:
+    - blocks:
+        - blockGroup: 68ebc161-ef6a-46a1-8224-267382e4ffbc
+          content: >-
+            # Transformers installation
+
+            ! pip install transformers datasets evaluate accelerate
+
+            # To install from source instead of the last release, comment the
+            command above and uncomment the following one.
+
+            # ! pip install git+https://github.com/huggingface/transformers.git
+          id: d79b22b6-467c-423f-b2a2-cee99dcebbe3
+          metadata: {}
+          outputs: []
+          sortingKey: "0"
+          type: code
+        - blockGroup: ca05e82d-3076-404d-8242-a76dc6211a8e
+          content: "# Quickstart"
+          id: 547c7a14-4298-4f5a-aa13-8506877446af
+          metadata: {}
+          sortingKey: "1"
+          type: markdown
+        - blockGroup: 54ed9626-9655-4c87-87c8-e342619f83b0
+          content: |-
+            Transformers is designed to be fast and easy to use so that everyone can start learning or building with transformer models.
+
+            The number of user-facing abstractions is limited to only three classes for instantiating a model, and two APIs for inference or training. This quickstart introduces you to Transformers' key features and shows you how to:
+
+            - load a pretrained model
+            - run inference with [Pipeline](https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.Pipeline)
+            - fine-tune a model with [Trainer](https://huggingface.co/docs/transformers/main/en/main_classes/trainer#transformers.Trainer)
+          id: 7608a4bb-f7de-48fd-9a0e-255bb706c2a4
+          metadata: {}
+          sortingKey: "2"
+          type: markdown
+        - blockGroup: d0b70da2-f35f-40b4-ac56-1754ea98c121
+          content: "## Set up"
+          id: 884bc2b1-cda6-4167-8527-1ddc9fa944a8
+          metadata: {}
+          sortingKey: "3"
+          type: markdown
+        - blockGroup: 9deb68a5-a4d2-4081-94be-ab1af6642331
+          content: |-
+            To start, we recommend creating a Hugging Face [account](https://hf.co/join). An account lets you host and access version controlled models, datasets, and [Spaces](https://hf.co/spaces) on the Hugging Face [Hub](https://hf.co/docs/hub/index), a collaborative platform for discovery and building.
+
+            Create a [User Access Token](https://hf.co/docs/hub/security-tokens#user-access-tokens) and log in to your account.
+
+            <hfoptions id="authenticate">
+            <hfoption id="notebook">
+
+            Paste your User Access Token into [notebook_login](https://huggingface.co/docs/huggingface_hub/main/en/package_reference/authentication#huggingface_hub.notebook_login) when prompted to log in.
+          id: b100fd40-1afe-4244-8912-3be2efe03e00
+          metadata: {}
+          sortingKey: "4"
+          type: markdown
+        - blockGroup: 4bc291d9-58ef-428e-87b1-87bc0984f75e
+          content: |-
+            from huggingface_hub import notebook_login
+
+            notebook_login()
+          id: 8ebb82fd-e36b-4884-a057-a91139c4e277
+          metadata: {}
+          outputs: []
+          sortingKey: "5"
+          type: code
+        - blockGroup: c2f19e79-a6a0-4206-8741-6cd3ab22ebea
+          content: |-
+            </hfoption>
+            <hfoption id="CLI">
+
+            Make sure the [huggingface_hub[cli]](https://huggingface.co/docs/huggingface_hub/guides/cli#getting-started) package is installed and run the command below. Paste your User Access Token when prompted to log in.
+
+            ```bash
+            hf auth login
+            ```
+
+            </hfoption>
+            </hfoptions>
+
+            Install Pytorch.
+
+            ```bash
+            !pip install torch
+            ```
+
+            Then install an up-to-date version of Transformers and some additional libraries from the Hugging Face ecosystem for accessing datasets and vision models, evaluating training, and optimizing training for large models.
+
+            ```bash
+            !pip install -U transformers datasets evaluate accelerate timm
+            ```
+          id: 6cbdbcc4-9cb1-425e-9918-9ce74dcf06ca
+          metadata: {}
+          sortingKey: "6"
+          type: markdown
+        - blockGroup: c50c7269-2e7e-4bb3-9a81-d29b9a3e47e9
+          content: "## Pretrained models"
+          id: 7d9b9ae0-3886-48f6-baf9-24d8527b64ab
+          metadata: {}
+          sortingKey: "7"
+          type: markdown
+        - blockGroup: c92427fd-5d09-4ebf-81a6-94f95c86de91
+          content: |-
+            Each pretrained model inherits from three base classes.
+
+            | **Class** | **Description** |
+            |---|---|
+            | [PreTrainedConfig](https://huggingface.co/docs/transformers/main/en/main_classes/configuration#transformers.PreTrainedConfig) | A file that specifies a models attributes such as the number of attention heads or vocabulary size. |
+            | [PreTrainedModel](https://huggingface.co/docs/transformers/main/en/main_classes/model#transformers.PreTrainedModel) | A model (or architecture) defined by the model attributes from the configuration file. A pretrained model only returns the raw hidden states. For a specific task, use the appropriate model head to convert the raw hidden states into a meaningful result (for example, [LlamaModel](https://huggingface.co/docs/transformers/main/en/model_doc/llama2#transformers.LlamaModel) versus [LlamaForCausalLM](https://huggingface.co/docs/transformers/main/en/model_doc/llama2#transformers.LlamaForCausalLM)). |
+            | Preprocessor | A class for converting raw inputs (text, images, audio, multimodal) into numerical inputs to the model. For example, [PreTrainedTokenizer](https://huggingface.co/docs/transformers/main/en/main_classes/tokenizer#transformers.PreTrainedTokenizer) converts text into tensors and [ImageProcessingMixin](https://huggingface.co/docs/transformers/main/en/internal/image_processing_utils#transformers.ImageProcessingMixin) converts pixels into tensors. |
+
+            We recommend using the [AutoClass](https://huggingface.co/docs/transformers/main/en/./model_doc/auto) API to load models and preprocessors because it automatically infers the appropriate architecture for each task and machine learning framework based on the name or path to the pretrained weights and configuration file.
+
+            Use [from_pretrained()](https://huggingface.co/docs/transformers/main/en/main_classes/model#transformers.PreTrainedModel.from_pretrained) to load the weights and configuration file from the Hub into the model and preprocessor class.
+
+            When you load a model, configure the following parameters to ensure the model is optimally loaded.
+
+            - `device_map="auto"` automatically allocates the model weights to your fastest device first.
+            - `dtype="auto"` directly initializes the model weights in the data type they're stored in, which can help avoid loading the weights twice (PyTorch loads weights in `torch.float32` by default).
+          id: 7ddd2f88-8dc8-4b13-9364-974f0b51d51c
+          metadata: {}
+          sortingKey: "8"
+          type: markdown
+        - blockGroup: e0e7c232-8d24-425e-8c61-f0ea2f637484
+          content: >-
+            from transformers import AutoModelForCausalLM, AutoTokenizer
+
+
+            model =
+            AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf",
+            dtype="auto", device_map="auto")
+
+            tokenizer =
+            AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
+          id: ecabd9d4-ee34-4313-bda2-7231da05a284
+          metadata: {}
+          outputs: []
+          sortingKey: "9"
+          type: code
+        - blockGroup: b78c5219-52d1-4cf4-bcc3-6e3124b15faf
+          content: Tokenize the text and return PyTorch tensors with the tokenizer. Move
+            the model to an accelerator if it's available to accelerate
+            inference.
+          id: 7b43622d-b427-4e07-b5ea-dae2d6c9c98f
+          metadata: {}
+          sortingKey: a
+          type: markdown
+        - blockGroup: 88ba492f-f736-4081-8c87-e6031b2d0cef
+          content: model_inputs = tokenizer(["The secret to baking a good cake is "],
+            return_tensors="pt").to(model.device)
+          id: a4f6615f-ccf2-44e1-8557-72a58ed5be9f
+          metadata: {}
+          outputs: []
+          sortingKey: b
+          type: code
+        - blockGroup: 3a50a1d6-1b04-4b34-a97f-41991b453f23
+          content: |-
+            The model is now ready for inference or training.
+
+            For inference, pass the tokenized inputs to [generate()](https://huggingface.co/docs/transformers/main/en/main_classes/text_generation#transformers.GenerationMixin.generate) to generate text. Decode the token ids back into text with [batch_decode()](https://huggingface.co/docs/transformers/main/en/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.batch_decode).
+          id: dbe4b2dd-d50a-4265-bd45-f8655fb77c6d
+          metadata: {}
+          sortingKey: c
+          type: markdown
+        - blockGroup: 1fc93fe4-982b-4343-8d97-67802ad9934b
+          content: >-
+            generated_ids = model.generate(**model_inputs, max_length=30)
+
+            tokenizer.batch_decode(generated_ids)[0]
+
+            '<s> The secret to baking a good cake is 100% in the preparation.
+            There are so many recipes out there,'
+          id: cfe10152-050b-476e-9988-df5137255610
+          metadata: {}
+          outputs: []
+          sortingKey: d
+          type: code
+        - blockGroup: 448434d3-5457-42f2-bf1c-63795bc1281c
+          content: >-
+            > [!TIP]
+
+            > Skip ahead to the [Trainer](#trainer-api) section to learn how to
+            fine-tune a model.
+          id: ad6fb3a9-6c20-44ab-b9f7-bb35e3d0537b
+          metadata: {}
+          sortingKey: e
+          type: markdown
+        - blockGroup: 0f421b81-3ad3-4c7e-82cb-d56e319e00e3
+          content: "## Pipeline"
+          id: 8c6d1a0b-34c9-416d-b0d3-22e7e7cea58e
+          metadata: {}
+          sortingKey: f
+          type: markdown
+        - blockGroup: 9fd219d5-6222-4755-8ae0-64d25f98fbf6
+          content: |-
+            The [Pipeline](https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.Pipeline) class is the most convenient way to inference with a pretrained model. It supports many tasks such as text generation, image segmentation, automatic speech recognition, document question answering, and more.
+
+            > [!TIP]
+            > Refer to the [Pipeline](https://huggingface.co/docs/transformers/main/en/./main_classes/pipelines) API reference for a complete list of available tasks.
+
+            Create a [Pipeline](https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.Pipeline) object and select a task. By default, [Pipeline](https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.Pipeline) downloads and caches a default pretrained model for a given task. Pass the model name to the `model` parameter to choose a specific model.
+
+            <hfoptions id="pipeline-tasks">
+            <hfoption id="text generation">
+
+            Use `Accelerator` to automatically detect an available accelerator for inference.
+          id: db39d811-3795-4cd0-841b-64349253d699
+          metadata: {}
+          sortingKey: g
+          type: markdown
+        - blockGroup: 7c81add1-5bd9-4e77-8011-046b44d14f4d
+          content: >-
+            from transformers import pipeline
+
+            from accelerate import Accelerator
+
+
+            device = Accelerator().device
+
+
+            pipeline = pipeline("text-generation",
+            model="meta-llama/Llama-2-7b-hf", device=device)
+          id: a3c43341-66ab-4832-b629-4d934f30cd7f
+          metadata: {}
+          outputs: []
+          sortingKey: h
+          type: code
+        - blockGroup: ffdc0c3c-48c9-4333-9593-1ffa69f59bd2
+          content: Prompt
+            [Pipeline](https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.Pipeline)
+            with some initial text to generate more text.
+          id: 41507698-9d4b-4bc5-8c1a-02166e15e955
+          metadata: {}
+          sortingKey: i
+          type: markdown
+        - blockGroup: f21ee9bd-b52d-467e-a253-4480ef8d5e52
+          content: >-
+            pipeline("The secret to baking a good cake is ", max_length=50)
+
+            [{'generated_text': 'The secret to baking a good cake is 100% in the
+            batter. The secret to a great cake is the icing.\nThis is why we’ve
+            created the best buttercream frosting reci'}]
+          id: 18d1c5d4-dade-46d5-a8d8-76304b95d158
+          metadata: {}
+          outputs: []
+          sortingKey: j
+          type: code
+        - blockGroup: 6ff14953-b83c-4662-bd61-984006316f8a
+          content: >-
+            </hfoption>
+
+            <hfoption id="image segmentation">
+
+
+            Use `Accelerator` to automatically detect an available accelerator
+            for inference.
+          id: 189c18a5-33ca-4410-86c1-01d5f17d1054
+          metadata: {}
+          sortingKey: k
+          type: markdown
+        - blockGroup: 33d8a146-9d0a-4413-93bf-72d2003fe06e
+          content: >-
+            from transformers import pipeline
+
+            from accelerate import Accelerator
+
+
+            device = Accelerator().device
+
+
+            pipeline = pipeline("image-segmentation",
+            model="facebook/detr-resnet-50-panoptic", device=device)
+          id: d237c70e-c9c6-4a04-a444-b27ec3313c17
+          metadata: {}
+          outputs: []
+          sortingKey: l
+          type: code
+        - blockGroup: 7688bf30-cccb-4218-a018-6d3cff0546d8
+          content: |-
+            Pass an image - a URL or local path to the image - to [Pipeline](https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.Pipeline).
+
+            <div class="flex justify-center">
+               <img src="https://huggingface.co/datasets/Narsil/image_dummy/raw/main/parrots.png"/>
+            </div>
+          id: c8673518-4a44-4ed9-acaa-730329699a12
+          metadata: {}
+          sortingKey: m
+          type: markdown
+        - blockGroup: 3c2a0673-6a48-46c8-b8a7-d2944614a031
+          content: |-
+            segments = pipeline("https://huggingface.co/datasets/Narsil/image_dummy/raw/main/parrots.png")
+            segments[0]["label"]
+            'bird'
+            segments[1]["label"]
+            'bird'
+          id: 7d4d07f1-6fda-40a3-9975-135ce5b45214
+          metadata: {}
+          outputs: []
+          sortingKey: n
+          type: code
+        - blockGroup: af50f717-be0b-47ff-bab6-4e07c2fe54d8
+          content: >-
+            </hfoption>
+
+            <hfoption id="automatic speech recognition">
+
+
+            Use `Accelerator` to automatically detect an available accelerator
+            for inference.
+          id: ab9f0912-db74-4d10-9e3d-96cabf4208e8
+          metadata: {}
+          sortingKey: o
+          type: markdown
+        - blockGroup: be1fe333-2e10-43be-a805-0734188a2698
+          content: >-
+            from transformers import pipeline
+
+            from accelerate import Accelerator
+
+
+            device = Accelerator().device
+
+
+            pipeline = pipeline("automatic-speech-recognition",
+            model="openai/whisper-large-v3", device=device)
+          id: 586b77a8-74c5-48cc-90be-cb98be69560a
+          metadata: {}
+          outputs: []
+          sortingKey: p
+          type: code
+        - blockGroup: 7c3a8fe3-ab3c-4b42-8898-ee073bef134d
+          content: Pass an audio file to
+            [Pipeline](https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.Pipeline).
+          id: 9a4cf8cf-9cb2-4092-9d78-02865cee20ba
+          metadata: {}
+          sortingKey: q
+          type: markdown
+        - blockGroup: c12e15fb-d8fa-4a16-bfe5-57598674d68e
+          content: |-
+            pipeline("https://huggingface.co/datasets/Narsil/asr_dummy/resolve/main/1.flac")
+            {'text': ' He hoped there would be stew for dinner, turnips and carrots and bruised potatoes and fat mutton pieces to be ladled out in thick, peppered flour-fatten sauce.'}
+          id: c8f42ea1-f615-482e-9565-1bdee59bd455
+          metadata: {}
+          outputs: []
+          sortingKey: r
+          type: code
+        - blockGroup: e955fcab-6a19-4bce-b4f1-f3223e8e9e7b
+          content: |-
+            </hfoption>
+            </hfoptions>
+          id: e60747c8-3cdd-454f-9d65-2871628158ba
+          metadata: {}
+          sortingKey: s
+          type: markdown
+        - blockGroup: 29f18b13-78ee-4717-aaf8-60634ddd1535
+          content: "## Trainer"
+          id: 1e1cadca-c8a8-4fba-84e8-200046b10c85
+          metadata: {}
+          sortingKey: t
+          type: markdown
+        - blockGroup: fe46e28a-4a64-4771-9918-b5f6a5db2504
+          content: |-
+            [Trainer](https://huggingface.co/docs/transformers/main/en/main_classes/trainer#transformers.Trainer) is a complete training and evaluation loop for PyTorch models. It abstracts away a lot of the boilerplate usually involved in manually writing a training loop, so you can start training faster and focus on training design choices. You only need a model, dataset, a preprocessor, and a data collator to build batches of data from the dataset.
+
+            Use the [TrainingArguments](https://huggingface.co/docs/transformers/main/en/main_classes/trainer#transformers.TrainingArguments) class to customize the training process. It provides many options for training, evaluation, and more. Experiment with training hyperparameters and features like batch size, learning rate, mixed precision, torch.compile, and more to meet your training needs. You could also use the default training parameters to quickly produce a baseline.
+
+            Load a model, tokenizer, and dataset for training.
+          id: e99a334f-6780-4cd2-8b8a-980d324e07ac
+          metadata: {}
+          sortingKey: u
+          type: markdown
+        - blockGroup: d9d531ee-561e-47dc-bb05-9aad016ee1c4
+          content: |-
+            from transformers import AutoModelForSequenceClassification, AutoTokenizer
+            from datasets import load_dataset
+
+            model = AutoModelForSequenceClassification.from_pretrained("distilbert/distilbert-base-uncased")
+            tokenizer = AutoTokenizer.from_pretrained("distilbert/distilbert-base-uncased")
+            dataset = load_dataset("rotten_tomatoes")
+          id: 173a4c7d-5316-414a-a9da-1ec0f0830144
+          metadata: {}
+          outputs: []
+          sortingKey: v
+          type: code
+        - blockGroup: 17488cdb-d26c-4355-8ff9-fcf696438e15
+          content: Create a function to tokenize the text and convert it into PyTorch
+            tensors. Apply this function to the whole dataset with the
+            [map](https://huggingface.co/docs/datasets/main/en/package_reference/main_classes#datasets.Dataset.map)
+            method.
+          id: 3093eb0c-801e-4c12-aa41-ac59eaf7cc13
+          metadata: {}
+          sortingKey: w
+          type: markdown
+        - blockGroup: 9cdc7754-b6c2-41e1-807f-910ff9989263
+          content: |-
+            def tokenize_dataset(dataset):
+                return tokenizer(dataset["text"])
+            dataset = dataset.map(tokenize_dataset, batched=True)
+          id: 732cee7f-cb31-4cda-abaf-1cdb8508e87a
+          metadata: {}
+          outputs: []
+          sortingKey: x
+          type: code
+        - blockGroup: 9b908e2f-150f-462b-8f1b-053225f0ddbc
+          content: Load a data collator to create batches of data and pass the tokenizer
+            to it.
+          id: d1d0510c-b866-45bb-9535-f253e2ba0377
+          metadata: {}
+          sortingKey: y
+          type: markdown
+        - blockGroup: f8df7cc1-f597-4466-850e-e9f8ed84887e
+          content: |-
+            from transformers import DataCollatorWithPadding
+
+            data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
+          id: d4ec5a07-0689-4068-9f27-acc437daac63
+          metadata: {}
+          outputs: []
+          sortingKey: z
+          type: code
+        - blockGroup: a0a184ec-0269-4217-8be4-36d824bb7ac9
+          content: Next, set up
+            [TrainingArguments](https://huggingface.co/docs/transformers/main/en/main_classes/trainer#transformers.TrainingArguments)
+            with the training features and hyperparameters.
+          id: f07beff4-7c0b-4479-b5bc-46062d0507c8
+          metadata: {}
+          sortingKey: "00"
+          type: markdown
+        - blockGroup: 87fca9b6-2ca1-4102-9620-7a1ee809c15a
+          content: |-
+            from transformers import TrainingArguments
+
+            training_args = TrainingArguments(
+                output_dir="distilbert-rotten-tomatoes",
+                learning_rate=2e-5,
+                per_device_train_batch_size=8,
+                per_device_eval_batch_size=8,
+                num_train_epochs=2,
+                push_to_hub=True,
+            )
+          id: 0e02e7c7-899e-4cb8-a2cd-806ee169ede7
+          metadata: {}
+          outputs: []
+          sortingKey: "01"
+          type: code
+        - blockGroup: 744b5318-66fe-4662-b57c-822e4d610894
+          content: Finally, pass all these separate components to
+            [Trainer](https://huggingface.co/docs/transformers/main/en/main_classes/trainer#transformers.Trainer)
+            and call
+            [train()](https://huggingface.co/docs/transformers/main/en/main_classes/trainer#transformers.Trainer.train)
+            to start.
+          id: e1791025-664b-4f8e-ab44-2c0d831fbe8f
+          metadata: {}
+          sortingKey: "02"
+          type: markdown
+        - blockGroup: 1eec4117-dc57-4a0e-883f-1a2cb4bd7683
+          content: |-
+            from transformers import Trainer
+
+            trainer = Trainer(
+                model=model,
+                args=training_args,
+                train_dataset=dataset["train"],
+                eval_dataset=dataset["test"],
+                tokenizer=tokenizer,
+                data_collator=data_collator,
+            )
+
+            trainer.train()
+          id: ae0bdc64-b4da-4694-824b-0f95905086aa
+          metadata: {}
+          outputs: []
+          sortingKey: "03"
+          type: code
+        - blockGroup: ffdd079b-5eac-4a18-8e2c-1ec44312cf1b
+          content: Share your model and tokenizer to the Hub with
+            [push_to_hub()](https://huggingface.co/docs/transformers/main/en/main_classes/trainer#transformers.Trainer.push_to_hub).
+          id: 54ff6048-cfcf-4d60-a5cc-1d4c77afdd7a
+          metadata: {}
+          sortingKey: "04"
+          type: markdown
+        - blockGroup: 84324263-adb4-4639-a82f-ecb710b3706a
+          content: trainer.push_to_hub()
+          id: fb9fc726-49f0-48cc-8d1a-817bf63c026b
+          metadata: {}
+          outputs: []
+          sortingKey: "05"
+          type: code
+        - blockGroup: fa73b047-ee30-412b-84ee-cd23bad8acf1
+          content: Congratulations, you just trained your first model with Transformers!
+          id: d447b067-10d9-40d1-8f96-37e2392e8e1e
+          metadata: {}
+          sortingKey: "06"
+          type: markdown
+        - blockGroup: 2556c048-e624-4943-acf9-f0ce56113f24
+          content: "## Next steps"
+          id: 92a8e0da-8f4e-4281-8a33-eed7b41943e0
+          metadata: {}
+          sortingKey: "07"
+          type: markdown
+        - blockGroup: f1496669-ed1d-4648-829d-62c75af61e7c
+          content: |-
+            Now that you have a better understanding of Transformers and what it offers, it's time to keep exploring and learning what interests you the most.
+
+            - **Base classes**: Learn more about the configuration, model and processor classes. This will help you understand how to create and customize models, preprocess different types of inputs (audio, images, multimodal), and how to share your model.
+            - **Inference**: Explore the [Pipeline](https://huggingface.co/docs/transformers/main/en/main_classes/pipelines#transformers.Pipeline) further, inference and chatting with LLMs, agents, and how to optimize inference with your machine learning framework and hardware.
+            - **Training**: Study the [Trainer](https://huggingface.co/docs/transformers/main/en/main_classes/trainer#transformers.Trainer) in more detail, as well as distributed training and optimizing training on specific hardware.
+            - **Quantization**: Reduce memory and storage requirements with quantization and speed up inference by representing weights with fewer bits.
+            - **Resources**: Looking for end-to-end recipes for how to train and inference with a model for a specific task? Check out the task recipes!
+          id: 8ffcc546-cc19-4632-a1d7-17f7daa265bf
+          metadata: {}
+          sortingKey: "08"
+          type: markdown
+      executionMode: block
+      id: 0f5f1daa-8b46-48a8-9caa-3b3c2ef9ca8f
+      isModule: false
+      name: hf-transformers-quickstart
+  settings: {}
+version: 1.0.0

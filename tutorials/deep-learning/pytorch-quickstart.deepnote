@@ -1,0 +1,641 @@
+metadata:
+  createdAt: 2025-12-12T21:26:58.391Z
+project:
+  id: 698f1b8e-6aec-4c22-84ea-1db3c66d53f4
+  integrations: []
+  name: pytorch-quickstart
+  notebooks:
+    - blocks:
+        - blockGroup: afed220e-4d5e-4306-9c58-d0c1f9491c90
+          content: >-
+            # # This Python 3 environment comes with many helpful analytics
+            libraries installed
+
+            # # It is defined by the kaggle/python Docker image:
+            https://github.com/kaggle/docker-python
+
+            # # For example, here's several helpful packages to load
+
+
+            # import numpy as np # linear algebra
+
+            # import pandas as pd # data processing, CSV file I/O (e.g.
+            pd.read_csv)
+
+
+            # # Input data files are available in the read-only "../input/"
+            directory
+
+            # # For example, running this (by clicking run or pressing
+            Shift+Enter) will list all files under the input directory
+
+
+            # import os
+
+            # for dirname, _, filenames in os.walk('/kaggle/input'):
+
+            #     for filename in filenames:
+
+            #         print(os.path.join(dirname, filename))
+
+
+            # # You can write up to 20GB to the current directory
+            (/kaggle/working/) that gets preserved as output when you create a
+            version using "Save & Run All" 
+
+            # # You can also write temporary files to /kaggle/temp/, but they
+            won't be saved outside of the current session
+          executionCount: 29
+          id: 77f21f3d-8e95-4a82-b3cf-839863071e45
+          metadata:
+            _uuid: 8f2839f25d086af736a60e9eeb907d3b93b6e0e5
+            _cell_guid: b1076dfc-b9ad-4769-8c92-a6c4dae69d19
+            trusted: true
+            execution:
+              iopub.status.busy: 2025-11-07T07:08:11.697333Z
+              iopub.execute_input: 2025-11-07T07:08:11.697609Z
+              iopub.status.idle: 2025-11-07T07:08:11.703794Z
+              shell.execute_reply.started: 2025-11-07T07:08:11.697586Z
+              shell.execute_reply: 2025-11-07T07:08:11.702167Z
+          outputs: []
+          sortingKey: "0"
+          type: code
+        - blockGroup: e6ab457a-6b5d-4d94-bc1b-9a1e66091a81
+          content: "Source:
+            https://docs.pytorch.org/tutorials/beginner/basics/quickstart_tutor\
+            ial.html"
+          id: 6e355281-2f79-4360-b609-62a9e8a15e1d
+          metadata: {}
+          sortingKey: "1"
+          type: markdown
+        - blockGroup: e11e7ba4-bdde-49e7-b86f-2b315bfc4b00
+          content: >-
+            # Working with data
+
+            PyTorch has two [primitives to work with
+            data](https://docs.pytorch.org/docs/stable/data.html):
+            `torch.utils.data.DataLoader` and `torch.utils.data.Dataset`.
+            Dataset stores the samples and their corresponding labels, and
+            `DataLoader` wraps an iterable around the `Dataset`.
+          id: 24dc0014-1d93-4e18-9163-c47f77088f98
+          metadata: {}
+          sortingKey: "2"
+          type: markdown
+        - blockGroup: ec04da8c-399e-4f12-8d70-85a8be6c6e31
+          content: |-
+            import torch
+            from torch import nn
+            from torch.utils.data import DataLoader
+            from torchvision import datasets
+            from torchvision.transforms import ToTensor
+          executionCount: 14
+          id: 4440ac02-6131-4fd7-bd51-1e98a231b8ab
+          metadata:
+            trusted: true
+            execution:
+              iopub.status.busy: 2025-11-07T07:04:30.066109Z
+              iopub.execute_input: 2025-11-07T07:04:30.066710Z
+              iopub.status.idle: 2025-11-07T07:04:30.071667Z
+              shell.execute_reply.started: 2025-11-07T07:04:30.066664Z
+              shell.execute_reply: 2025-11-07T07:04:30.070703Z
+          outputs: []
+          sortingKey: "3"
+          type: code
+        - blockGroup: 316859ec-b419-42c6-8594-bcf24e01b8d6
+          content: >-
+            PyTorch offers domain-specific libraries such as
+            [TorchText](https://pytorch.org/text/stable/index.html),
+            [TorchVision](https://pytorch.org/vision/stable/index.html), and
+            [TorchAudio](https://pytorch.org/audio/stable/index.html), all of
+            which include datasets. For this tutorial, we will be using a
+            TorchVision dataset.
+
+
+            The `torchvision.datasets` module contains `Dataset` objects for
+            many real-world vision data like CIFAR, COCO ([full list
+            here](https://pytorch.org/vision/stable/datasets.html)). In this
+            tutorial, we use the FashionMNIST dataset. Every TorchVision Dataset
+            includes two arguments: `transform` and `target_transform` to modify
+            the samples and labels respectively.
+          id: a64abcd2-8dc7-46e1-8221-d55d7c1e9627
+          metadata: {}
+          sortingKey: "4"
+          type: markdown
+        - blockGroup: d949013c-ec3d-4c57-9a7b-268be5c736e8
+          content: |-
+            # Download training data from open datasets.
+            training_data = datasets.FashionMNIST(
+                root="data",
+                train=True,
+                download=True,
+                transform=ToTensor(),
+            )
+
+            # Download test data from open datasets.
+            test_data = datasets.FashionMNIST(
+                root="data",
+                train=False,
+                download=True,
+                transform=ToTensor(),
+            )
+          executionCount: 16
+          id: 23d93fec-cad4-471c-a452-0f4dd449619e
+          metadata:
+            trusted: true
+            execution:
+              iopub.status.busy: 2025-11-07T07:04:42.929004Z
+              iopub.execute_input: 2025-11-07T07:04:42.929330Z
+              iopub.status.idle: 2025-11-07T07:04:47.346773Z
+              shell.execute_reply.started: 2025-11-07T07:04:42.929292Z
+              shell.execute_reply: 2025-11-07T07:04:47.345390Z
+          outputs:
+            - name: stderr
+              text: |
+                100%|██████████| 26.4M/26.4M [00:01<00:00, 22.2MB/s]
+                100%|██████████| 29.5k/29.5k [00:00<00:00, 336kB/s]
+                100%|██████████| 4.42M/4.42M [00:00<00:00, 6.26MB/s]
+                100%|██████████| 5.15k/5.15k [00:00<00:00, 7.74MB/s]
+              output_type: stream
+          sortingKey: "5"
+          type: code
+        - blockGroup: d6dafa46-63fa-4913-9204-214c3c8f1ea0
+          content: We pass the `Dataset` as an argument to `DataLoader`. This wraps an
+            iterable over our dataset, and supports automatic batching,
+            sampling, shuffling and multiprocess data loading. Here we define a
+            batch size of 64, i.e. each element in the dataloader iterable will
+            return a batch of 64 features and labels.
+          id: a5b47c1c-d878-457a-b12d-aa5c394dd063
+          metadata: {}
+          sortingKey: "6"
+          type: markdown
+        - blockGroup: 74a49db3-4a26-4431-83a1-2925a2a829b1
+          content: |-
+            batch_size = 64
+
+            # Create data loaders.
+            train_dataloader = DataLoader(training_data, batch_size=batch_size)
+            test_dataloader = DataLoader(test_data, batch_size=batch_size)
+
+            for X, y in test_dataloader:
+                print(f"Shape of X [N, C, H, W]: {X.shape}")
+                print(f"Shape of y: {y.shape} {y.dtype}")
+                break
+          executionCount: 17
+          id: 299efe4e-dda2-4720-a4ef-3f19ed0fd303
+          metadata:
+            trusted: true
+            execution:
+              iopub.status.busy: 2025-11-07T07:04:50.229185Z
+              iopub.execute_input: 2025-11-07T07:04:50.230440Z
+              iopub.status.idle: 2025-11-07T07:04:50.258984Z
+              shell.execute_reply.started: 2025-11-07T07:04:50.230397Z
+              shell.execute_reply: 2025-11-07T07:04:50.257535Z
+          outputs:
+            - name: stdout
+              text: |
+                Shape of X [N, C, H, W]: torch.Size([64, 1, 28, 28])
+                Shape of y: torch.Size([64]) torch.int64
+              output_type: stream
+          sortingKey: "7"
+          type: code
+        - blockGroup: e14509dd-d485-40b3-b69f-30b5ce717169
+          content: Read more about loading data in PyTorch.
+          id: 166274ea-9c3c-4ff4-8eca-53925562fde6
+          metadata: {}
+          sortingKey: "8"
+          type: markdown
+        - blockGroup: cfe12d9f-8df7-4ea7-b957-19884b5fd8b5
+          content: |-
+            Creating Models
+            To define a neural network in PyTorch, we create a class that inherits from nn.Module. We define the layers of the network in the `__init__` function and specify how data will pass through the network in the `forward` function. To accelerate operations in the neural network, we move it to the [accelerator](https://pytorch.org/docs/stable/torch.html#accelerators) such as CUDA, MPS, MTIA, or XPU. If the current accelerator is available, we will use it. Otherwise, we use the CPU.
+          id: d7908e16-8e2f-4e23-a6f8-043c6ad38992
+          metadata: {}
+          sortingKey: "9"
+          type: markdown
+        - blockGroup: 28a8d5a9-f9ff-48f3-9c17-16461f3ce69e
+          content: >-
+            device = torch.accelerator.current_accelerator().type if
+            torch.accelerator.is_available() else "cpu"
+
+            print(f"Using {device} device")
+
+
+            # Define model
+
+            class NeuralNetwork(nn.Module):
+                def __init__(self):
+                    super().__init__()
+                    self.flatten = nn.Flatten()
+                    self.linear_relu_stack = nn.Sequential(
+                        nn.Linear(28*28, 512),
+                        nn.ReLU(),
+                        nn.Linear(512, 512),
+                        nn.ReLU(),
+                        nn.Linear(512, 10)
+                    )
+
+                def forward(self, x):
+                    x = self.flatten(x)
+                    logits = self.linear_relu_stack(x)
+                    return logits
+
+            model = NeuralNetwork().to(device)
+
+            print(model)
+          executionCount: 18
+          id: 71b8c1d6-3cc9-4626-940b-5322e9b0197a
+          metadata:
+            trusted: true
+            execution:
+              iopub.status.busy: 2025-11-07T07:04:53.724596Z
+              iopub.execute_input: 2025-11-07T07:04:53.724921Z
+              iopub.status.idle: 2025-11-07T07:04:53.739825Z
+              shell.execute_reply.started: 2025-11-07T07:04:53.724901Z
+              shell.execute_reply: 2025-11-07T07:04:53.738244Z
+          outputs:
+            - name: stdout
+              text: |
+                Using cpu device
+                NeuralNetwork(
+                  (flatten): Flatten(start_dim=1, end_dim=-1)
+                  (linear_relu_stack): Sequential(
+                    (0): Linear(in_features=784, out_features=512, bias=True)
+                    (1): ReLU()
+                    (2): Linear(in_features=512, out_features=512, bias=True)
+                    (3): ReLU()
+                    (4): Linear(in_features=512, out_features=10, bias=True)
+                  )
+                )
+              output_type: stream
+          sortingKey: a
+          type: code
+        - blockGroup: ae763dd1-c09c-466f-9c69-7e1751f9b8b4
+          content: Read more about [building neural networks in
+            PyTorch](https://docs.pytorch.org/tutorials/beginner/basics/buildmodel_tutorial.html).
+          id: 590fb8f5-3061-40bf-8c45-7cdd11ac65e8
+          metadata: {}
+          sortingKey: b
+          type: markdown
+        - blockGroup: f5e7e6d8-208f-45d6-8e8c-5cd8b2fd376b
+          content: "# Optimizing the Model Parameters"
+          id: 2506ac7d-e923-4053-bf9f-9e10e11eca23
+          metadata: {}
+          sortingKey: c
+          type: markdown
+        - blockGroup: 400d6774-b15f-47cd-b205-c6431b6f97ad
+          content: >+
+            To train a model, we need a [loss
+            function](https://pytorch.org/docs/stable/nn.html#loss-functions)
+            and an [optimizer](https://pytorch.org/docs/stable/optim.html).
+
+          id: 700aba6c-8732-4dbd-bc01-6f4101301d8f
+          metadata: {}
+          sortingKey: d
+          type: markdown
+        - blockGroup: 02153237-39dd-4ca2-9f82-adac2f0da1ca
+          content: |-
+            loss_fn = nn.CrossEntropyLoss()
+            optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+          executionCount: 19
+          id: 143083ff-0f35-4cd5-b49b-f6ac5d969e8f
+          metadata:
+            trusted: true
+            execution:
+              iopub.status.busy: 2025-11-07T07:04:58.435078Z
+              iopub.execute_input: 2025-11-07T07:04:58.435371Z
+              iopub.status.idle: 2025-11-07T07:04:58.441193Z
+              shell.execute_reply.started: 2025-11-07T07:04:58.435351Z
+              shell.execute_reply: 2025-11-07T07:04:58.440005Z
+          outputs: []
+          sortingKey: e
+          type: code
+        - blockGroup: 83a63f18-7d38-49b2-8b5e-4165e3223bda
+          content: In a single training loop, the model makes predictions on the training
+            dataset (fed to it in batches), and backpropagates the prediction
+            error to adjust the model’s parameters.
+          id: c11949da-c9b6-4d5a-923f-7d3b5f54d145
+          metadata: {}
+          sortingKey: f
+          type: markdown
+        - blockGroup: 954fd372-36d2-485e-82d4-8ea028d36238
+          content: |-
+            def train(dataloader, model, loss_fn, optimizer):
+                size = len(dataloader.dataset)
+                model.train()
+                for batch, (X, y) in enumerate(dataloader):
+                    X, y = X.to(device), y.to(device)
+
+                    # Compute prediction error
+                    pred = model(X)
+                    loss = loss_fn(pred, y)
+
+                    # Backpropagation
+                    loss.backward()
+                    optimizer.step()
+                    optimizer.zero_grad()
+
+                    if batch % 100 == 0:
+                        loss, current = loss.item(), (batch + 1) * len(X)
+                        print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+          executionCount: 20
+          id: aa5fe6f2-1262-428b-92c8-d289154963eb
+          metadata:
+            trusted: true
+            execution:
+              iopub.status.busy: 2025-11-07T07:05:00.857225Z
+              iopub.execute_input: 2025-11-07T07:05:00.857593Z
+              iopub.status.idle: 2025-11-07T07:05:00.865002Z
+              shell.execute_reply.started: 2025-11-07T07:05:00.857572Z
+              shell.execute_reply: 2025-11-07T07:05:00.863768Z
+          outputs: []
+          sortingKey: g
+          type: code
+        - blockGroup: c5459565-1787-4cdf-87ba-70c1aad038a0
+          content: >+
+            We also check the model’s performance against the test dataset to
+            ensure it is learning.
+
+          id: d2f16fa6-383b-464f-8d0e-02e69d9ebf57
+          metadata: {}
+          sortingKey: h
+          type: markdown
+        - blockGroup: 8894b0f2-162f-40a2-b968-d60abee4a704
+          content: >-
+            def test(dataloader, model, loss_fn):
+                size = len(dataloader.dataset)
+                num_batches = len(dataloader)
+                model.eval()
+                test_loss, correct = 0, 0
+                with torch.no_grad():
+                    for X, y in dataloader:
+                        X, y = X.to(device), y.to(device)
+                        pred = model(X)
+                        test_loss += loss_fn(pred, y).item()
+                        correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+                test_loss /= num_batches
+                correct /= size
+                print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+          executionCount: 21
+          id: c9be374e-f914-47d9-8988-72a1a1dd8b5d
+          metadata:
+            trusted: true
+            execution:
+              iopub.status.busy: 2025-11-07T07:05:02.832477Z
+              iopub.execute_input: 2025-11-07T07:05:02.832858Z
+              iopub.status.idle: 2025-11-07T07:05:02.839763Z
+              shell.execute_reply.started: 2025-11-07T07:05:02.832829Z
+              shell.execute_reply: 2025-11-07T07:05:02.838501Z
+          outputs: []
+          sortingKey: i
+          type: code
+        - blockGroup: 65c2f9e4-a260-4e4b-9938-a8226c526a54
+          content: The training process is conducted over several iterations (epochs).
+            During each epoch, the model learns parameters to make better
+            predictions. We print the model’s accuracy and loss at each epoch;
+            we’d like to see the accuracy increase and the loss decrease with
+            every epoch.
+          id: 558ee4f4-2908-4b76-a413-34114eb8bb09
+          metadata: {}
+          sortingKey: j
+          type: markdown
+        - blockGroup: b5969864-6d95-4ac3-aa48-9d58b042e86b
+          content: |-
+            epochs = 5
+            for t in range(epochs):
+                print(f"Epoch {t+1}\n-------------------------------")
+                train(train_dataloader, model, loss_fn, optimizer)
+                test(test_dataloader, model, loss_fn)
+            print("Done!")
+          executionCount: 22
+          id: 0661d9fc-c8dc-4468-9a29-7682febd1cc2
+          metadata:
+            trusted: true
+            execution:
+              iopub.status.busy: 2025-11-07T07:05:04.854576Z
+              iopub.execute_input: 2025-11-07T07:05:04.854912Z
+              iopub.status.idle: 2025-11-07T07:06:01.069333Z
+              shell.execute_reply.started: 2025-11-07T07:05:04.854892Z
+              shell.execute_reply: 2025-11-07T07:06:01.068347Z
+          outputs:
+            - name: stdout
+              text: |
+                Epoch 1
+                -------------------------------
+                loss: 2.301367  [   64/60000]
+                loss: 2.283831  [ 6464/60000]
+                loss: 2.262343  [12864/60000]
+                loss: 2.251732  [19264/60000]
+                loss: 2.235025  [25664/60000]
+                loss: 2.210045  [32064/60000]
+                loss: 2.213509  [38464/60000]
+                loss: 2.182078  [44864/60000]
+                loss: 2.178913  [51264/60000]
+                loss: 2.147853  [57664/60000]
+                Test Error: 
+                 Accuracy: 54.3%, Avg loss: 2.134294 
+
+                Epoch 2
+                -------------------------------
+                loss: 2.150229  [   64/60000]
+                loss: 2.140752  [ 6464/60000]
+                loss: 2.071564  [12864/60000]
+                loss: 2.085661  [19264/60000]
+                loss: 2.048927  [25664/60000]
+                loss: 1.984088  [32064/60000]
+                loss: 2.005648  [38464/60000]
+                loss: 1.930786  [44864/60000]
+                loss: 1.931136  [51264/60000]
+                loss: 1.866806  [57664/60000]
+                Test Error: 
+                 Accuracy: 60.3%, Avg loss: 1.853906 
+
+                Epoch 3
+                -------------------------------
+                loss: 1.895684  [   64/60000]
+                loss: 1.869725  [ 6464/60000]
+                loss: 1.736655  [12864/60000]
+                loss: 1.772586  [19264/60000]
+                loss: 1.688400  [25664/60000]
+                loss: 1.633245  [32064/60000]
+                loss: 1.647505  [38464/60000]
+                loss: 1.553869  [44864/60000]
+                loss: 1.574436  [51264/60000]
+                loss: 1.479068  [57664/60000]
+                Test Error: 
+                 Accuracy: 61.8%, Avg loss: 1.486150 
+
+                Epoch 4
+                -------------------------------
+                loss: 1.560292  [   64/60000]
+                loss: 1.532321  [ 6464/60000]
+                loss: 1.365056  [12864/60000]
+                loss: 1.438496  [19264/60000]
+                loss: 1.341547  [25664/60000]
+                loss: 1.326344  [32064/60000]
+                loss: 1.342566  [38464/60000]
+                loss: 1.265776  [44864/60000]
+                loss: 1.296837  [51264/60000]
+                loss: 1.210582  [57664/60000]
+                Test Error: 
+                 Accuracy: 64.0%, Avg loss: 1.228658 
+
+                Epoch 5
+                -------------------------------
+                loss: 1.305969  [   64/60000]
+                loss: 1.299889  [ 6464/60000]
+                loss: 1.116313  [12864/60000]
+                loss: 1.224102  [19264/60000]
+                loss: 1.120861  [25664/60000]
+                loss: 1.133928  [32064/60000]
+                loss: 1.159536  [38464/60000]
+                loss: 1.092382  [44864/60000]
+                loss: 1.125762  [51264/60000]
+                loss: 1.054734  [57664/60000]
+                Test Error: 
+                 Accuracy: 65.2%, Avg loss: 1.071166 
+
+                Done!
+              output_type: stream
+          sortingKey: k
+          type: code
+        - blockGroup: 37b9fda2-1ed6-4cb1-bdc6-11f9e08a8f82
+          content: Read more about [Training your
+            model](https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html).
+          id: feb75241-5beb-4ce9-8af7-de4948458002
+          metadata: {}
+          sortingKey: l
+          type: markdown
+        - blockGroup: 1f08d01b-51b4-44c1-8290-085acea95d9a
+          content: "# Saving Models"
+          id: e66db895-7243-4f81-98ef-71cecd24dffb
+          metadata: {}
+          sortingKey: m
+          type: markdown
+        - blockGroup: 7808baf2-94ff-4d34-acb9-51db78dbbe0b
+          content: >+
+            A common way to save a model is to serialize the internal state
+            dictionary (containing the model parameters).
+
+          id: 0e746ba6-5ea1-46c0-8707-0db6d9457c06
+          metadata: {}
+          sortingKey: n
+          type: markdown
+        - blockGroup: 87d9c07f-f674-4c0e-a54e-eb3034d6ed96
+          content: |-
+            torch.save(model.state_dict(), "model.pth")
+            print("Saved PyTorch Model State to model.pth")
+          executionCount: 26
+          id: 32185252-8edc-4646-b204-6543856c6c18
+          metadata:
+            trusted: true
+            execution:
+              iopub.status.busy: 2025-11-07T07:06:54.948455Z
+              iopub.execute_input: 2025-11-07T07:06:54.948815Z
+              iopub.status.idle: 2025-11-07T07:06:54.960417Z
+              shell.execute_reply.started: 2025-11-07T07:06:54.948794Z
+              shell.execute_reply: 2025-11-07T07:06:54.959175Z
+          outputs:
+            - name: stdout
+              text: |
+                Saved PyTorch Model State to model.pth
+              output_type: stream
+          sortingKey: o
+          type: code
+        - blockGroup: 7df6ff07-a90b-4502-a1a7-0bbf384f8530
+          content: "# Loading Models"
+          id: babc02c2-0664-44a2-ae46-75e56f7a0080
+          metadata: {}
+          sortingKey: p
+          type: markdown
+        - blockGroup: d9ff09ac-132f-4807-8d01-5ec4decbecf8
+          content: >+
+            The process for loading a model includes re-creating the model
+            structure and loading the state dictionary into it.
+
+          id: 4772166f-9cf5-4c4e-a553-69cdacc4ab77
+          metadata: {}
+          sortingKey: q
+          type: markdown
+        - blockGroup: 16ffafd3-0733-445a-acfd-7bc1f8523b9f
+          content: |-
+            model = NeuralNetwork().to(device)
+            model.load_state_dict(torch.load("model.pth", weights_only=True))
+          executionCount: 27
+          id: 5a9a0e06-1778-4440-8979-33d8ad5165be
+          metadata:
+            trusted: true
+            execution:
+              iopub.status.busy: 2025-11-07T07:06:59.029864Z
+              iopub.execute_input: 2025-11-07T07:06:59.030833Z
+              iopub.status.idle: 2025-11-07T07:06:59.049806Z
+              shell.execute_reply.started: 2025-11-07T07:06:59.030794Z
+              shell.execute_reply: 2025-11-07T07:06:59.048298Z
+          outputs:
+            - execution_count: 27
+              output_type: execute_result
+              data:
+                text/plain: <All keys matched successfully>
+              metadata: {}
+          sortingKey: r
+          type: code
+        - blockGroup: 82eaa8e3-8c6a-4f9d-a69c-6d50ddb3c3da
+          content: |+
+            This model can now be used to make predictions.
+
+          id: 83c2b388-891c-44af-b482-9f3861e4965f
+          metadata: {}
+          sortingKey: s
+          type: markdown
+        - blockGroup: 8153b644-baea-4c5a-b568-b4f200bbca9a
+          content: |-
+            classes = [
+                "T-shirt/top",
+                "Trouser",
+                "Pullover",
+                "Dress",
+                "Coat",
+                "Sandal",
+                "Shirt",
+                "Sneaker",
+                "Bag",
+                "Ankle boot",
+            ]
+
+            model.eval()
+            x, y = test_data[0][0], test_data[0][1]
+            with torch.no_grad():
+                x = x.to(device)
+                pred = model(x)
+                predicted, actual = classes[pred[0].argmax(0)], classes[y]
+                print(f'Predicted: "{predicted}", Actual: "{actual}"')
+          executionCount: 28
+          id: 52ff2757-41a6-47ee-b42d-f193873c8d4b
+          metadata:
+            trusted: true
+            execution:
+              iopub.status.busy: 2025-11-07T07:07:01.934582Z
+              iopub.execute_input: 2025-11-07T07:07:01.934848Z
+              iopub.status.idle: 2025-11-07T07:07:01.943754Z
+              shell.execute_reply.started: 2025-11-07T07:07:01.934830Z
+              shell.execute_reply: 2025-11-07T07:07:01.942658Z
+          outputs:
+            - name: stdout
+              text: |
+                Predicted: "Ankle boot", Actual: "Ankle boot"
+              output_type: stream
+          sortingKey: t
+          type: code
+        - blockGroup: d42cb5c3-bf57-4257-adf8-26ff2e9c6df9
+          content: |+
+            Read more about [Saving & Loading your model](https://docs.pytorch.org/tutorials/beginner/basics/saveloadrun_tutorial.html).
+
+          id: 4a894310-8612-4c5c-9a58-c5bd3b6af478
+          metadata: {}
+          sortingKey: u
+          type: markdown
+      executionMode: block
+      id: 107cf6a2-9964-4670-a734-951ad38f2ca7
+      isModule: false
+      name: pytorch-quickstart
+  settings: {}
+version: 1.0.0

@@ -1,0 +1,334 @@
+metadata:
+  createdAt: 2025-12-12T21:29:47.031Z
+project:
+  id: 8210cb0e-03ea-4c52-a3c6-cb2cd9ea8af3
+  integrations: []
+  name: oil_and_gas_production_allocation_pyomo
+  notebooks:
+    - blocks:
+        - blockGroup: 12b51aee-aead-49e4-a7fc-8815fe4c5a9a
+          content: "# Exercise — Oil & Gas Production Allocation using Pyomo"
+          id: 4dc491ff-f1f2-401a-8005-f790d41db40c
+          metadata: {}
+          sortingKey: "0"
+          type: markdown
+        - blockGroup: 4690e35d-88de-4c8d-b5f1-ff302a6c8378
+          content: "## Scenario"
+          id: 34496140-87ae-495c-91c9-2e02273d1f43
+          metadata: {}
+          sortingKey: "1"
+          type: markdown
+        - blockGroup: 02cdac40-c166-450f-a5e6-84497a9b998a
+          content: >+
+            An operator manages three wells: `A`, `B`, and `C`.
+
+            Each well has:
+
+            - a maximum daily production capacity (barrel/day)
+
+            - a minimum “contracted” production they should try to meet if
+            possible
+
+
+            There is also a shared pipeline with a maximum daily throughput.
+
+
+            Each well has a different revenue per barrel due to quality
+            differences.
+
+
+            You must decide the production per well to maximise revenue, subject
+            to:
+
+            - well capacity constraints
+
+            - pipeline capacity
+
+            - contracted minimums
+
+
+            ### Inputs
+
+            You are given this data as Python dictionaries:
+
+            ```python
+
+            well_capacities = {
+                "A": {"min": 200, "max": 600},
+                "B": {"min": 100, "max": 500},
+                "C": {"min":  50, "max": 300},
+            }
+
+
+            pipeline_capacity = 1000  # barrels per day
+
+
+            revenue_per_barrel = {
+                "A": 45.0,
+                "B": 40.0,
+                "C": 50.0,
+            }
+
+            ```
+
+            ### Task
+
+            Implement:
+
+            ```python
+
+            from typing import Dict
+
+
+            def optimise_production_plan(
+                well_capacities: Dict[str, Dict[str, float]],
+                pipeline_capacity: float,
+                revenue_per_barrel: Dict[str, float],
+            ) -> Dict[str, float]:
+                """
+                Compute the optimal production per well subject to capacity and pipeline constraints.
+                """
+                ...
+            ```
+
+            ### Requirements
+
+            - Formulate and solve a linear program using Pyomo.
+
+            - Decision variables: production of each well (`A`, `B`, `C`).
+
+            - Constraints:
+                - For each well: min $\leq$ production $\leq$ max
+                - Sum of all production $\leq$ pipeline capacity
+            - Objective: maximize total revenue
+
+            - Return a dictionary
+
+            ```python
+
+            {
+              "A": float,
+              "B": float,
+              "C": float,
+              "total_revenue": float
+            }
+
+            ```
+
+            - Handle potential solver failure by raising a clear error or
+            returning a meaningful message. 
+                
+
+          id: bd9d268e-5a69-4e91-8b19-5f2ab42b8334
+          metadata: {}
+          sortingKey: "2"
+          type: markdown
+        - blockGroup: af84ddc7-6e1f-45f4-ae93-d98f1c3e57c4
+          content: "## Code implementation"
+          id: 2d74f478-5c98-4e0e-a7a3-a457c0daf0ae
+          metadata: {}
+          sortingKey: "3"
+          type: markdown
+        - blockGroup: 37d8746b-1cfa-4771-b342-eed56f4194de
+          content: >-
+            from typing import Dict, List
+
+            from pyomo.environ import ConcreteModel, Var, Objective, Constraint,
+            maximize, SolverFactory, value
+
+
+            def optimise_production_plan(
+                well_capacities: Dict[str, Dict[str, float]],
+                pipeline_capacity: float,
+                revenue_per_barrel: Dict[str, float],
+            ) -> Dict[str, float]:
+                """
+                Compute the optimal production per well subject to capacity and pipeline constraints.
+
+                This function solves a linear programming problem to maximize revenue by determining
+                how much to produce from each well, subject to:
+                - Well capacity constraints (min/max production per well)
+                - Pipeline capacity constraint (total production limit)
+
+                Problem formulation:
+                - Decision variables: x_A, x_B, x_C (production in barrels/day for each well)
+                - Objective: Maximize revenue = revenue_A * x_A + revenue_B * x_B + revenue_C * x_C
+                - Constraints: min_w ≤ x_w ≤ max_w for each well, and x_A + x_B + x_C ≤ pipeline_capacity
+
+                Pyomo is a Python-based open-source optimization modeling language that provides a
+                high-level interface for defining optimization problems. It can interface with various
+                solvers (CBC, IPOPT, etc.) to solve the problem. Pyomo is particularly
+                useful for modeling complex optimization problems with readable, maintainable code.
+
+                Args: 
+                    well_capacities: Dict mapping well name -> {"min": float, "max": float}
+                                     min: contracted minimum production (barrels/day)
+                                     max: maximum well capacity (barrels/day)
+                    pipeline_capacity: Maximum total pipeline throughput (barrels/day)
+                    revenue_per_barrel: Dict mapping well name -> revenue per barrel
+                
+                Returns:
+                    Dict with optimal production per well and total revenue, e.g.:
+                    {
+                        "A": 600.0,
+                        "B": 100.0,
+                        "C": 300.0,
+                        "total_revenue": 46000.0
+                    }
+                    
+                Raises:
+                    RuntimeError: If solver creation fails
+                    ValueError: If the problem is infeasible or unbounded
+                """
+                # ============================================================
+                # STEP 1: Create the Pyomo model
+                # ============================================================
+                # Pyomo uses ConcreteModel for models where all data is known at model creation time.
+                # ConcreteModel allows us to define the model structure and data together.
+                model = ConcreteModel()
+                
+                # ============================================================
+                # STEP 2: Establish deterministic variable ordering
+                # ============================================================
+                # Sort wells to ensure consistent ordering for reproducibility.
+                # This ensures the same inputs always produce the same variable order.
+                wells: List[str] = sorted(well_capacities.keys())
+                
+                # Create an index set for the wells
+                model.wells = wells
+
+                # ============================================================
+                # STEP 3: Create decision variables
+                # ============================================================
+                # Decision variables represent production amounts (barrels/day) for each well.
+                # Var creates continuous variables (can be fractional) with explicit bounds.
+                # Setting bounds on variables is more efficient than adding separate constraints.
+                # 
+                # When using bounds with a rule function, the rule takes (model, index) and returns (lower, upper).
+                # The bounds rule is called for each index in model.wells to set individual bounds per well.
+                # Example: For well "A", the rule returns (200, 600), meaning 200 ≤ x_A ≤ 600
+                # Note: The rule function can access data from the outer scope (well_capacities)
+                # because Pyomo's ConcreteModel evaluates rules at model creation time.
+                def x_bounds_rule(model, w):
+                    w_min = well_capacities[w]["min"]  # Lower bound: contracted minimum
+                    w_max = well_capacities[w]["max"]  # Upper bound: well capacity
+                    return (w_min, w_max)
+                
+                model.x = Var(model.wells, bounds=x_bounds_rule, doc='Production per well (barrels/day)')
+
+                # ============================================================
+                # STEP 4: Add pipeline capacity constraint
+                # ============================================================
+                # Constraint: x_A + x_B + x_C ≤ pipeline_capacity
+                # This is a shared resource constraint involving multiple variables.
+                # The constraint rule function defines the constraint expression.
+                # Note: The rule function can access data from the outer scope (pipeline_capacity)
+                # because Pyomo's ConcreteModel evaluates rules at model creation time.
+                def pipeline_capacity_rule(model):
+                    return sum(model.x[w] for w in model.wells) <= pipeline_capacity
+                
+                model.pipeline_capacity = Constraint(rule=pipeline_capacity_rule, doc='Total production cannot exceed pipeline capacity')
+
+                # ============================================================
+                # STEP 5: Set objective function (maximize total revenue)
+                # ============================================================
+                # Objective: maximize revenue = revenue_A * x_A + revenue_B * x_B + revenue_C * x_C
+                # This is linear because each term is a constant times a variable (no x², etc.).
+                # The objective rule function defines the expression to maximize.
+                # Note: The rule function can access data from the outer scope (revenue_per_barrel)
+                # because Pyomo's ConcreteModel evaluates rules at model creation time.
+                def objective_rule(model):
+                    return sum(revenue_per_barrel[w] * model.x[w] for w in model.wells)
+                
+                model.objective = Objective(rule=objective_rule, sense=maximize, doc='Maximize total revenue')
+
+                # ============================================================
+                # STEP 6: Solve the linear program
+                # ============================================================
+                # Pyomo can interface with various solvers. We'll use:
+                # - 'cbc': COIN-OR Branch and Cut (excellent for linear programming)
+                # - 'ipopt': Interior Point Optimizer (good for linear and nonlinear problems)
+                solver_name = None
+                for candidate in ['cbc', 'ipopt']:
+                    if SolverFactory(candidate).available():
+                        solver_name = candidate
+                        break
+                
+                if solver_name is None:
+                    raise RuntimeError(
+                        "No suitable solver found. Please install cbc or ipopt. "
+                        "For example: conda install -c conda-forge coincbc ipopt"
+                    )
+                
+                solver = SolverFactory(solver_name)
+                # Set solver options for better performance
+                if solver_name == 'cbc':
+                    solver.options['seconds'] = 60  # Time limit
+                
+                results = solver.solve(model, tee=False)  # tee=False suppresses solver output
+
+                # ============================================================
+                # STEP 7: Extract and format results
+                # ============================================================
+                # Extract optimal values from the model.
+                # value(model.x[w]) returns the value of variable x[w] in the solution.
+                # Clamp values to bounds to handle floating-point precision issues.
+                result: Dict[str, float] = {}
+                for w in wells:
+                    var_value = value(model.x[w])
+                    # Clamp to bounds to handle numerical noise (e.g., 199.9999999 → 200.0)
+                    w_min = well_capacities[w]["min"]
+                    w_max = well_capacities[w]["max"]
+                    var_value = max(float(w_min), min(float(w_max), float(var_value)))
+                    result[w] = var_value
+                
+                # Get total revenue from the objective value
+                total_revenue = value(model.objective)
+                result["total_revenue"] = float(total_revenue)
+
+                return result
+
+            # ============================================================
+
+            # Test algorithm
+
+            # ============================================================
+
+            # if __name__ == "__main__":    
+
+            well_capacities_demo = {
+                "A": {"min": 200, "max": 600},
+                "B": {"min": 100, "max": 500},
+                "C": {"min":  50, "max": 300},
+            }
+
+            pipeline_capacity_demo = 1000
+
+            revenue_demo = {"A": 45.0, "B": 40.0, "C": 50.0}
+
+
+            prod_plan = optimise_production_plan(
+                well_capacities_demo,
+                pipeline_capacity_demo,
+                revenue_demo,
+            )
+
+            print("Exercise result:", prod_plan)
+          executionCount: 3
+          id: e8065785-0dfb-4ae5-951f-0e582f27bb99
+          metadata: {}
+          outputs:
+            - name: stdout
+              output_type: stream
+              text:
+                - >
+                  Exercise result: {'A': 600.0, 'B': 100.0, 'C': 300.0,
+                  'total_revenue': 46000.0}
+          sortingKey: "4"
+          type: code
+      executionMode: block
+      id: 508372d7-7501-42c5-9ca0-ef7aba7a9080
+      isModule: false
+      name: oil_and_gas_production_allocation_pyomo
+  settings: {}
+version: 1.0.0

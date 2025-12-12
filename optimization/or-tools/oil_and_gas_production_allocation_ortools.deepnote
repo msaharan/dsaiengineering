@@ -1,0 +1,331 @@
+metadata:
+  createdAt: 2025-12-12T21:29:34.029Z
+project:
+  id: 57700788-f95b-4c89-9b5e-57fe3908b1bd
+  integrations: []
+  name: oil_and_gas_production_allocation_ortools
+  notebooks:
+    - blocks:
+        - blockGroup: 9435489e-4651-4670-98ed-9512ae4ad682
+          content: "# Exercise — Oil & Gas Production Allocation using OR-Tools"
+          id: c5f1f634-75bb-4db4-8267-b3c098773b35
+          metadata: {}
+          sortingKey: "0"
+          type: markdown
+        - blockGroup: b8352ceb-e517-4cc9-8082-ba3363e69291
+          content: "## Scenario"
+          id: 4a38342b-bef9-48fa-876b-6f4f268b2019
+          metadata: {}
+          sortingKey: "1"
+          type: markdown
+        - blockGroup: 60822d19-400f-4fdd-bbd3-89168c590aff
+          content: >+
+            An operator manages three wells: `A`, `B`, and `C`.
+
+            Each well has:
+
+            - a maximum daily production capacity (barrel/day)
+
+            - a minimum “contracted” production they should try to meet if
+            possible
+
+
+            There is also a shared pipeline with a maximum daily throughput.
+
+
+            Each well has a different revenue per barrel due to quality
+            differences.
+
+
+            You must decide the production per well to maximise revenue, subject
+            to:
+
+            - well capacity constraints
+
+            - pipeline capacity
+
+            - contracted minimums
+
+
+            ### Inputs
+
+            You are given this data as Python dictionaries:
+
+            ```python
+
+            well_capacities = {
+                "A": {"min": 200, "max": 600},
+                "B": {"min": 100, "max": 500},
+                "C": {"min":  50, "max": 300},
+            }
+
+
+            pipeline_capacity = 1000  # barrels per day
+
+
+            revenue_per_barrel = {
+                "A": 45.0,
+                "B": 40.0,
+                "C": 50.0,
+            }
+
+            ```
+
+            ### Task
+
+            Implement:
+
+            ```python
+
+            from typing import Dict
+
+
+            def optimise_production_plan(
+                well_capacities: Dict[str, Dict[str, float]],
+                pipeline_capacity: float,
+                revenue_per_barrel: Dict[str, float],
+            ) -> Dict[str, float]:
+                """
+                Compute the optimal production per well subject to capacity and pipeline constraints.
+                """
+                ...
+            ```
+
+            ### Requirements
+
+            - Formulate and solve a linear program using OR-Tools' linear solver
+            (`ortools.linear_solver.pywraplp`).
+
+            - Decision variables: production of each well (`A`, `B`, `C`).
+
+            - Constraints:
+                - For each well: min $\leq$ production $\leq$ max
+                - Sum of all production $\leq$ pipeline capacity
+            - Objective: maximize total revenue
+
+            - Return a dictionary
+
+            ```python
+
+            {
+              "A": float,
+              "B": float,
+              "C": float,
+              "total_revenue": float
+            }
+
+            ```
+
+            - Handle potential solver failure by raising a clear error or
+            returning a meaningful message. 
+                
+
+          id: a73aea92-92d2-44a1-a15c-9f247b6f9629
+          metadata: {}
+          sortingKey: "2"
+          type: markdown
+        - blockGroup: c42a64fc-cc2e-4341-ac2f-68a67884a3c8
+          content: "## Code implementation"
+          id: d24c6b46-5405-49e2-b5cf-6f738c9e55e3
+          metadata: {}
+          sortingKey: "3"
+          type: markdown
+        - blockGroup: 6e792816-8cfe-47ad-a357-a04436da1f0a
+          content: >-
+            from typing import Dict, List
+
+            from ortools.linear_solver import pywraplp
+
+
+            def optimise_production_plan(
+                well_capacities: Dict[str, Dict[str, float]],
+                pipeline_capacity: float,
+                revenue_per_barrel: Dict[str, float],
+            ) -> Dict[str, float]:
+                """
+                Compute the optimal production per well subject to capacity and pipeline constraints.
+
+                This function solves a linear programming problem to maximize revenue by determining
+                how much to produce from each well, subject to:
+                - Well capacity constraints (min/max production per well)
+                - Pipeline capacity constraint (total production limit)
+
+                Problem formulation:
+                - Decision variables: x_A, x_B, x_C (production in barrels/day for each well)
+                - Objective: Maximize revenue = revenue_A * x_A + revenue_B * x_B + revenue_C * x_C
+                - Constraints: min_w ≤ x_w ≤ max_w for each well, and x_A + x_B + x_C ≤ pipeline_capacity
+
+                Args: 
+                    well_capacities: Dict mapping well name -> {"min": float, "max": float}
+                                     min: contracted minimum production (barrels/day)
+                                     max: maximum well capacity (barrels/day)
+                    pipeline_capacity: Maximum total pipeline throughput (barrels/day)
+                    revenue_per_barrel: Dict mapping well name -> revenue per barrel
+                
+                Returns:
+                    Dict with optimal production per well and total revenue, e.g.:
+                    {
+                        "A": 600.0,
+                        "B": 100.0,
+                        "C": 300.0,
+                        "total_revenue": 46000.0
+                    }
+                    
+                Raises:
+                    RuntimeError: If solver creation fails
+                    ValueError: If the problem is infeasible or unbounded
+                """
+                # ============================================================
+                # STEP 1: Create the linear solver
+                # ============================================================
+                # GLOP (Google Linear Optimization Package) is OR-Tools' linear programming solver.
+                # It's open-source, fast, and handles continuous variables natively.
+                solver = pywraplp.Solver.CreateSolver('GLOP')
+                if not solver:
+                    raise RuntimeError("Failed to create GLOP solver. Check OR-Tools installation.")
+                
+                # ============================================================
+                # STEP 2: Establish deterministic variable ordering
+                # ============================================================
+                # Sort wells to ensure consistent ordering for reproducibility.
+                # This ensures the same inputs always produce the same variable order.
+                wells: List[str] = sorted(well_capacities.keys())
+
+                # ============================================================
+                # STEP 3: Create decision variables
+                # ============================================================
+                # Decision variables represent production amounts (barrels/day) for each well.
+                # NumVar creates continuous variables (can be fractional) with explicit bounds.
+                # Setting bounds on variables is more efficient than adding separate constraints.
+                x = {}
+                for w in wells:
+                    w_min = well_capacities[w]["min"]  # Lower bound: contracted minimum
+                    w_max = well_capacities[w]["max"]  # Upper bound: well capacity
+                    x[w] = solver.NumVar(float(w_min), float(w_max), f'production_{w}')
+                
+                # Example: x["A"] = NumVar(200, 600, "production_A") means 200 ≤ x_A ≤ 600
+
+                # ============================================================
+                # STEP 4: Add pipeline capacity constraint
+                # ============================================================
+                # Constraint: x_A + x_B + x_C ≤ pipeline_capacity
+                # This is a shared resource constraint involving multiple variables.
+                # Constraint(lower, upper, name) creates: lower ≤ expression ≤ upper
+                constraint = solver.Constraint(0.0, float(pipeline_capacity), 'pipeline_capacity')
+                for w in wells:
+                    # Each well contributes its full production to the pipeline total
+                    constraint.SetCoefficient(x[w], 1.0)
+
+                # ============================================================
+                # STEP 5: Set objective function (maximize total revenue)
+                # ============================================================
+                # Objective: maximize revenue = revenue_A * x_A + revenue_B * x_B + revenue_C * x_C
+                # This is linear because each term is a constant times a variable (no x², etc.).
+                objective = solver.Objective()
+                for w in wells:
+                    objective.SetCoefficient(x[w], float(revenue_per_barrel[w]))
+                objective.SetMaximization()
+
+                # ============================================================
+                # STEP 6: Solve the linear program
+                # ============================================================
+                # The solver finds optimal values that maximize the objective while satisfying constraints.
+                status = solver.Solve()
+
+                # ============================================================
+                # STEP 7: Check solver status and handle errors
+                # ============================================================
+                # Check if solver found a solution. Common statuses:
+                # - OPTIMAL: Found the best solution
+                # - FEASIBLE: Found a valid solution (may not be optimal)
+                # - INFEASIBLE: No solution exists (e.g., min productions exceed pipeline capacity)
+                # - UNBOUNDED: Objective can go to infinity (shouldn't happen with capacity constraints)
+                if status == pywraplp.Solver.OPTIMAL:
+                    pass  # Solution found successfully
+                elif status == pywraplp.Solver.FEASIBLE:
+                    pass  # Acceptable for our use case
+                elif status == pywraplp.Solver.INFEASIBLE:
+                    raise ValueError(
+                        "Linear program is infeasible: no solution satisfies all constraints.\n"
+                        "Possible causes: sum of minimum productions exceeds pipeline capacity, "
+                        "or conflicting constraints. Check your input data."
+                    )
+                elif status == pywraplp.Solver.UNBOUNDED:
+                    raise ValueError(
+                        "Linear program is unbounded: objective can go to infinity.\n"
+                        "This indicates a modeling error - check that all variables have proper bounds."
+                    )
+                else:
+                    raise ValueError(f"Linear program solver failed with status: {status}")
+                
+                # ============================================================
+                # STEP 8: Extract and format results
+                # ============================================================
+                # Extract optimal values from the solver.
+                # Clamp values to bounds to handle floating-point precision issues.
+                result: Dict[str, float] = {}
+                for w in wells:
+                    value = x[w].solution_value()
+                    # Clamp to bounds to handle numerical noise (e.g., 199.9999999 → 200.0)
+                    w_min = well_capacities[w]["min"]
+                    w_max = well_capacities[w]["max"]
+                    value = max(float(w_min), min(float(w_max), float(value)))
+                    result[w] = value
+                
+                # Get total revenue from the objective value
+                total_revenue = float(objective.Value())
+                result["total_revenue"] = total_revenue
+
+                return result
+
+            # ============================================================
+
+            # Test algorithm
+
+            # ============================================================
+
+            # if __name__ == "__main__":    
+
+            well_capacities_demo = {
+                "A": {"min": 200, "max": 600},
+                "B": {"min": 100, "max": 500},
+                "C": {"min":  50, "max": 300},
+            }
+
+            pipeline_capacity_demo = 1000
+
+            revenue_demo = {"A": 45.0, "B": 40.0, "C": 50.0}
+
+
+            prod_plan = optimise_production_plan(
+                well_capacities_demo,
+                pipeline_capacity_demo,
+                revenue_demo,
+            )
+
+            print("Exercise result:", prod_plan)
+          executionCount: 1
+          id: 6d7e79e0-6bd4-4d4c-bacd-24d8ad823c81
+          metadata: {}
+          outputs:
+            - name: stdout
+              output_type: stream
+              text:
+                - >
+                  Exercise result: {'A': 600.0, 'B': 100.0, 'C': 300.0,
+                  'total_revenue': 46000.0}
+          sortingKey: "4"
+          type: code
+        - blockGroup: 95d2d14e-e8f3-4980-8dd0-436b65a5f62b
+          content: ""
+          id: 1286793a-8dcc-41de-9c95-ed103e1d62eb
+          metadata: {}
+          outputs: []
+          sortingKey: "5"
+          type: code
+      executionMode: block
+      id: c60a9102-63c7-44ea-98d8-10f8ce7e17fb
+      isModule: false
+      name: oil_and_gas_production_allocation_ortools
+  settings: {}
+version: 1.0.0

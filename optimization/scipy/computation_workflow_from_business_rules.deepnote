@@ -1,0 +1,502 @@
+metadata:
+  createdAt: 2025-12-12T21:29:56.125Z
+project:
+  id: 5b6a88a4-dbca-4dfe-9422-4bd4b0d57db0
+  integrations: []
+  name: computation_workflow_from_business_rules
+  notebooks:
+    - blocks:
+        - blockGroup: 8b52ee0c-7594-45b5-8d5b-3df15019aa9b
+          content: "# Exercise — Build a Computational Workflow From Business Rules"
+          id: 3c5058eb-e685-4ab9-8b9a-18655f7d9a46
+          metadata: {}
+          sortingKey: "0"
+          type: markdown
+        - blockGroup: ec2c7d21-1af4-4a40-962c-69050bf57722
+          content: "## Scenario"
+          id: 747626ae-0c25-4d02-82f9-7eb877b3a199
+          metadata: {}
+          sortingKey: "1"
+          type: markdown
+        - blockGroup: 6df50b8f-ef78-4beb-b154-c8dbc81be37e
+          content: >-
+            A client uses a simple rule-based simulation to decide daily
+            staffing. You must implement the logic as a reusable, testable
+            function block. You are given the rules:
+
+            1. Expected workload for the day = `forecast_demand` *
+            `demand_variability_factor`
+
+            2. Required staff = `ceil(workload/staff_capacity)`
+
+            3. If required staff exceeds `max_staff`, cap it at `max_staff`
+
+            4. If expected workload < `emergency_threshold`:
+                - Set staff = `minimum_staff`
+            5. Output must contain intermediate values for monitoring.
+
+
+            ### Input example
+
+
+            ```python
+
+            config = {
+                "forecast_demand": 120,
+                "demand_variability_factor": 1.15,
+                "staff_capacity": 30,
+                "minimum_staff": 2,
+                "max_staff": 10,
+                "emergency_threshold": 20,
+            }
+
+            ```
+
+
+            ### Task
+
+            Implement:
+
+            ```python
+
+            def compute_staffing(config: dict) -> dict:
+                ...
+            ```
+
+
+            ### Requirements
+
+            Return:
+
+            ```python
+
+            {
+                "expected_workload": float,
+                "required_staff_raw" int,
+                "final_staff": int
+            }
+
+            ```
+
+
+            ### Constraints
+
+            - No hard-coded values
+
+            - Modular, readable logic
+
+            - Use math.ceil()
+
+
+            ### Evaluation Criteria
+
+            - Clean workflow
+
+            - Business rules $\rightarrow$ computational logic translation
+
+            - Good variable naming
+
+            - Testability
+          id: ab82f757-1b88-4cbe-9d8d-fcc8827639ba
+          metadata: {}
+          sortingKey: "2"
+          type: markdown
+        - blockGroup: 17e4c79c-b280-4360-a3c7-5f47b5bb294d
+          content: "## Thinking through the problem"
+          id: 30c9c7c9-700b-4f14-8f4d-5f6f7d6e5197
+          metadata: {}
+          sortingKey: "3"
+          type: markdown
+        - blockGroup: 4571aa45-1291-41bf-8d9b-039c7c33af41
+          content: "The problem: turn a set of business rules into a small deterministic
+            computation. No optimization solver, just clean logic."
+          id: 4661ccc5-f2b7-4e3d-9589-4b0ff2b11fcd
+          metadata: {}
+          sortingKey: "4"
+          type: markdown
+        - blockGroup: aa4cc43d-f2ab-4319-96fb-22b154a05b03
+          content: >
+            ### 1. Inputs (`config` dict)
+
+            We get a `config: Dict[str, Any]` with these keys:
+
+            - `forecast_demand: float`
+
+            - `demand_variability_factor: float`
+
+            - `staff_capacity: float`
+
+            - `minimum_staff: int`
+
+            - `max_staff: int`
+
+            - `emergency_threshold: float`
+
+
+            We can think:
+
+            - `forecast_demand`: base demand, e.g. expected number of tasks /
+            calls / orders.
+
+            - `demand_variability_factor`: multiplier for uncertainty / peaks.
+
+            - `staff_capacity`: how much workload one staff member can handle.
+
+            - `minimum_staff`: hard lower bound (e.g. must have at least X
+            people).
+
+            - `max_staff` hard upper bound (e.g. can’t schedule more than Y
+            people). 
+
+            - `emergency_threshold` if workload is tiny, we go to a minimal
+            “skeleton crew”.
+          id: 4e478345-51f7-4493-a3b0-68d3914cd9b6
+          metadata: {}
+          sortingKey: "5"
+          type: markdown
+        - blockGroup: ad8b4cf3-bb52-4941-829e-b731a4342d9e
+          content: "### 2. Rule 1 - expected workload"
+          id: dacecdb6-acd3-4593-b011-6140ba0724a2
+          metadata: {}
+          sortingKey: "6"
+          type: markdown
+        - blockGroup: 302ed8e8-a0ce-4d67-9c3f-0cd9f0a89b02
+          content: |+
+            ```python
+            expected_workload = forecast_demand * demand_variability_factor
+            ```
+            This is the adjusted demand considering variability.
+
+          id: 39a5fd64-0a9b-40a8-b0e0-c394cbe0c6df
+          metadata: {}
+          sortingKey: "7"
+          type: markdown
+        - blockGroup: a7e5abcf-9cec-4771-884c-f8502c933920
+          content: "### 3. Rule 2 – required_staff_raw"
+          id: 34ef53ec-3061-4c8a-99d8-aca678e2dc70
+          metadata: {}
+          sortingKey: "8"
+          type: markdown
+        - blockGroup: b9fdd5f8-34db-4408-8556-6ba293c766da
+          content: >
+            > `required_staff_raw = ceil(expected_workload / staff_capacity)`
+
+            We want enough people so that:
+
+            $$
+
+            \text{required\_staff} \geq
+            \frac{\text{expected\_workload}}{\text{staff\_capacity}}
+
+            $$
+
+            So we use ceiling to round up:
+
+            ```python
+
+            required_staff_raw = math.ceil(expected_workload / staff_capacity)
+
+            ```
+
+
+            Why "raw"? Because we later cap it by `max_staff` and possibly
+            override it.
+
+
+            Note: `staff_capacity` should not be 0; the problem doesn't mention
+            this edge case, so we assume valid config.
+          id: 229ae063-91d7-4459-b366-4e0e471d968f
+          metadata: {}
+          sortingKey: "9"
+          type: markdown
+        - blockGroup: 8cdb6099-e827-4b60-8a8a-7a1d14134000
+          content: "### 4. Rule 3 – cap with max_staff"
+          id: b8153d01-8a74-40da-8015-a038e28c8a80
+          metadata: {}
+          sortingKey: a
+          type: markdown
+        - blockGroup: 4dc88b0a-e241-414c-bb5f-3ed53aaacc59
+          content: >-
+            > if `required_staff_raw > max_staff` $\rightarrow$ cap to
+            `max_staff`
+
+            So:
+
+            ```python
+
+            required_staff_capped = min(required_staff_raw, max_staff)
+
+            ```
+
+            This ensures we never exceed `max_staff`.
+          id: 51db24ea-cae3-4536-b556-c904c17359fd
+          metadata: {}
+          sortingKey: b
+          type: markdown
+        - blockGroup: 7fed5293-5709-42d7-89af-c13c2ca8afa8
+          content: "### 5. Rule 4 & 5 - emergency threshold vs `final_staff`"
+          id: 36ea5709-73f4-42bf-9856-6bea878b0b32
+          metadata: {}
+          sortingKey: c
+          type: markdown
+        - blockGroup: 959fa156-39b2-4704-8e58-cb0126f89004
+          content: >
+            Rules:
+
+            4. If `expected_workload < emergency_threshold` $\rightarrow$
+            `final_staff = minimum_staff`
+
+            5. Else $\rightarrow$ `final_staff = capped required_staff`
+
+            So we compare the workload, not the staff number.
+
+
+            ```python
+
+            if expected_workload < emergency_threshold:
+                final_staff = minimum_staff
+            else:
+                final_staff = required_staff_capped
+            ```
+
+            <!-- Note: the problem doesn’t explicitly say to enforce
+            minimum_staff otherwise, but in practice:
+
+
+            In the “else” case, `required_staff_capped` might already be $\geq$
+            `minimum_staff` if the demand is higher, so you’re fine.
+
+
+            If we want to be extra safe, we could do `final_staff =
+            max(minimum_staff, required_staff_capped)`, but that’s not exactly
+            what’s written. So let'sstick literally to the rules of the problem.
+            -->
+          id: 419138a5-02dc-49d4-9695-192ad33ca197
+          metadata: {}
+          sortingKey: d
+          type: markdown
+        - blockGroup: 7d05ebf5-b6a1-4c21-a7ee-f65183aaaffa
+          content: "### 6. Return structure"
+          id: 89ed159f-0070-4ace-b494-13e46185331d
+          metadata: {}
+          sortingKey: e
+          type: markdown
+        - blockGroup: 692ab4da-4c4e-4ca7-a92e-12ec93f76141
+          content: >
+            The problem asks for:
+
+            ```python
+
+            {
+                "expected_workload": float,
+                "required_staff_raw" int,
+                "final_staff": int
+            }
+
+            ```
+
+            Important:
+
+            - `expected_workload` is the value before any caps or thresholds.
+
+            - `required_staff_raw` is the `ceil(...)` result before `max_staff`
+            cap.
+
+            - `final_staff` reflects the actual decision, after:
+                - capping by `max_staff`, and
+                - possible override by `minimum_staff` due to `emergency_threshold`.
+          id: b9109a96-4fa4-4203-8cc9-0a2d5204e3e1
+          metadata: {}
+          sortingKey: f
+          type: markdown
+        - blockGroup: 00089413-2bf4-4ee3-832d-cc707e9db19b
+          content: >-
+            ### 7. Quick mental example (using the demo config)
+
+            ```python
+
+            config = {
+                "forecast_demand": 120,
+                "demand_variability_factor": 1.15,
+                "staff_capacity": 30,
+                "minimum_staff": 2,
+                "max_staff": 10,
+                "emergency_threshold": 20,
+            }
+
+            ```
+
+            Let's compute in our heads:
+
+            1. `expected_workload = 120 * 1.15 = 138.0`
+
+            2. `required_staff_raw = ceil(138.0 / 30) = 5`
+
+            3. Cap with `max_staff=10`: `required_staff_capped = min(5, 10) = 5`
+
+            4. Emergency rule: compare workload to `emergency_threshold=20`
+                - `expected_workload=138.0` is greater than `20`, so we don't override.
+                - So `final_staff = 5`
+
+            So, our function should return:
+
+            ```python
+
+            {
+                "expected_workload": 138.0,
+                "required_staff_raw": 5,
+                "final_staff": 5
+            }
+
+            If we run `forecast_demand` small enough (e.g. 5, factor of 1.0,
+            capacity 30 $\rightarrow$ expected workload 5 < 20), then:
+
+            - It will set `final_staff = minimum_staff` regardless of
+            `required_staff_raw`.
+          id: 33b4bce4-ca5a-436d-8d28-271b6905e837
+          metadata: {}
+          sortingKey: g
+          type: markdown
+        - blockGroup: 02d4b1ac-829b-4a30-b1de-19afcfac3df2
+          content: "## Code implementation"
+          id: 6a95f841-968b-464d-9019-42961382418f
+          metadata: {}
+          sortingKey: h
+          type: markdown
+        - blockGroup: 886f22c2-6347-4155-a650-d5989d8445dd
+          content: ""
+          id: 37eba9b4-5c2c-40f1-aa6d-18733eaa5954
+          metadata: {}
+          outputs: []
+          sortingKey: i
+          type: code
+        - blockGroup: cd49cc71-75e2-4031-bc2c-ee6fa1c70398
+          content: >-
+            import math 
+
+            from typing import Dict, Any
+
+
+            def compute_staffing(config: Dict[str, Any]) -> Dict[str, Any]:
+                """
+                Compute staffing levels based on simple business rules.
+                
+                This function demonstrates how to transform business rules into a clean,
+                testable computational workflow. Key principles:
+                1. Config-driven: no hard-coded values, making it reusable across scenarios
+                2. Step-by-step logic: each business rule maps to a clear computational step
+                3. Transparent: returns intermediate values for monitoring and debugging
+                4. Defensive: validates inputs to catch errors early
+
+                Config keys:
+                    - forecast_demand: float - Base expected demand (e.g., tasks, calls, orders)
+                    - demand_variability_factor: float - Multiplier to account for uncertainty/peaks
+                    - staff_capacity: float - How much workload one staff member can handle
+                    - minimum_staff: int - Hard lower bound (must have at least this many)
+                    - max_staff: int - Hard upper bound (cannot schedule more than this)
+                    - emergency_threshold: float - If workload below this, use minimal skeleton crew
+
+                Returns:
+                    Dictionary containing:
+                      - expected_workload: Adjusted demand after variability factor
+                      - required_staff_raw: Calculated staff before constraints (for transparency)
+                      - final_staff: Final staffing decision after all rules applied
+                """
+                # STEP 1: Extract and type-convert values from config dictionary
+                # Why extract first? Makes code readable, enables validation, and provides
+                # clear variable names that match the business domain terminology
+                forecast_demand = float(config["forecast_demand"])
+                demand_variability_factor = float(config["demand_variability_factor"])
+                staff_capacity = float(config["staff_capacity"])
+                minimum_staff = int(config["minimum_staff"])
+                max_staff = int(config["max_staff"])
+                emergency_threshold = float(config["emergency_threshold"])
+
+                # STEP 2: Compute expected workload (Business Rule 1)
+                # This adjusts the base forecast by a variability factor to account for
+                # uncertainty, peak periods, or safety margins
+                # Example: forecast_demand=100, factor=1.15 → expected_workload=115.0
+                expected_workload = forecast_demand * demand_variability_factor
+
+                # STEP 3: Calculate raw staffing requirement (Business Rule 2)
+                # We need enough staff to handle the expected workload
+                # math.ceil ensures we always round UP (e.g., 7.1 workload needs 8 staff)
+                # This is critical: understaffing can cause service degradation
+                # 
+                # Input validation: prevent division by zero or negative capacity
+                if staff_capacity <= 0:
+                    raise ValueError("staff_capacity must be positive.")
+                
+                # Calculate: required_staff = ceil(workload / capacity_per_staff)
+                # Example: workload=138, capacity=30 → 138/30 = 4.6 → ceil(4.6) = 5
+                required_staff_raw = int(math.ceil(expected_workload / staff_capacity))
+
+                # STEP 4: Apply maximum staff constraint (Business Rule 3)
+                # Cap the required staff at the maximum allowed (budget/resource constraint)
+                # This ensures we never exceed max_staff, even if workload is very high
+                # Example: required_staff_raw=12, max_staff=10 → required_staff_capped=10
+                required_staff_capped = min(required_staff_raw, max_staff)
+
+                # STEP 5: Apply emergency threshold rule (Business Rule 4)
+                # If workload is below a critical threshold, switch to minimal staffing
+                # This handles low-demand scenarios efficiently (skeleton crew mode)
+                # Note: We compare workload (not staff count) to the threshold
+                if expected_workload < emergency_threshold:
+                    # Low-demand mode: use minimum staffing regardless of calculation
+                    final_staff = minimum_staff
+                else:
+                    # Normal mode: use the capped required staff
+                    final_staff = required_staff_capped
+
+                # STEP 6: Return structured result with all intermediate values
+                # Why return intermediates? Enables:
+                #   - Monitoring: see where adjustments were made (caps, overrides)
+                #   - Debugging: trace how final value was computed
+                #   - UI display: show users the reasoning behind the decision
+                #   - Auditing: track when constraints were applied
+                return {
+                    "expected_workload": float(expected_workload),  # After variability adjustment
+                    "required_staff_raw": required_staff_raw,  # Before max_staff cap
+                    "final_staff": final_staff,  # Final decision after all rules
+                }
+
+            # ============================================================
+
+            # Test algorithm
+
+            # ============================================================
+
+            # if __name__ == "__main__":
+
+
+            config_demo = {
+                "forecast_demand": 120,
+                "demand_variability_factor": 1.15,
+                "staff_capacity": 30,
+                "minimum_staff": 2,
+                "max_staff": 10,
+                "emergency_threshold": 20,
+            }
+
+
+            result4 = compute_staffing(config_demo)
+
+            print("Exercise 4 result:", result4)
+          executionCount: 1
+          id: 05f7c284-7a53-4ec8-b737-5f66c9f683ab
+          metadata: {}
+          outputs:
+            - name: stdout
+              output_type: stream
+              text:
+                - >
+                  Exercise 4 result: {'expected_workload': 138.0,
+                  'required_staff_raw': 5, 'final_staff': 5}
+          sortingKey: j
+          type: code
+      executionMode: block
+      id: 935a27ea-a6ab-4ec1-a9a3-ecf4873d14c4
+      isModule: false
+      name: computation_workflow_from_business_rules
+  settings: {}
+version: 1.0.0

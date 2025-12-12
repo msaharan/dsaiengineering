@@ -1,0 +1,290 @@
+metadata:
+  createdAt: 2025-12-12T21:29:59.683Z
+project:
+  id: 92b6f996-87ae-45d8-b153-dd72312b17a1
+  integrations: []
+  name: healthcare_staffing_workflow
+  notebooks:
+    - blocks:
+        - blockGroup: ab6a8b46-0f51-444d-9340-c4d22e1cef0a
+          content: >-
+            # Exercise — Healthcare Staffing Workflow
+
+
+            Domain: Healthcare
+
+
+            Theme: Turn business rules into a clean, reusable computational
+            workflow.
+          id: 65cd19d1-377e-4945-a193-0db35533f04a
+          metadata: {}
+          sortingKey: "0"
+          type: markdown
+        - blockGroup: 7edbcc78-b345-4ce6-ab3d-eb62c4831f5d
+          content: "## Scenario"
+          id: 03cc405f-0f51-48e3-aaff-a62f69864d00
+          metadata: {}
+          sortingKey: "1"
+          type: markdown
+        - blockGroup: a6eb59bc-3d27-4682-8d6f-7c7308335314
+          content: >-
+            A hospital wants a simple staffing decision helper for a single
+            department per day.
+
+
+            **Why this matters:** Healthcare staffing decisions balance patient
+            safety (adequate care), regulatory compliance (minimum staffing),
+            and budget constraints (maximum staffing). Automating this workflow
+            ensures consistent, auditable decisions.
+
+
+            **Inputs (per day):**
+
+            - `forecast_patients` (float) — Expected patient count (from
+            predictive models or historical data)
+
+            - `patients_per_nurse` (float) — Nominal capacity per nurse
+            (workload standard, e.g., 10 patients/nurse)
+
+            - `min_nurses` (int) — Must always have at least this many
+            (safety/regulatory minimum)
+
+            - `max_nurses` (int) — Upper bound due to budget constraints
+
+            - `critical_threshold` (float) — If forecast patients exceed this,
+            add emergency nurses (safety trigger)
+
+            - `emergency_nurses` (int) — Additional nurses to add when above
+            threshold
+
+
+            **The logic (step-by-step workflow):**
+
+
+            1. **Base calculation:** Compute `base_required =
+            ceil(forecast_patients / patients_per_nurse)`.
+               - Uses ceiling to always round UP (understaffing is dangerous)
+               - Example: 81 patients ÷ 10 per nurse = 8.1 → 9 nurses
+
+            2. **Apply constraints:** Enforce minimum and maximum bounds:
+               `clamped_required = min(max(base_required, min_nurses), max_nurses)`.
+               - Inner `max()` ensures we meet minimum requirement
+               - Outer `min()` ensures we don't exceed budget
+               - This "clamping" pattern is common in constraint-based systems
+
+            3. **Emergency rule:** If `forecast_patients > critical_threshold`,
+            then:
+               `final_nurses = min(clamped_required + emergency_nurses, max_nurses)`
+               else:
+               `final_nurses = clamped_required`.
+               - Conditional logic implements business rule
+               - Still respects max_nurses limit (budget constraint)
+
+            4. **Transparency:** Provide both intermediate and final values for
+            monitoring and UI.
+               - Enables audit trails
+               - Helps users understand the decision
+               - Supports debugging and optimization
+
+            ### Task
+
+            Implement
+
+            ```python
+
+            from typing import Dict, Any
+
+
+            def compute_daily_staffing(config: Dict[str, Any]) -> Dict[str,
+            Any]:
+                """
+                Turn staffing business rules into a structured computational workflow.
+                """
+                ...
+            ```
+
+            ### Requirements
+
+            - Use `math.ceil` for rounding.
+
+            - Don’t hard-code magic numbers; use values from config.
+
+            - Return:
+
+            ```python
+
+            {
+              "forecast_patients": float,
+              "base_required": int,
+              "clamped_required": int,
+              "final_nurses": int
+            }
+
+            ```
+
+            - Keep the implementation:
+              - modular,
+              - clearly readable,
+              - easily testable.
+          id: 3c4254ce-f6ba-4127-a5a9-b0db16323fdb
+          metadata: {}
+          sortingKey: "2"
+          type: markdown
+        - blockGroup: f1ed6485-4714-4d87-a3ce-5868cb801522
+          content: "## Code implementation"
+          id: 83e62bfc-01ac-4ad7-b8c9-4fa259bfa4b6
+          metadata: {}
+          sortingKey: "3"
+          type: markdown
+        - blockGroup: 07046dbc-7177-46fe-9768-02036ef9bc0f
+          content: >
+            # Import necessary modules
+
+            # math.ceil: rounds up to the nearest integer (essential for
+            staffing calculations)
+
+            # typing: provides type hints for better code documentation and IDE
+            support
+
+            import math
+
+            from typing import Any, Dict
+
+
+
+            def compute_daily_staffing(config: Dict[str, Any]) -> Dict[str,
+            Any]:
+                """
+                Turn staffing business rules into a structured computational workflow.
+                
+                This function demonstrates how to transform business rules into a clean,
+                testable computational workflow. The key principles:
+                1. Separation of concerns: each step is clear and independent
+                2. Config-driven: no hard-coded values, making it reusable
+                3. Transparent: returns intermediate values for monitoring/debugging
+                4. Defensive: validates inputs to catch errors early
+
+                Config keys:
+                    - forecast_patients: float - Expected number of patients for the day
+                    - patients_per_nurse: float - Nominal capacity (workload per nurse)
+                    - min_nurses: int - Minimum staffing level (safety/regulatory requirement)
+                    - max_nurses: int - Maximum staffing level (budget constraint)
+                    - critical_threshold: float - Patient count that triggers emergency staffing
+                    - emergency_nurses: int - Additional nurses when above critical threshold
+
+                Logic Flow:
+                    1. Calculate base requirement from patient-to-nurse ratio
+                    2. Apply min/max constraints (clamping)
+                    3. Apply emergency staffing rule if threshold exceeded
+                    4. Return all intermediate values for transparency
+
+                Returns:
+                    Dictionary containing:
+                      - forecast_patients: Original input (for reference)
+                      - base_required: Calculated before constraints
+                      - clamped_required: After min/max constraints
+                      - final_nurses: Final staffing decision after all rules
+                """
+                # STEP 1: Extract and type-convert values from config dictionary
+                # Why extract first? Makes code readable, enables validation, and provides
+                # clear variable names that match the business domain
+                forecast_patients = float(config["forecast_patients"])
+                patients_per_nurse = float(config["patients_per_nurse"])
+                min_nurses = int(config["min_nurses"])
+                max_nurses = int(config["max_nurses"])
+                critical_threshold = float(config["critical_threshold"])
+                emergency_nurses = int(config["emergency_nurses"])
+
+                # STEP 2: Input validation - defensive programming
+                # Catch invalid inputs early rather than producing nonsensical results
+                # Division by zero or negative ratios would break the calculation
+                if patients_per_nurse <= 0:
+                    raise ValueError("patients_per_nurse must be positive.")
+
+                # STEP 3: Calculate base staffing requirement
+                # math.ceil ensures we always round UP (e.g., 7.1 patients needs 8 nurses)
+                # This is critical in healthcare: understaffing is dangerous
+                # Example: 80 patients / 10 per nurse = 8.0 -> 8 nurses
+                # Example: 81 patients / 10 per nurse = 8.1 -> 9 nurses (rounded up!)
+                base_required = math.ceil(forecast_patients / patients_per_nurse)
+
+                # STEP 4: Apply min/max constraints (clamping)
+                # This implements: min_nurses <= nurses <= max_nurses
+                # The nested min/max pattern is a common idiom for clamping values:
+                #   - max(base_required, min_nurses) ensures we meet minimum
+                #   - min(..., max_nurses) ensures we don't exceed maximum
+                # Example: if base_required=3, min_nurses=5, max_nurses=15
+                #   -> max(3, 5) = 5, then min(5, 15) = 5
+                clamped_required = min(max(base_required, min_nurses), max_nurses)
+
+                # STEP 5: Apply emergency staffing rule (conditional logic)
+                # This implements a business rule: when patient load exceeds a critical
+                # threshold, add emergency nurses (subject to max constraint)
+                # The min() ensures we still respect the max_nurses budget limit
+                if forecast_patients > critical_threshold:
+                    # Emergency mode: add extra nurses but cap at maximum
+                    final_nurses = min(clamped_required + emergency_nurses, max_nurses)
+                else:
+                    # Normal mode: use the clamped value
+                    final_nurses = clamped_required
+
+                # STEP 6: Return structured result with all intermediate values
+                # Why return intermediates? Enables:
+                #   - Monitoring: see where adjustments were made
+                #   - Debugging: trace how final value was computed
+                #   - UI display: show users the reasoning behind the decision
+                #   - Auditing: track when constraints were applied
+                return {
+                    "forecast_patients": forecast_patients,  # Original input
+                    "base_required": int(base_required),  # Before constraints
+                    "clamped_required": int(clamped_required),  # After min/max
+                    "final_nurses": int(final_nurses),  # Final decision
+                }
+
+            # Demo: Testing the function with example data
+
+            # This demonstrates how to use the function and interpret results
+
+            if __name__ == "__main__":
+                # Example configuration: a typical day scenario
+                # This config-driven approach makes it easy to test different scenarios
+                staffing_config_demo = {
+                    "forecast_patients": 80.0,  # Expected 80 patients
+                    "patients_per_nurse": 10.0,  # Each nurse handles 10 patients
+                    "min_nurses": 5,  # Always need at least 5 nurses
+                    "max_nurses": 15,  # Budget allows up to 15 nurses
+                    "critical_threshold": 100.0,  # Emergency mode if > 100 patients
+                    "emergency_nurses": 3,  # Add 3 extra nurses in emergency
+                }
+                
+                # Execute the workflow
+                staffing_result = compute_daily_staffing(staffing_config_demo)
+                
+                # Display results
+                # Expected output for this scenario:
+                # - base_required: ceil(80/10) = 8 nurses
+                # - clamped_required: min(max(8, 5), 15) = 8 nurses (within bounds)
+                # - final_nurses: 8 (since 80 < 100, no emergency staffing)
+                print("Exercise result:", staffing_result)
+                
+                # Try modifying the config to see different behaviors:
+                # - Set forecast_patients to 105 to trigger emergency mode
+                # - Set forecast_patients to 3 to see min_nurses constraint
+                # - Set forecast_patients to 200 to see max_nurses constraint
+          id: 851583ad-3e78-4238-a184-92760c4fd38c
+          metadata: {}
+          outputs:
+            - name: stdout
+              output_type: stream
+              text:
+                - >
+                  Exercise result: {'forecast_patients': 80.0, 'base_required':
+                  8, 'clamped_required': 8, 'final_nurses': 8}
+          sortingKey: "4"
+          type: code
+      executionMode: block
+      id: 57f077b2-a262-4dd6-82ab-e559ca458635
+      isModule: false
+      name: healthcare_staffing_workflow
+  settings: {}
+version: 1.0.0

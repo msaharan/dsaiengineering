@@ -1,0 +1,359 @@
+metadata:
+  createdAt: 2025-12-12T21:29:35.780Z
+project:
+  id: 903d4866-ce62-41bf-bca2-f400a91f3921
+  integrations: []
+  name: scheduling_optimization_ortools
+  notebooks:
+    - blocks:
+        - blockGroup: e5cd3b47-f4e2-4ad7-adb9-802d86634c01
+          content: "# Exercise — Scheduling Optimisation using OR-Tools"
+          id: 9fc28b57-fa80-4f61-84f5-42ac098847ac
+          metadata: {}
+          sortingKey: "0"
+          type: markdown
+        - blockGroup: f3fbf65d-0bba-4ead-ac75-91f6d2e08103
+          content: "## Scenario"
+          id: 4269f4f4-cf33-4d36-9fe0-7389bc689224
+          metadata: {}
+          sortingKey: "1"
+          type: markdown
+        - blockGroup: b39d6df8-a0e1-4b93-a255-5be9a8112f67
+          content: >+
+            You must assign 5 tasks to 5 engineers.
+
+            Each engineer has a task-specific “cost” (lower is better).
+
+            You must assign exactly 1 task per engineer.
+
+
+            ### Input
+
+
+            ```python
+
+            cost_matrix = np.array([
+                [9, 2, 7, 8, 6],
+                [6, 4, 3, 7, 5],
+                [5, 8, 1, 8, 7],
+                [7, 6, 9, 4, 3],
+                [8, 5, 6, 9, 4]
+            ])
+
+            ```
+
+            Rows: engineers
+
+            Columns: tasks
+
+
+            ### Task
+
+
+            Write:
+
+
+            ```python
+
+            def assign_tasks(cost_matrix: np.ndarray):
+                ...
+            ```
+
+
+            ### Requirements
+
+
+            - Use OR-Tools to solve the assignment problem (CP-SAT solver
+            recommended).
+
+            - Return a dictionary:
+
+            ```python
+
+            {
+                "assignments": [(engineer_idx, task_idx), ...],
+                "total_cost": float
+            }
+
+            ```
+
+
+            ### Evaluation Criteria
+
+            - Correct use of the algorithm
+
+            - Type hints
+
+            - Nicely formatted output
+
+            - No unnecessary loops
+
+          id: 11fd3dd5-cbc3-4a81-a027-8ccd1c533c0e
+          metadata: {}
+          sortingKey: "2"
+          type: markdown
+        - blockGroup: 634ce5f3-dc7d-4800-b0d0-c91f298bcfcd
+          content: "## Code implementation"
+          id: 12f5f83f-9f1f-4f38-85e7-95ccec687590
+          metadata: {}
+          sortingKey: "3"
+          type: markdown
+        - blockGroup: c2f48b00-f69c-40bb-8dcd-03ff5f7951b1
+          content: >-
+            from typing import Dict, Any, List, Tuple 
+
+            import numpy as np 
+
+            from ortools.sat.python import cp_model
+
+
+            def assign_tasks(cost_matrix: np.ndarray) -> Dict[str, Any]:
+                """
+                Solve the assignment problem: assign tasks to engineers to minimize total cost.
+                
+                This function solves a classic assignment problem (also known as the linear assignment
+                problem or bipartite matching problem). Given N engineers and N tasks, we find the
+                one-to-one assignment that minimizes total cost.
+                
+                Problem formulation:
+                - Each engineer must be assigned to exactly one task
+                - Each task must be assigned to exactly one engineer
+                - Goal: minimize the sum of assignment costs
+                
+                This is a fundamental optimization problem in operations research, useful for:
+                - Resource allocation (workers to jobs, machines to tasks)
+                - Scheduling (assigning shifts, matching pairs)
+                - Transportation (matching sources to destinations)
+                
+                Algorithm: We use OR-Tools' CP-SAT (Constraint Programming - Satisfiability) solver,
+                which models the problem as a constraint satisfaction problem with boolean decision
+                variables. CP-SAT is well-suited for assignment problems and guarantees finding the
+                optimal solution.
+
+                Args:
+                    cost_matrix: 2D numpy array of shape (n_engineers, n_tasks)
+                                 cost_matrix[i, j] represents the cost of assigning engineer i to task j.
+                                 Lower values are better (we're minimizing total cost).
+                                 
+                Returns:
+                    Dictionary with two keys:
+                    - "assignments": List of tuples [(engineer_idx, task_idx), ...]
+                      Each tuple (i, j) means engineer i is assigned to task j.
+                    - "total_cost": float
+                      The sum of cost_matrix[i, j] for all assignment pairs in the optimal solution.
+                      
+                Example:
+                    >>> cost_matrix = np.array([[9, 2], [6, 4]])
+                    >>> result = assign_tasks(cost_matrix)
+                    >>> print(result)
+                    {'assignments': [(0, 1), (1, 0)], 'total_cost': 8.0}
+                    # Engineer 0 → Task 1 (cost=2), Engineer 1 → Task 0 (cost=6), Total=8
+                """
+                # STEP 1: Validate input and get dimensions
+                # The cost matrix tells us how many engineers (rows) and tasks (columns) we have
+                # For a proper assignment problem, we typically have n_engineers == n_tasks,
+                # but the code handles rectangular matrices as well
+                n_engineers, n_tasks = cost_matrix.shape
+                
+                # STEP 2: Create the CP-SAT model
+                # CP-SAT (Constraint Programming - Satisfiability) is OR-Tools' constraint programming
+                # solver. It works by:
+                # 1. Modeling the problem with decision variables (boolean, integer, or interval)
+                # 2. Adding constraints that must be satisfied
+                # 3. Defining an objective function to optimize
+                # 4. Using advanced search algorithms to find optimal solutions
+                # 
+                # Why CP-SAT for assignment problems?
+                # - Efficiently handles boolean variables (perfect for yes/no assignments)
+                # - Guarantees optimality (finds the best possible solution)
+                # - Handles integer costs natively (after scaling)
+                model = cp_model.CpModel()
+                
+                # STEP 3: Create decision variables
+                # We create a boolean variable x[i][j] for each engineer-task pair.
+                # x[i][j] = 1 means "engineer i is assigned to task j"
+                # x[i][j] = 0 means "engineer i is NOT assigned to task j"
+                #
+                # Example: If we have 3 engineers and 3 tasks, we create 9 boolean variables:
+                # x[0][0], x[0][1], x[0][2]  (engineer 0 can be assigned to task 0, 1, or 2)
+                # x[1][0], x[1][1], x[1][2]  (engineer 1 can be assigned to task 0, 1, or 2)
+                # x[2][0], x[2][1], x[2][2]  (engineer 2 can be assigned to task 0, 1, or 2)
+                x = []
+                for i in range(n_engineers):
+                    row = []
+                    for j in range(n_tasks):
+                        # NewBoolVar creates a boolean decision variable that the solver will determine
+                        # The name is optional but helpful for debugging
+                        row.append(model.NewBoolVar(f'engineer_{i}_task_{j}'))
+                    x.append(row)
+                
+                # STEP 4: Add constraints
+                # Constraints ensure that our solution satisfies the problem requirements.
+                # Without constraints, the solver might assign multiple tasks to one engineer,
+                # or leave some engineers unassigned.
+                
+                # Constraint 1: Each engineer must be assigned to exactly one task
+                # For each engineer i, the sum of x[i][j] over all tasks j must equal 1.
+                # This means exactly one of x[i][0], x[i][1], ..., x[i][n_tasks-1] must be 1.
+                #
+                # Example: For engineer 0 with 3 tasks: x[0][0] + x[0][1] + x[0][2] == 1
+                # This ensures engineer 0 gets exactly one task (not zero, not two or more)
+                for i in range(n_engineers):
+                    model.Add(sum(x[i][j] for j in range(n_tasks)) == 1)
+                
+                # Constraint 2: Each task must be assigned to exactly one engineer
+                # For each task j, the sum of x[i][j] over all engineers i must equal 1.
+                # This means exactly one of x[0][j], x[1][j], ..., x[n_engineers-1][j] must be 1.
+                #
+                # Example: For task 1 with 3 engineers: x[0][1] + x[1][1] + x[2][1] == 1
+                # This ensures task 1 gets exactly one engineer (not zero, not two or more)
+                for j in range(n_tasks):
+                    model.Add(sum(x[i][j] for i in range(n_engineers)) == 1)
+                
+                # STEP 5: Define the objective function
+                # The objective is to minimize the total cost of all assignments.
+                # Total cost = sum over all (i,j) of: cost_matrix[i][j] * x[i][j]
+                #
+                # Why multiply by x[i][j]? 
+                # - If x[i][j] = 1 (engineer i assigned to task j), we include cost_matrix[i][j]
+                # - If x[i][j] = 0 (not assigned), we don't include it (multiply by 0)
+                #
+                # Example: If engineer 0 is assigned to task 1, then:
+                #   cost_matrix[0][1] * x[0][1] = cost_matrix[0][1] * 1 = cost_matrix[0][1]
+                # If engineer 0 is NOT assigned to task 2, then:
+                #   cost_matrix[0][2] * x[0][2] = cost_matrix[0][2] * 0 = 0 (doesn't contribute)
+                
+                # CP-SAT requires integer coefficients, so we scale float costs to integers.
+                # We multiply by 1000 to preserve 3 decimal places of precision.
+                # Example: cost 2.456 becomes 2456, cost 9.0 becomes 9000
+                objective_terms = []
+                for i in range(n_engineers):
+                    for j in range(n_tasks):
+                        # Scale the cost to an integer (multiply by 1000 and round)
+                        scaled_cost = int(round(cost_matrix[i, j] * 1000))
+                        # Add the term: if x[i][j] is 1, this contributes scaled_cost to the objective
+                        objective_terms.append(x[i][j] * scaled_cost)
+                
+                # Tell the model to minimize the sum of all objective terms
+                model.Minimize(sum(objective_terms))
+                
+                # STEP 6: Solve the model
+                # The solver uses advanced algorithms (constraint propagation, search heuristics,
+                # branch-and-bound) to find the optimal assignment that satisfies all constraints
+                # and minimizes the objective function.
+                solver = cp_model.CpSolver()
+                status = solver.Solve(model)
+                
+                # STEP 7: Check if a solution was found
+                # The solver returns a status code indicating the result:
+                # - OPTIMAL: Found the best possible solution ✓
+                # - FEASIBLE: Found a valid solution, but might not be optimal
+                # - INFEASIBLE: No solution exists (shouldn't happen for assignment problems)
+                # - MODEL_INVALID: The model has errors
+                if status != cp_model.OPTIMAL:
+                    raise ValueError(
+                        f"Assignment problem could not be solved optimally. "
+                        f"Status: {status} (expected {cp_model.OPTIMAL})"
+                    )
+                
+                # STEP 8: Extract the solution
+                # Now that the solver has found the optimal assignment, we need to:
+                # 1. Find which x[i][j] variables are set to 1 (the actual assignments)
+                # 2. Calculate the total cost using the original (unscaled) cost values
+                assignments: List[Tuple[int, int]] = []
+                total_cost = 0.0
+                
+                # Iterate through all engineer-task pairs
+                for i in range(n_engineers):
+                    for j in range(n_tasks):
+                        # solver.Value(x[i][j]) returns the value of the variable in the solution
+                        # It will be either 0 or 1 (since x[i][j] is a boolean variable)
+                        if solver.Value(x[i][j]) == 1:
+                            # This assignment is part of the optimal solution
+                            assignments.append((i, j))
+                            # Add the original cost (not the scaled version) to the total
+                            total_cost += float(cost_matrix[i, j])
+                
+                # STEP 9: Return the results
+                # We return a dictionary with:
+                # - assignments: A list of (engineer_idx, task_idx) tuples showing who does what
+                # - total_cost: The sum of costs for this optimal assignment
+                #
+                # This format is easy to:
+                # - Display to users
+                # - Serialize to JSON for APIs
+                # - Use in downstream processing
+                return {
+                    "assignments": assignments,  # List of (engineer_idx, task_idx) pairs
+                    "total_cost": total_cost     # Sum of costs for optimal assignment
+                }
+
+            # Test the function with the example from the problem statement
+
+            cost_matrix_demo = np.array([
+                [9, 2, 7, 8, 6],  # Engineer 0's costs for tasks 0-4
+                [6, 4, 3, 7, 5],  # Engineer 1's costs for tasks 0-4
+                [5, 8, 1, 8, 7],  # Engineer 2's costs for tasks 0-4
+                [7, 6, 9, 4, 3],  # Engineer 3's costs for tasks 0-4
+                [8, 5, 6, 9, 4],  # Engineer 4's costs for tasks 0-4
+            ])
+
+
+            result = assign_tasks(cost_matrix_demo)
+
+            print("Exercise result:", result)
+
+
+            # Verify the solution manually:
+
+            # Expected optimal assignment:
+
+            # - Engineer 0 → Task 1 (cost = 2)  ← lowest cost for engineer 0
+
+            # - Engineer 1 → Task 0 (cost = 6)
+
+            # - Engineer 2 → Task 2 (cost = 1)  ← lowest cost for engineer 2
+
+            # - Engineer 3 → Task 3 (cost = 4)
+
+            # - Engineer 4 → Task 4 (cost = 4)
+
+            # Total cost = 2 + 6 + 1 + 4 + 4 = 17
+
+            #
+
+            # Note: The optimal solution doesn't just pick the minimum cost for
+            each engineer
+
+            # independently (that would be greedy and suboptimal). Instead, it
+            finds the global
+
+            # minimum considering all constraints (each engineer gets exactly
+            one task, each task
+
+            # gets exactly one engineer).
+          executionCount: 6
+          id: 719845a7-8c28-47a0-a167-e194b5805aa2
+          metadata: {}
+          outputs:
+            - name: stdout
+              output_type: stream
+              text:
+                - >
+                  Exercise result: {'assignments': [(0, 1), (1, 0), (2, 2), (3,
+                  3), (4, 4)], 'total_cost': 17.0}
+          sortingKey: "4"
+          type: code
+        - blockGroup: 4f885c88-e1b3-42c3-bcd9-2dda8ec5d47c
+          content: ""
+          id: bddcefe8-680f-45cb-87e8-913de608234b
+          metadata: {}
+          outputs: []
+          sortingKey: "5"
+          type: code
+      executionMode: block
+      id: 3d4998ef-082b-4148-b41a-df2e307db5c8
+      isModule: false
+      name: scheduling_optimization_ortools
+  settings: {}
+version: 1.0.0

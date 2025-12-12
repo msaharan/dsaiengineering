@@ -1,0 +1,363 @@
+metadata:
+  createdAt: 2025-12-12T21:29:48.767Z
+project:
+  id: 0a5ff85b-76b8-469d-9fc6-dec0e715c7ca
+  integrations: []
+  name: scheduling_optimization_pyomo
+  notebooks:
+    - blocks:
+        - blockGroup: 718dd089-81f9-4a39-b319-e32539f9d5e5
+          content: "# Exercise — Scheduling Optimisation using Pyomo"
+          id: 21b55f7a-b1b6-46a9-b02a-8bab2a1a60e4
+          metadata: {}
+          sortingKey: "0"
+          type: markdown
+        - blockGroup: fa805f61-e864-48d9-a02c-991f4c3283d4
+          content: "## Scenario"
+          id: 4f8553f2-712c-492f-8625-dacc431c3798
+          metadata: {}
+          sortingKey: "1"
+          type: markdown
+        - blockGroup: b8280c50-b51c-470e-94ce-b13acee9b78c
+          content: |+
+            You must assign 5 tasks to 5 engineers.
+            Each engineer has a task-specific “cost” (lower is better).
+            You must assign exactly 1 task per engineer.
+
+            ### Input
+
+            ```python
+            cost_matrix = np.array([
+                [9, 2, 7, 8, 6],
+                [6, 4, 3, 7, 5],
+                [5, 8, 1, 8, 7],
+                [7, 6, 9, 4, 3],
+                [8, 5, 6, 9, 4]
+            ])
+            ```
+            Rows: engineers
+            Columns: tasks
+
+            ### Task
+
+            Write:
+
+            ```python
+            def assign_tasks(cost_matrix: np.ndarray):
+                ...
+            ```
+
+            ### Requirements
+
+            - Use Pyomo to solve the assignment problem.
+            - Return a dictionary:
+            ```python
+            {
+                "assignments": [(engineer_idx, task_idx), ...],
+                "total_cost": float
+            }
+            ```
+
+            ### Evaluation Criteria
+            - Correct use of the algorithm
+            - Type hints
+            - Nicely formatted output
+            - No unnecessary loops
+
+          id: 8361c40a-356d-4247-b048-c7a4e107c06e
+          metadata: {}
+          sortingKey: "2"
+          type: markdown
+        - blockGroup: daed4e3e-f6af-4f08-8dde-149524a8d9ee
+          content: "## Code implementation"
+          id: 17fd1dcc-6a58-4980-82f0-80e2611eec71
+          metadata: {}
+          sortingKey: "3"
+          type: markdown
+        - blockGroup: ddcd4094-5354-49bd-acc8-6de5e93f9037
+          content: >-
+            from typing import Dict, Any, List, Tuple 
+
+            import numpy as np 
+
+            from pyomo.environ import ConcreteModel, Var, Objective, Constraint,
+            Binary, minimize, SolverFactory, value
+
+
+            def assign_tasks(cost_matrix: np.ndarray) -> Dict[str, Any]:
+                """
+                Solve the assignment problem: assign tasks to engineers to minimize total cost.
+                
+                This function solves a classic assignment problem (also known as the linear assignment
+                problem or bipartite matching problem). Given N engineers and N tasks, we find the
+                one-to-one assignment that minimizes total cost.
+                
+                Problem formulation:
+                - Each engineer must be assigned to exactly one task
+                - Each task must be assigned to exactly one engineer
+                - Goal: minimize the sum of assignment costs
+                
+                This is a fundamental optimization problem in operations research, useful for:
+                - Resource allocation (workers to jobs, machines to tasks)
+                - Scheduling (assigning shifts, matching pairs)
+                - Transportation (matching sources to destinations)
+                
+                Algorithm: We use Pyomo to model the problem as a binary integer linear program (BILP).
+                Pyomo is a Python-based open-source optimization modeling language that provides a
+                high-level interface for defining optimization problems. It can interface with various
+                solvers (CBC, Gurobi, CPLEX, etc.) to solve the problem. Pyomo is well-suited for
+                assignment problems and guarantees finding the optimal solution.
+
+                Args:
+                    cost_matrix: 2D numpy array of shape (n_engineers, n_tasks)
+                                 cost_matrix[i, j] represents the cost of assigning engineer i to task j.
+                                 Lower values are better (we're minimizing total cost).
+                                 
+                Returns:
+                    Dictionary with two keys:
+                    - "assignments": List of tuples [(engineer_idx, task_idx), ...]
+                      Each tuple (i, j) means engineer i is assigned to task j.
+                    - "total_cost": float
+                      The sum of cost_matrix[i, j] for all assignment pairs in the optimal solution.
+                      
+                Example:
+                    >>> cost_matrix = np.array([[9, 2], [6, 4]])
+                    >>> result = assign_tasks(cost_matrix)
+                    >>> print(result)
+                    {'assignments': [(0, 1), (1, 0)], 'total_cost': 8.0}
+                    # Engineer 0 → Task 1 (cost=2), Engineer 1 → Task 0 (cost=6), Total=8
+                """
+                # STEP 1: Validate input and get dimensions
+                # The cost matrix tells us how many engineers (rows) and tasks (columns) we have
+                # For a proper assignment problem, we require n_engineers == n_tasks
+                # because each engineer must get exactly one task AND each task must get exactly one engineer
+                # If the dimensions don't match, the problem will be infeasible
+                n_engineers, n_tasks = cost_matrix.shape
+                
+                # STEP 2: Create index sets
+                # We'll use these index sets to define variables and constraints in a clean way
+                engineers = list(range(n_engineers))
+                tasks = list(range(n_tasks))
+                
+                # STEP 3: Create the Pyomo model
+                # Pyomo uses ConcreteModel for models where all data is known at model creation time.
+                # ConcreteModel allows us to define the model structure and data together.
+                # 
+                # Why Pyomo for assignment problems?
+                # - Clean, readable model definition (similar to mathematical notation)
+                # - Flexible solver interface (can use CBC, Gurobi, CPLEX, etc.)
+                # - Supports binary variables natively (perfect for yes/no assignments)
+                # - Guarantees optimality (finds the best possible solution)
+                model = ConcreteModel()
+                
+                # STEP 4: Create decision variables
+                # We create a binary variable x[i, j] for each engineer-task pair.
+                # x[i, j] = 1 means "engineer i is assigned to task j"
+                # x[i, j] = 0 means "engineer i is NOT assigned to task j"
+                #
+                # Var(within=Binary) creates a binary decision variable that can only be 0 or 1.
+                # The within parameter specifies the domain (Binary means values must be 0 or 1).
+                #
+                # Example: If we have 3 engineers and 3 tasks, we create 9 binary variables:
+                # x[0, 0], x[0, 1], x[0, 2]  (engineer 0 can be assigned to task 0, 1, or 2)
+                # x[1, 0], x[1, 1], x[1, 2]  (engineer 1 can be assigned to task 0, 1, or 2)
+                # x[2, 0], x[2, 1], x[2, 2]  (engineer 2 can be assigned to task 0, 1, or 2)
+                model.x = Var(engineers, tasks, within=Binary)
+                
+                # STEP 5: Add constraints
+                # Constraints ensure that our solution satisfies the problem requirements.
+                # Without constraints, the solver might assign multiple tasks to one engineer,
+                # or leave some engineers unassigned.
+                
+                # Constraint 1: Each engineer must be assigned to exactly one task
+                # For each engineer i, the sum of x[i, j] over all tasks j must equal 1.
+                # This means exactly one of x[i, 0], x[i, 1], ..., x[i, n_tasks-1] must be 1.
+                #
+                # Example: For engineer 0 with 3 tasks: x[0, 0] + x[0, 1] + x[0, 2] == 1
+                # This ensures engineer 0 gets exactly one task (not zero, not two or more)
+                def engineer_rule(model, i):
+                    return sum(model.x[i, j] for j in tasks) == 1
+                
+                model.engineer_constraint = Constraint(engineers, rule=engineer_rule)
+                
+                # Constraint 2: Each task must be assigned to exactly one engineer
+                # For each task j, the sum of x[i, j] over all engineers i must equal 1.
+                # This means exactly one of x[0, j], x[1, j], ..., x[n_engineers-1, j] must be 1.
+                #
+                # Example: For task 1 with 3 engineers: x[0, 1] + x[1, 1] + x[2, 1] == 1
+                # This ensures task 1 gets exactly one engineer (not zero, not two or more)
+                def task_rule(model, j):
+                    return sum(model.x[i, j] for i in engineers) == 1
+                
+                model.task_constraint = Constraint(tasks, rule=task_rule)
+                
+                # STEP 6: Define the objective function
+                # The objective is to minimize the total cost of all assignments.
+                # Total cost = sum over all (i,j) of: cost_matrix[i, j] * x[i, j]
+                #
+                # Why multiply by x[i, j]? 
+                # - If x[i, j] = 1 (engineer i assigned to task j), we include cost_matrix[i, j]
+                # - If x[i, j] = 0 (not assigned), we don't include it (multiply by 0)
+                #
+                # Example: If engineer 0 is assigned to task 1, then:
+                #   cost_matrix[0, 1] * x[0, 1] = cost_matrix[0, 1] * 1 = cost_matrix[0, 1]
+                # If engineer 0 is NOT assigned to task 2, then:
+                #   cost_matrix[0, 2] * x[0, 2] = cost_matrix[0, 2] * 0 = 0 (doesn't contribute)
+                def objective_rule(model):
+                    return sum(cost_matrix[i, j] * model.x[i, j] for i in engineers for j in tasks)
+                
+                model.objective = Objective(rule=objective_rule, sense=minimize)
+                
+                # STEP 7: Solve the model
+                # Pyomo can interface with various solvers. We'll try:
+                # - 'cbc': COIN-OR Branch and Cut (excellent for integer and binary programming)
+                # - 'glpk': GNU Linear Programming Kit (can handle binary variables)
+                #
+                # Note: IPOPT is not suitable here as it's a continuous nonlinear solver that doesn't
+                # handle binary variables natively. For binary integer programming, we need solvers
+                # like CBC, GLPK, Gurobi, or CPLEX that support discrete variables.
+                #
+                # The solver uses advanced algorithms (branch-and-bound, cutting planes) to find
+                # the optimal assignment that satisfies all constraints and minimizes the objective function.
+                solver_name = None
+                for candidate in ['cbc', 'glpk']:
+                    if SolverFactory(candidate).available():
+                        solver_name = candidate
+                        break
+                
+                if solver_name is None:
+                    raise RuntimeError(
+                        "No suitable solver found. Please install cbc or glpk. "
+                        "For example: conda install -c conda-forge coincbc glpk"
+                    )
+                
+                solver = SolverFactory(solver_name)
+                # Set solver options for better performance
+                if solver_name == 'cbc':
+                    solver.options['seconds'] = 60  # Time limit
+                elif solver_name == 'glpk':
+                    solver.options['tmlim'] = 60  # Time limit (seconds)
+                
+                results = solver.solve(model, tee=False)  # tee=False suppresses solver output
+                
+                # STEP 8: Check if a solution was found
+                # The solver returns a results object with status information.
+                # We accept both 'optimal' and 'feasible' solutions. Other possible termination conditions include:
+                # - 'optimal': Found the best possible solution ✓ (preferred)
+                # - 'feasible': Found a valid solution, but might not be optimal (acceptable)
+                # - 'infeasible': No solution exists (shouldn't happen for assignment problems)
+                # - 'unbounded': Objective can go to negative infinity (shouldn't happen with non-negative costs)
+                # - 'error': Solver encountered an error
+                if results.solver.termination_condition not in ['optimal', 'feasible']:
+                    if results.solver.termination_condition == 'infeasible':
+                        raise ValueError("Assignment problem is infeasible: no solution satisfies all constraints")
+                    elif results.solver.termination_condition == 'unbounded':
+                        raise ValueError("Assignment problem is unbounded: objective can go to negative infinity")
+                    else:
+                        raise ValueError(
+                            f"Assignment problem could not be solved: termination condition = {results.solver.termination_condition}"
+                        )
+                
+                # STEP 9: Extract the solution
+                # Now that the solver has found the optimal assignment, we need to:
+                # 1. Find which x[i, j] variables are set to 1 (the actual assignments)
+                # 2. Calculate the total cost using the original cost values
+                assignments: List[Tuple[int, int]] = []
+                total_cost = 0.0
+                
+                # Iterate through all engineer-task pairs
+                for i in engineers:
+                    for j in tasks:
+                        # value(model.x[i, j]) returns the value of the variable in the solution
+                        # It will be either 0 or 1 (since x[i, j] is a binary variable)
+                        # We check if it's close to 1 (using > 0.5) to handle floating-point precision
+                        if value(model.x[i, j]) > 0.5:
+                            # This assignment is part of the optimal solution
+                            assignments.append((i, j))
+                            # Add the cost to the total
+                            total_cost += float(cost_matrix[i, j])
+                
+                # STEP 10: Return the results
+                # We return a dictionary with:
+                # - assignments: A list of (engineer_idx, task_idx) tuples showing who does what
+                # - total_cost: The sum of costs for this optimal assignment
+                #
+                # This format is easy to:
+                # - Display to users
+                # - Serialize to JSON for APIs
+                # - Use in downstream processing
+                return {
+                    "assignments": assignments,  # List of (engineer_idx, task_idx) pairs
+                    "total_cost": total_cost     # Sum of costs for optimal assignment
+                }
+
+            # Test the function with the example from the problem statement
+
+            cost_matrix_demo = np.array([
+                [9, 2, 7, 8, 6],  # Engineer 0's costs for tasks 0-4
+                [6, 4, 3, 7, 5],  # Engineer 1's costs for tasks 0-4
+                [5, 8, 1, 8, 7],  # Engineer 2's costs for tasks 0-4
+                [7, 6, 9, 4, 3],  # Engineer 3's costs for tasks 0-4
+                [8, 5, 6, 9, 4],  # Engineer 4's costs for tasks 0-4
+            ])
+
+
+            result = assign_tasks(cost_matrix_demo)
+
+            print("Exercise result:", result)
+
+
+            # Verify the solution:
+
+            # The optimal assignment found by the solver is:
+
+            # - Engineer 0 → Task 1 (cost = 2)
+
+            # - Engineer 1 → Task 0 (cost = 6)
+
+            # - Engineer 2 → Task 2 (cost = 1)
+
+            # - Engineer 3 → Task 3 (cost = 4)
+
+            # - Engineer 4 → Task 4 (cost = 4)
+
+            # Total cost = 2 + 6 + 1 + 4 + 4 = 17
+
+            #
+
+            # Note: This is the globally optimal solution. A greedy approach
+            (picking the minimum
+
+            # cost for each engineer independently) would be suboptimal because
+            it doesn't consider
+
+            # the constraint that each task must be assigned to exactly one
+            engineer. The solver
+
+            # finds the global minimum considering all constraints
+            simultaneously.
+          executionCount: 2
+          id: 0825b544-a9f0-4d1c-a43b-f52c8193572f
+          metadata: {}
+          outputs:
+            - name: stdout
+              output_type: stream
+              text:
+                - >
+                  Exercise result: {'assignments': [(0, 1), (1, 0), (2, 2), (3,
+                  3), (4, 4)], 'total_cost': 17.0}
+          sortingKey: "4"
+          type: code
+        - blockGroup: 8f88ba96-4275-4924-9f7c-bb33e2fea954
+          content: ""
+          id: abacd6b6-aa78-4d16-843b-f5c714489f59
+          metadata: {}
+          outputs: []
+          sortingKey: "5"
+          type: code
+      executionMode: block
+      id: ffbc537d-70f5-4c96-9607-03cae1025b3a
+      isModule: false
+      name: scheduling_optimization_pyomo
+  settings: {}
+version: 1.0.0

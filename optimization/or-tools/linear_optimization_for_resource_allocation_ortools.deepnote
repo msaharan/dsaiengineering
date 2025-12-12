@@ -1,0 +1,320 @@
+metadata:
+  createdAt: 2025-12-12T21:29:32.217Z
+project:
+  id: e53944f4-fd14-4f33-bf97-dfb4256ef0b9
+  integrations: []
+  name: linear_optimization_for_resource_allocation_ortools
+  notebooks:
+    - blocks:
+        - blockGroup: f8b956f1-4180-4b0b-9247-bb36fd274e0b
+          content: "# Exercise: Linear optimization for resource allocation using
+            OR-Tools"
+          id: df1671f2-1cbf-4b34-a7d8-f0492abe4c5d
+          metadata: {}
+          sortingKey: "0"
+          type: markdown
+        - blockGroup: 094d9645-cc26-4956-bd9c-2fc08a60f593
+          content: "## Scenario"
+          id: a3a4d65b-b2be-46c0-a067-6610bffbaae8
+          metadata: {}
+          sortingKey: "1"
+          type: markdown
+        - blockGroup: 9904984f-f44f-4628-a574-38aa8c8426b9
+          content: >-
+            
+            A client wants to decide how many units of 3 products to produce.
+
+            Each product requires machine time on two machines.
+
+            Each product yields a profit.
+
+
+            You must build a linear programming model that determines the
+            optimal production plan.
+
+
+            ---
+
+
+            ### Input
+
+
+            You receive three Python dictionaries:
+
+
+            ```python   
+
+            machine_cap = {
+                "machine_1": 240,   # minutes available
+                "machine_2": 200
+            }
+
+
+            time_per_unit = {
+                "product_A": {"machine_1": 3, "machine_2": 4},
+                "product_B": {"machine_1": 2, "machine_2": 1},
+                "product_C": {"machine_1": 4, "machine_2": 2},
+            }
+
+
+            profit = {
+                "product_A": 40,
+                "product_B": 25,
+                "product_C": 30,
+            }
+
+            ```
+
+            ---
+
+
+            ### Task
+
+
+            Write a function 
+
+
+            ```python
+
+            def optimise_production(machine_cap, time_per_unit, profit):
+                ...
+            ```
+
+
+            ### Requirements
+
+
+            - Use scipy.optimize.linprog or OR-Tools' linear solver.
+
+
+            - Maximise total profit.
+
+
+            - Products must have non-negative production quantities.
+
+
+            - Return a dict:
+
+
+            ```python
+
+            {
+              "product_A": optimal_float,
+              "product_B": optimal_float,
+              "product_C": optimal_float,
+              "total_profit": float
+            }
+
+            ```
+
+            ### Evaluation Criteria
+
+
+            -  Correct LP formulation
+
+
+            - Clear structure
+
+
+            - Type hints
+
+
+            - Comments explaining constraints
+
+
+            ---
+          id: f979e34e-0ebe-4014-916a-e82c3524a895
+          metadata: {}
+          sortingKey: "2"
+          type: markdown
+        - blockGroup: 372379ae-6767-421f-a924-2d4f1d317ee5
+          content: "## Code implementation"
+          id: c9980149-6180-44cd-9ba3-009480b15d2d
+          metadata: {}
+          sortingKey: "3"
+          type: markdown
+        - blockGroup: c504588e-cb4b-4af4-8988-b3282c3875ed
+          content: >-
+            from typing import Dict, List
+
+            from ortools.linear_solver import pywraplp
+
+
+            def optimise_production(
+                machine_cap: Dict[str, float],
+                time_per_unit: Dict[str, Dict[str, float]],
+                profit: Dict[str, float],
+            ) -> Dict[str, float]:
+                """
+                Solve a linear program to maximise total profit subject to machine capacity constraints.
+                
+                This function demonstrates linear programming (LP) for resource allocation:
+                - Decision variables: how many units of each product to produce
+                - Objective: maximize total profit
+                - Constraints: machine time capacities cannot be exceeded
+                - Bounds: production quantities must be non-negative
+
+                Args:
+                    machine_cap: Dict mapping machine name -> available time (e.g., minutes)
+                    time_per_unit: Dict mapping product -> {machine: time_required}
+                    profit: Dict mapping product -> profit per unit
+                
+                Returns:
+                    Dict with optimal production per product and total profit
+                """
+                # STEP 1: Create the linear solver
+                # OR-Tools provides multiple solvers. We specify 'GLOP' (Google Linear Optimization Package),
+                # which is a good choice for most linear programming problems. It's open-source
+                # and doesn't require additional licenses.
+                solver = pywraplp.Solver.CreateSolver('GLOP')
+                if not solver:
+                    raise RuntimeError("Failed to create GLOP solver")
+                
+                # STEP 2: Establish deterministic variable ordering
+                # We need a consistent order for decision variables to match coefficients
+                # in objective and constraint matrices. Using list() preserves insertion order
+                # (Python 3.7+), but explicit ordering makes the code more predictable
+                products = list(time_per_unit.keys())
+                machines = list(machine_cap.keys())
+                # Example: products = ["product_A", "product_B", "product_C"]
+                #          means x[0]=A, x[1]=B, x[2]=C in our decision vector
+
+                # STEP 3: Create decision variables
+                # Each variable represents the number of units to produce for a product
+                # Variables are continuous (can be fractional) and non-negative (>= 0)
+                # 
+                # OR-Tools allows direct maximization, so we don't need to negate the objective
+                # like we would with scipy.optimize.linprog
+                x = {}
+                for p in products:
+                    # Create a continuous variable with lower bound 0 and no upper bound
+                    # Variable name includes product name for better debugging
+                    x[p] = solver.NumVar(0.0, solver.infinity(), f'x_{p}')
+                # Example: x = {"product_A": NumVar(0, inf, "x_product_A"), ...}
+
+                # STEP 4: Add machine capacity constraints
+                # For each machine, the total time used by all products must not exceed capacity
+                # 
+                # Constraint form: Σ(time_per_unit[p][m] * x[p]) <= machine_cap[m]
+                # 
+                # Example for machine_1: 3*x_A + 2*x_B + 4*x_C <= 240
+                for m in machines:
+                    # Create a linear constraint: sum of (time * production) <= capacity
+                    constraint = solver.Constraint(0.0, machine_cap[m], f'capacity_{m}')
+                    for p in products:
+                        # Get time required for product p on machine m
+                        # If product doesn't use machine, assume 0 time (defensive programming)
+                        time_required = time_per_unit.get(p, {}).get(m, 0.0)
+                        # Add coefficient: time_required * x[p] contributes to this constraint
+                        constraint.SetCoefficient(x[p], float(time_required))
+
+                # STEP 5: Set objective function (maximize total profit)
+                # Mathematical objective: maximize profit = Σ(profit[p] * x[p])
+                # 
+                # OR-Tools can maximize directly, so we use positive profit coefficients
+                # Example: profit = {"A": 40, "B": 25, "C": 30}
+                #          → objective = 40*x_A + 25*x_B + 30*x_C
+                objective = solver.Objective()
+                for p in products:
+                    objective.SetCoefficient(x[p], float(profit[p]))
+                # Set to maximize (default is minimize)
+                objective.SetMaximization()
+
+                # STEP 6: Solve the linear program
+                # The solver will find the optimal values for all decision variables
+                # that maximize the objective while satisfying all constraints
+                status = solver.Solve()
+
+                # STEP 7: Check solver status and handle errors
+                # OR-Tools returns different status codes:
+                # - OPTIMAL: found optimal solution
+                # - FEASIBLE: found feasible solution (may not be optimal)
+                # - INFEASIBLE: no solution satisfies all constraints
+                # - UNBOUNDED: objective can go to infinity (shouldn't happen with capacity constraints)
+                if status == pywraplp.Solver.OPTIMAL:
+                    # Solution found successfully
+                    pass
+                elif status == pywraplp.Solver.FEASIBLE:
+                    # Feasible solution found but may not be optimal
+                    # This is acceptable for our use case
+                    pass
+                elif status == pywraplp.Solver.INFEASIBLE:
+                    raise ValueError("Linear program is infeasible: no solution satisfies all constraints")
+                elif status == pywraplp.Solver.UNBOUNDED:
+                    raise ValueError("Linear program is unbounded: objective can go to infinity")
+                else:
+                    raise ValueError(f"Linear program did not converge: status = {status}")
+                
+                # STEP 8: Extract and format results
+                # Get optimal values for each decision variable
+                # Clean numerical noise: sometimes solver returns tiny negative values (e.g., -1e-10)
+                # due to floating-point precision. Round these to zero for cleaner output
+                result: Dict[str, float] = {}
+                for p in products:
+                    value = x[p].solution_value()
+                    # Clean tiny negative values due to numerical noise
+                    result[p] = max(0.0, float(value))
+                
+                # Get total profit from the objective value
+                # Since we maximized, the objective value is already the total profit
+                total_profit = float(objective.Value())
+                result["total_profit"] = total_profit
+
+                return result
+
+            # ============================================================
+
+            # test algorithm
+
+            # ============================================================
+
+
+            # if __name__ == "__main__":
+
+            machine_cap_demo = {
+                "machine_1": 240,
+                "machine_2": 200,
+            }
+
+            time_per_unit_demo = {
+                "product_A": {"machine_1": 3, "machine_2": 4},
+                "product_B": {"machine_1": 2, "machine_2": 1},
+                "product_C": {"machine_1": 4, "machine_2": 2},
+            }
+
+            profit_demo = {
+                "product_A": 40,
+                "product_B": 25,
+                "product_C": 30,
+            }
+
+
+            result1 = optimise_production(machine_cap_demo, time_per_unit_demo,
+            profit_demo)
+
+            print("Exercise result:", result1)
+          id: 5114fea2-4a92-4d24-8542-0270ef5c8999
+          metadata: {}
+          outputs:
+            - name: stdout
+              output_type: stream
+              text:
+                - >
+                  Exercise result: {'product_A': 32.00000000000001, 'product_B':
+                  71.99999999999997, 'product_C': 0.0, 'total_profit':
+                  3079.9999999999995}
+          sortingKey: "4"
+          type: code
+        - blockGroup: df6303a7-bc94-4295-aa45-6d9d6c33d294
+          content: ""
+          id: edb16369-31c7-4bfb-ac11-9b9e27de8181
+          metadata: {}
+          outputs: []
+          sortingKey: "5"
+          type: code
+      executionMode: block
+      id: 150e3523-4a71-4bdf-b540-a1fe5aa7dd49
+      isModule: false
+      name: linear_optimization_for_resource_allocation_ortools
+  settings: {}
+version: 1.0.0

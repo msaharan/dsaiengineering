@@ -1,0 +1,356 @@
+metadata:
+  createdAt: 2025-12-12T21:29:45.201Z
+project:
+  id: cc0084c1-2219-4b8d-af6b-9e6cef3106cb
+  integrations: []
+  name: linear_optimization_for_resource_allocation_pyomo
+  notebooks:
+    - blocks:
+        - blockGroup: c262b5a1-49ce-49c2-a92d-cf8c8ed0232b
+          content: "# Exercise: Linear optimization for resource allocation using Pyomo"
+          id: 2e6f7f0c-58e7-4b6b-b6cb-04464a7835e2
+          metadata: {}
+          sortingKey: "0"
+          type: markdown
+        - blockGroup: 9eecfd83-726e-493d-90a9-964f36c2f54b
+          content: "## Scenario"
+          id: 10c93067-656e-4ea6-afd8-f386a9f61718
+          metadata: {}
+          sortingKey: "1"
+          type: markdown
+        - blockGroup: e8eef557-50d6-4b7c-b079-0a3586d5254b
+          content: >-
+            
+            A client wants to decide how many units of 3 products to produce.
+
+            Each product requires machine time on two machines.
+
+            Each product yields a profit.
+
+
+            You must build a linear programming model that determines the
+            optimal production plan.
+
+
+            ---
+
+
+            ### Input
+
+
+            You receive three Python dictionaries:
+
+
+            ```python   
+
+            machine_cap = {
+                "machine_1": 240,   # minutes available
+                "machine_2": 200
+            }
+
+
+            time_per_unit = {
+                "product_A": {"machine_1": 3, "machine_2": 4},
+                "product_B": {"machine_1": 2, "machine_2": 1},
+                "product_C": {"machine_1": 4, "machine_2": 2},
+            }
+
+
+            profit = {
+                "product_A": 40,
+                "product_B": 25,
+                "product_C": 30,
+            }
+
+            ```
+
+            ---
+
+
+            ### Task
+
+
+            Write a function 
+
+
+            ```python
+
+            def optimise_production(machine_cap, time_per_unit, profit):
+                ...
+            ```
+
+
+            ### Requirements
+
+
+            - Use Pyomo to model and solve the linear program.
+
+
+            - Maximise total profit.
+
+
+            - Products must have non-negative production quantities.
+
+
+            - Return a dict:
+
+
+            ```python
+
+            {
+              "product_A": optimal_float,
+              "product_B": optimal_float,
+              "product_C": optimal_float,
+              "total_profit": float
+            }
+
+            ```
+
+            ### Evaluation Criteria
+
+
+            -  Correct LP formulation
+
+
+            - Clear structure
+
+
+            - Type hints
+
+
+            - Comments explaining constraints
+
+
+            ---
+          id: 505df6bc-fab7-42e7-b34b-1ffddc435c90
+          metadata: {}
+          sortingKey: "2"
+          type: markdown
+        - blockGroup: 0bdce691-82f5-4abb-bf7b-c841277ad1ee
+          content: "## Code implementation"
+          id: dd851225-fb61-493f-a81d-ddd52d1b1a21
+          metadata: {}
+          sortingKey: "3"
+          type: markdown
+        - blockGroup: 2224b6fa-6840-44f6-bee3-951b0398d079
+          content: >-
+            from typing import Dict
+
+            from pyomo.environ import ConcreteModel, Var, Objective, Constraint,
+            NonNegativeReals, maximize, SolverFactory, value
+
+
+            def optimise_production(
+                machine_cap: Dict[str, float],
+                time_per_unit: Dict[str, Dict[str, float]],
+                profit: Dict[str, float],
+            ) -> Dict[str, float]:
+                """
+                Solve a linear program to maximise total profit subject to machine capacity constraints.
+                
+                This function demonstrates linear programming (LP) for resource allocation:
+                - Decision variables: how many units of each product to produce
+                - Objective: maximize total profit
+                - Constraints: machine time capacities cannot be exceeded
+                - Bounds: production quantities must be non-negative
+                
+                Pyomo is a Python-based open-source optimization modeling language that provides a
+                high-level interface for defining optimization problems. It can interface with various
+                solvers (CBC, IPOPT, etc.) to solve the problem. Pyomo is particularly
+                useful for modeling complex optimization problems with readable, maintainable code.
+
+                Args:
+                    machine_cap: Dict mapping machine name -> available time (e.g., minutes)
+                    time_per_unit: Dict mapping product -> {machine: time_required}
+                    profit: Dict mapping product -> profit per unit
+                
+                Returns:
+                    Dict with optimal production per product and total profit
+                """
+                # STEP 1: Establish deterministic variable ordering
+                # We need a consistent order for decision variables to ensure reproducible behavior.
+                # Using list() preserves insertion order (Python 3.7+), making the code predictable.
+                # These lists will be used as index sets for Pyomo variables and constraints.
+                products = list(time_per_unit.keys())
+                machines = list(machine_cap.keys())
+                # Example: products = ["product_A", "product_B", "product_C"]
+                #          These will be used to index model.x["product_A"], model.x["product_B"], etc.
+
+                # STEP 2: Create the Pyomo model
+                # Pyomo uses ConcreteModel for models where all data is known at model creation time.
+                # ConcreteModel allows us to define the model structure and data together.
+                # 
+                # Why Pyomo for linear programming?
+                # - Clean, readable model definition (similar to mathematical notation)
+                # - Flexible solver interface (can use CBC, IPOPT, etc.)
+                # - Supports both integer and continuous variables
+                # - Good for educational purposes and production systems
+                model = ConcreteModel()
+                
+                # STEP 3: Define index sets
+                # Index sets help organize the model and make it more readable.
+                # We'll use these sets to define variables and constraints.
+                model.products = products
+                model.machines = machines
+
+                # STEP 4: Create decision variables
+                # Each variable represents the number of units to produce for a product
+                # Variables are continuous (can be fractional) and non-negative (>= 0)
+                # 
+                # Var(within=NonNegativeReals) creates a continuous decision variable that must be >= 0.
+                # The within parameter specifies the domain (NonNegativeReals means values must be >= 0).
+                # No upper bound is specified, so variables can be unbounded above.
+                #
+                # Example: model.x["product_A"] is a variable representing units of product_A to produce
+                #          with constraint: model.x["product_A"] >= 0 (no upper limit)
+                model.x = Var(model.products, within=NonNegativeReals)
+
+                # STEP 5: Add machine capacity constraints
+                # For each machine, the total time used by all products must not exceed capacity
+                # 
+                # Constraint form: Σ(time_per_unit[p][m] * x[p]) <= machine_cap[m]
+                # 
+                # Example for machine_1: 3*x_A + 2*x_B + 4*x_C <= 240
+                # Note: The rule function can access data from the outer scope (time_per_unit, machine_cap)
+                # because Pyomo's ConcreteModel evaluates rules at model creation time.
+                def capacity_rule(model, m):
+                    # Sum of (time * production) over all products must be <= capacity
+                    # Get time required for each product on machine m
+                    # If product doesn't use machine, assume 0 time (defensive programming)
+                    return sum(time_per_unit.get(p, {}).get(m, 0.0) * model.x[p] for p in model.products) <= machine_cap[m]
+                
+                model.capacity = Constraint(model.machines, rule=capacity_rule)
+
+                # STEP 6: Define objective function (maximize total profit)
+                # Mathematical objective: maximize profit = Σ(profit[p] * x[p])
+                # 
+                # Pyomo can maximize directly, so we use positive profit coefficients
+                # Example: profit = {"product_A": 40, "product_B": 25, "product_C": 30}
+                #          → objective = 40*x_A + 25*x_B + 30*x_C
+                # Note: The rule function can access data from the outer scope (profit)
+                # because Pyomo's ConcreteModel evaluates rules at model creation time.
+                def objective_rule(model):
+                    return sum(profit[p] * model.x[p] for p in model.products)
+                
+                model.objective = Objective(rule=objective_rule, sense=maximize)
+
+                # STEP 7: Solve the model
+                # Pyomo can interface with various solvers. We'll use:
+                # - 'cbc': COIN-OR Branch and Cut (excellent for linear and integer programming)
+                # - 'ipopt': Interior Point Optimizer (good for linear and nonlinear problems)
+                #
+                # The solver uses advanced algorithms (simplex, interior point) to find
+                # the optimal production plan that satisfies all constraints and maximizes profit.
+                solver_name = None
+                for candidate in ['cbc', 'ipopt']:
+                    if SolverFactory(candidate).available():
+                        solver_name = candidate
+                        break
+                
+                if solver_name is None:
+                    raise RuntimeError(
+                        "No suitable solver found. Please install cbc or ipopt. "
+                        "For example: conda install -c conda-forge coincbc ipopt"
+                    )
+                
+                solver = SolverFactory(solver_name)
+                # Set solver options for better performance and to ensure optimality
+                if solver_name == 'cbc':
+                    solver.options['seconds'] = 60  # Time limit
+                elif solver_name == 'ipopt':
+                    solver.options['max_iter'] = 1000  # Maximum iterations
+                
+                results = solver.solve(model, tee=False)  # tee=False suppresses solver output
+
+                # STEP 8: Check solver status and handle errors
+                # The solver returns a results object with status information.
+                # We accept both 'optimal' and 'feasible' solutions. Other possible termination conditions include:
+                # - 'optimal': Found the best possible solution ✓ (preferred)
+                # - 'feasible': Found a valid solution, but might not be optimal (acceptable)
+                # - 'infeasible': No solution satisfies all constraints
+                # - 'unbounded': Objective can go to infinity (shouldn't happen with capacity constraints)
+                # - 'error': Solver encountered an error
+                # For linear programs, we prefer optimal solutions but accept feasible ones for robustness.
+                if results.solver.termination_condition not in ['optimal', 'feasible']:
+                    if results.solver.termination_condition == 'infeasible':
+                        raise ValueError("Linear program is infeasible: no solution satisfies all constraints")
+                    elif results.solver.termination_condition == 'unbounded':
+                        raise ValueError("Linear program is unbounded: objective can go to infinity")
+                    else:
+                        raise ValueError(
+                            f"Linear program did not converge: termination condition = {results.solver.termination_condition}"
+                        )
+                
+                # STEP 9: Extract and format results
+                # Get optimal values for each decision variable
+                # Clean numerical noise: sometimes solver returns tiny negative values (e.g., -1e-10)
+                # due to floating-point precision. Round these to zero for cleaner output
+                result: Dict[str, float] = {}
+                for p in products:
+                    # value(model.x[p]) returns the value of the variable in the solution
+                    var_value = value(model.x[p])
+                    # Clean tiny negative values due to numerical noise
+                    result[p] = max(0.0, float(var_value))
+                
+                # Get total profit from the objective value
+                # Since we maximized, the objective value is already the total profit
+                total_profit = float(value(model.objective))
+                result["total_profit"] = total_profit
+
+                return result
+
+            # ============================================================
+
+            # test algorithm
+
+            # ============================================================
+
+
+            # if __name__ == "__main__":
+
+            machine_cap_demo = {
+                "machine_1": 240,
+                "machine_2": 200,
+            }
+
+            time_per_unit_demo = {
+                "product_A": {"machine_1": 3, "machine_2": 4},
+                "product_B": {"machine_1": 2, "machine_2": 1},
+                "product_C": {"machine_1": 4, "machine_2": 2},
+            }
+
+            profit_demo = {
+                "product_A": 40,
+                "product_B": 25,
+                "product_C": 30,
+            }
+
+
+            result1 = optimise_production(machine_cap_demo, time_per_unit_demo,
+            profit_demo)
+
+            print("Exercise result:", result1)
+          id: b9d7d2db-b5b4-4ed9-a2eb-ad22d29e721e
+          metadata: {}
+          outputs:
+            - name: stdout
+              output_type: stream
+              text:
+                - >
+                  Exercise result: {'product_A': 32.0, 'product_B': 72.0,
+                  'product_C': 0.0, 'total_profit': 3080.0}
+          sortingKey: "4"
+          type: code
+        - blockGroup: 463aab24-8a09-4c0c-8a6a-e77a058c299c
+          content: ""
+          id: 0b8d6384-a2d0-44ca-8a2f-2a627d0a5d3b
+          metadata: {}
+          outputs: []
+          sortingKey: "5"
+          type: code
+      executionMode: block
+      id: 22573f70-38a8-4020-a664-d9bda677b5a0
+      isModule: false
+      name: linear_optimization_for_resource_allocation_pyomo
+  settings: {}
+version: 1.0.0

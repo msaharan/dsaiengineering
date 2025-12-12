@@ -1,0 +1,470 @@
+metadata:
+  createdAt: 2025-12-12T21:30:03.261Z
+project:
+  id: 64cf71cf-6b8a-4508-b521-fddd2281678a
+  integrations: []
+  name: oil_and_gas_production_allocation_scipy
+  notebooks:
+    - blocks:
+        - blockGroup: 329e9c15-96c2-49c9-87be-6d4122c58449
+          content: "# Exercise — Oil & Gas Production Allocation"
+          id: 51bcd606-a025-4d5d-8456-0b97a596ee60
+          metadata: {}
+          sortingKey: "0"
+          type: markdown
+        - blockGroup: beaf2b1c-3312-421b-81a3-cbfbfea4a2cd
+          content: "## Scenario"
+          id: d584efc7-c739-4c7f-8d2e-581368d5809c
+          metadata: {}
+          sortingKey: "1"
+          type: markdown
+        - blockGroup: 72a88768-125f-45f8-bebd-52c11d555a64
+          content: >+
+            An operator manages three wells: `A`, `B`, and `C`.
+
+            Each well has:
+
+            - a maximum daily production capacity (barrel/day)
+
+            - a minimum “contracted” production they should try to meet if
+            possible
+
+
+            There is also a shared pipeline with a maximum daily throughput.
+
+
+            Each well has a different revenue per barrel due to quality
+            differences.
+
+
+            You must decide the production per well to maximise revenue, subject
+            to:
+
+            - well capacity constraints
+
+            - pipeline capacity
+
+            - contracted minimums
+
+
+            ### Inputs
+
+            You are given this data as Python dictionaries:
+
+            ```python
+
+            well_capacities = {
+                "A": {"min": 200, "max": 600},
+                "B": {"min": 100, "max": 500},
+                "C": {"min":  50, "max": 300},
+            }
+
+
+            pipeline_capacity = 1000  # barrels per day
+
+
+            revenue_per_barrel = {
+                "A": 45.0,
+                "B": 40.0,
+                "C": 50.0,
+            }
+
+            ```
+
+            ### Task
+
+            Implement:
+
+            ```python
+
+            from typing import Dict
+
+
+            def optimise_production_plan(
+                well_capacities: Dict[str, Dict[str, float]],
+                pipeline_capacity: float,
+                revenue_per_barrel: Dict[str, float],
+            ) -> Dict[str, float]:
+                """
+                Compute the optimal production per well subject to capacity and pipeline constraints.
+                """
+                ...
+            ```
+
+            ### Requirements
+
+            - Formulate and solve a linear program using
+            `scipy.optimize.linprog`.
+
+            - Decision variables: production of each well (`A`, `B`, `C`).
+
+            - Constraints:
+                - For each well: min $\leq$ production $\leq$ max
+                - Sum of all production $\leq$ pipeline capacity
+            - Objective: maximize tota revenue
+
+            - Return a dictionary
+
+            ```python
+
+            {
+              "A": float,
+              "B": float,
+              "C": float,
+              "total_revenue": float
+            }
+
+            ```
+
+            - Handle potential solver failure by raising a clear error or
+            returning a meaningful message. 
+                
+
+          id: 76060f28-35c8-4be4-8ebe-891546686da1
+          metadata: {}
+          sortingKey: "2"
+          type: markdown
+        - blockGroup: 4678e81e-7eac-4330-9750-89ef1ff670b8
+          content: "## Thinking through the problem"
+          id: e3663a6e-00e5-4a78-8051-10f5c4d0c6bd
+          metadata: {}
+          sortingKey: "3"
+          type: markdown
+        - blockGroup: 2ba52fee-6310-4f31-a929-e04e2199a0e9
+          content: "### Define decision variables"
+          id: a995f281-1788-4396-b321-99534c987f72
+          metadata: {}
+          sortingKey: "4"
+          type: markdown
+        - blockGroup: 8a132f76-aeb8-4c87-9866-fe84b7da87e0
+          content: |-
+            We need variables that represent the choices we control.
+
+            Let: 
+            - $x_A$ be the production of well A (per day)
+            - $x_B$ be the production of well B
+            - $x_C$ be the production of well C
+
+            So our decision vector is:
+            $$
+            x = [x_A, x_B, x_C]
+            $$
+          id: bf6620c2-ea2e-423e-963b-40936febd082
+          metadata: {}
+          sortingKey: "5"
+          type: markdown
+        - blockGroup: c9571e12-b7a0-4e4f-bf59-9367e5f1cc79
+          content: "### Define objective in math"
+          id: b857a655-4ec9-49cd-8663-98e0cafabec2
+          metadata: {}
+          sortingKey: "6"
+          type: markdown
+        - blockGroup: 3653274f-ae2a-4d30-9a16-16314a3d33ee
+          content: >-
+            $$
+
+            \text{Revenue}= 45x_A + 40x_B + 50x_C
+
+            $$
+
+
+            In vector form:
+
+            $$
+
+            \text{max}\;c^T x
+
+            $$
+
+            with $c = [45, 40, 50]$.
+
+
+            But `linprog` minimizes. So we pass `c = [-45, -40, -50]` and then
+            negate the result.
+          id: 68924f4a-157f-410e-b736-c3cd00b30204
+          metadata: {}
+          sortingKey: "7"
+          type: markdown
+        - blockGroup: 88466a26-3528-4606-8dcc-319bf9990228
+          content: "### Write the constraints in math"
+          id: 3db6dba9-4da5-41ad-b7f3-a37d80d5fee1
+          metadata: {}
+          sortingKey: "8"
+          type: markdown
+        - blockGroup: 269abe2e-df4a-4e05-a306-be43c391973f
+          content: >-
+            We have three types of constraints.
+
+
+            a) Pipeline capacity
+
+            Sum of all production must not exceed the pipeline capacity:
+
+            $$
+
+            x_A + x_B + x_C \leq pipeline\_capacity
+
+            $$
+
+
+            In vector/matrix form:
+
+            - $A_{ub} = [1, 1, 1]$
+
+            - $b_{ub} = pipeline\_capacity$
+
+
+            b) Per-well min and max
+
+            For each well:
+
+            - $\text{min}_A \leq x_A \leq \text{max}_A$
+
+            - $\text{min}_B \leq x_B \leq \text{max}_B$
+
+            - $\text{min}_C \leq x_C \leq \text{max}_C$
+
+
+            In `linprog`, these become bounds on each variable:
+
+            ```python
+
+            bounds = [
+                (min_A, max_A),
+                (min_B, max_B),
+                (min_C, max_C)
+            ]
+
+            ```
+
+
+            We don't need to encode min/max as extra rows in `A_ub`; `bounds`
+            handles it cleanly.
+
+
+            No need for expliciit non-negativity constraints because the lower
+            bounds already enforce that.
+          id: 4dd7700c-3054-47cd-a822-f0726dba46d5
+          metadata: {}
+          sortingKey: "9"
+          type: markdown
+        - blockGroup: 4fcf70f3-810f-4338-9984-c4e7d142298e
+          content: |
+            ### Map this to `linprog` parameters
+          id: 31f71655-5019-44d1-a134-9c6f851d3061
+          metadata: {}
+          sortingKey: a
+          type: markdown
+        - blockGroup: b728554f-2ed3-4cdb-ad0c-f0dcfdb6d2cc
+          content: >+
+            For SciPy:
+
+
+            ```python
+
+            from scipy.optimize import linprog
+
+
+            c = [-45, -40, -50] 
+
+            A_ub = [[1, 1, 1]]
+
+            b_ub = [pipeline_capacity]
+
+
+            bounds = [(min_A, max_A), (min_B, max_B), (min_C, max_C)]
+
+
+            res = linprog(c, A_ub, b_ub, bounds=bounds, method='highs')
+
+
+            Then:
+
+            - `res.x` $\rightarrow$ array with $[x_A, x_B, x_C]$
+
+            - `res.fun` $\rightarrow$ value of minimized objective =
+            $\Sigma_{i=1}^3 c_i x_i$ = negative revenue
+
+            - So total revenue is `-res.fun`
+
+          id: 2c283549-5827-403e-b8a3-f613eaa1292d
+          metadata: {}
+          sortingKey: b
+          type: markdown
+        - blockGroup: 160f5107-d7bc-4f07-b738-e784d65e9e30
+          content: "## Code implementation"
+          id: 05082dab-1027-4055-87d7-19db1f9f35bd
+          metadata: {}
+          sortingKey: c
+          type: markdown
+        - blockGroup: 076df9ef-a627-4dde-b03b-eac600ae8530
+          content: >-
+            from typing import Dict, List, Tuple
+
+            from scipy.optimize import linprog
+
+
+            def optimise_production_plan(
+                well_capacities: Dict[str, Dict[str, float]],
+                pipeline_capacity: float,
+                revenue_per_barrel: Dict[str, float],
+            ) -> Dict[str, float]:
+                """
+                Compute the optimal production per well subject to capacity and pipeline constraints.
+
+                Args: 
+                    well_capacities: Dict mapping well name -> {"min": float, "max": float}
+                    pipeline_capacity: Maximum total pipeline throughput (barrels/day)
+                    revenue_per_barrel: Dict mapping well name -> revenue per barrel
+                
+                Returns:
+                    Dict with optimal production per well and total revenue, e.g.:
+                    {
+                        "A": 300.0,
+                        "B": 400.0,
+                        "C": 300.0,
+                        "total_revenue": 39500.0
+                    }
+                """
+                # ============================================================
+                # STEP 1: Establish a deterministic variable ordering
+                # ============================================================
+                # We need a consistent order for our decision variables (x_A, x_B, x_C)
+                # to match the order in our coefficient vectors and constraint matrices.
+                # Sorting ensures the same input always produces the same variable ordering,
+                # which is important for reproducibility and debugging.
+                wells: List[str] = sorted(well_capacities.keys())
+                # Example: wells = ["A", "B", "C"] means x[0]=A, x[1]=B, x[2]=C
+
+                # ============================================================
+                # STEP 2: Build the objective function coefficients
+                # ============================================================
+                # Mathematical objective: maximize revenue = 45*x_A + 40*x_B + 50*x_C
+                # However, scipy.optimize.linprog MINIMIZES by default.
+                # 
+                # To maximize revenue, we minimize the negative revenue:
+                #   minimize: -45*x_A - 40*x_B - 50*x_C
+                # 
+                # This is equivalent because:
+                #   max(f(x)) = -min(-f(x))
+                #
+                # The coefficient vector c represents: minimize c^T * x
+                # So we negate all revenue values to convert maximization to minimization.
+                c = [-revenue_per_barrel[w] for w in wells]
+                # Example: If revenue = {"A": 45, "B": 40, "C": 50}
+                #          Then c = [-45, -40, -50]
+
+                # ============================================================
+                # STEP 3: Build the pipeline capacity constraint
+                # ============================================================
+                # Constraint: x_A + x_B + x_C <= pipeline_capacity
+                # 
+                # In matrix form: A_ub * x <= b_ub
+                # Where A_ub is a matrix and b_ub is a vector.
+                #
+                # For our single constraint: [1, 1, 1] * [x_A, x_B, x_C]^T <= pipeline_capacity
+                # So A_ub = [[1, 1, 1]] (one row, three columns)
+                #    b_ub = [pipeline_capacity]
+                A_ub = [[1.0 for _ in wells]]  # One row with 1.0 for each well
+                b_ub = [pipeline_capacity]      # Right-hand side of the inequality
+
+                # ============================================================
+                # STEP 4: Set variable bounds (per-well min/max constraints)
+                # ============================================================
+                # For each well w, we have: min_w <= x_w <= max_w
+                # 
+                # Instead of adding these as separate inequality constraints in A_ub,
+                # linprog allows us to specify bounds directly, which is more efficient.
+                # 
+                # bounds[i] = (lower_bound, upper_bound) for variable x[i]
+                # Use None for unbounded (e.g., (0, None) means x >= 0 with no upper bound)
+                bounds: List[Tuple[float, float]] = []
+                for w in wells:
+                    w_min = well_capacities[w]["min"]  # Lower bound (contracted minimum)
+                    w_max = well_capacities[w]["max"]  # Upper bound (well capacity)
+                    bounds.append((w_min, w_max))
+                # Example: bounds = [(200, 600), (100, 500), (50, 300)]
+                #          means: 200 <= x_A <= 600, 100 <= x_B <= 500, 50 <= x_C <= 300
+
+                # ============================================================
+                # STEP 5: Solve the linear program
+                # ============================================================
+                # Call the solver with all our parameters:
+                # - c: objective coefficients (we're minimizing -revenue)
+                # - A_ub, b_ub: inequality constraints (pipeline capacity)
+                # - bounds: variable bounds (well min/max)
+                # - method='highs': uses the HiGHS solver (fast and reliable)
+                res = linprog(
+                    c,
+                    A_ub=A_ub,
+                    b_ub=b_ub,
+                    bounds=bounds,
+                    method='highs',
+                )
+
+                # Check if the solver found an optimal solution
+                # If not, the problem might be infeasible (no solution exists) or unbounded
+                if not res.success:
+                    raise ValueError(f"LP solver failed: {res.message}")
+
+                # ============================================================
+                # STEP 6: Extract and format the results
+                # ============================================================
+                # res.x contains the optimal decision variables in the same order as 'wells'
+                # res.fun contains the optimal value of the MINIMIZED objective function
+                x_opt = res.x  # Optimal production values: [x_A_opt, x_B_opt, x_C_opt]
+                
+                # Remember: we minimized -revenue, so res.fun = -actual_revenue
+                # Therefore: actual_revenue = -res.fun
+                total_revenue = -res.fun
+
+                # Build a readable dictionary mapping well names to their optimal production
+                result: Dict[str, float] = {
+                    w: float(x) for w, x in zip(wells, x_opt)
+                }
+                result["total_revenue"] = float(total_revenue)
+                return result
+
+            # ============================================================
+
+            # Test algorithm
+
+            # ============================================================
+
+            # if __name__ == "__main__":    
+
+            well_capacities_demo = {
+                "A": {"min": 200, "max": 600},
+                "B": {"min": 100, "max": 500},
+                "C": {"min":  50, "max": 300},
+            }
+
+            pipeline_capacity_demo = 1000
+
+            revenue_demo = {"A": 45.0, "B": 40.0, "C": 50.0}
+
+
+            prod_plan = optimise_production_plan(
+                well_capacities_demo,
+                pipeline_capacity_demo,
+                revenue_demo,
+            )
+
+            print("Exercise result:", prod_plan)
+          id: 24ba4555-37e6-4a26-9a2d-13644c7a8b2c
+          metadata: {}
+          outputs:
+            - name: stdout
+              output_type: stream
+              text:
+                - >
+                  Exercise result: {'A': 600.0, 'B': 100.0, 'C': 300.0,
+                  'total_revenue': 46000.0}
+          sortingKey: d
+          type: code
+      executionMode: block
+      id: a8d87a6d-aaff-4c46-bb66-79012a21fe12
+      isModule: false
+      name: oil_and_gas_production_allocation_scipy
+  settings: {}
+version: 1.0.0

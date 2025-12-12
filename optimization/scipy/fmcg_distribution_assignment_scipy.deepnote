@@ -1,0 +1,217 @@
+metadata:
+  createdAt: 2025-12-12T21:29:57.892Z
+project:
+  id: b39923a7-0d75-4156-8ff0-eaa8d8442128
+  integrations: []
+  name: fmcg_distribution_assignment_scipy
+  notebooks:
+    - blocks:
+        - blockGroup: 0e8c0c3b-7ba7-4d22-bdc0-e68eddae6a00
+          content: |-
+            # Exercise — FMCG Distribution Assignment
+            Domain: FMCG (Fast-Moving Consumer Goods)
+
+            Theme: Assign warehouses to stores optimally (assignment problem).
+          id: 570e24ae-3228-403f-b6ea-61c1fc9bec74
+          metadata: {}
+          sortingKey: "0"
+          type: markdown
+        - blockGroup: 87bae8ab-e69c-4f54-882c-3553c4a672bf
+          content: |+
+            ## Scenario
+
+          id: fd9179bb-76d9-43bb-8b10-4866dc82a2f7
+          metadata: {}
+          sortingKey: "1"
+          type: markdown
+        - blockGroup: bfe2c5ea-f635-4e1a-bc7b-519a266da456
+          content: >
+            A consumer goods company has 3 warehouses and 3 major retail stores.
+            There is a pre-unit transportation cost from each warehouse to each
+            store.
+
+
+            To design a reusable "distribution assignment" block, you must
+            compute the minimum-cost assignment of warehouse to stores,
+            assuming:
+
+            - Each warehouse served exactly one store.
+
+            - Each store is served by exactly one warehouse.
+
+
+            ### Input
+
+            A cost matrix:
+
+            ```python
+
+            import numpy as np
+
+
+            cost_matrix = np.array([
+                [8, 6, 7],  # Warehouse 0 to Stores 0,1,2
+                [5, 9, 3],  # Warehouse 1
+                [6, 4, 5],  # Warehouse 2
+            ])
+
+
+            ### Task
+
+            Implement:
+
+            ```python
+
+            from typing import Any, Dict, List, Tuple
+
+            import numpy as np
+
+
+            def assign_warehouses_to_stores(cost_matrix: np.ndarray) ->
+            Dict[str, Any]:
+                """
+                Solve the warehouse-store assignment problem using the Hungarian algorithm.
+                """
+                ...
+            ```
+
+
+            ### Requirements
+
+            - Use `scipy.optimize.linear_sum_assignment` to solve the assignment
+            problem.
+
+            - Return
+
+            ```python
+
+            {
+                "assignments": List[Tuple[int, int]], # (warehouse_index, store_index)
+                "total_cost": float, # total cost of the assignment
+            }
+
+            ```
+
+            - Make sure the function works for any square cost matrix (n x n),
+            not just 3x3.
+          id: a9cec792-9a57-4501-aa67-6fb71e75e708
+          metadata: {}
+          sortingKey: "2"
+          type: markdown
+        - blockGroup: aa842489-8b9b-4d36-a422-80abe3de4c4c
+          content: "## Code implementation"
+          id: 2b151cdf-6b62-4edb-8d92-2d1ae05c8cac
+          metadata: {}
+          sortingKey: "3"
+          type: markdown
+        - blockGroup: a24fba94-de81-45c2-a766-6f750e0c6692
+          content: >-
+            import numpy as np
+
+            from typing import Any, Dict, List, Tuple
+
+            from scipy.optimize import linear_sum_assignment
+
+
+            def assign_warehouses_to_stores(cost_matrix: np.ndarray) ->
+            Dict[str, Any]:
+                """
+                Solve the warehouse-store assignment problem using the Hungarian algorithm.
+                
+                This function demonstrates the assignment problem: given N warehouses and N stores,
+                find the one-to-one assignment that minimizes total transportation cost.
+                
+                The Hungarian algorithm (implemented by scipy.optimize.linear_sum_assignment) is
+                a polynomial-time algorithm that solves this classic combinatorial optimization
+                problem efficiently. It's particularly useful when you need to assign resources
+                to tasks with different costs for each pairing.
+
+                Args:
+                    cost_matrix: A square numpy array of shape (n, n) where
+                                 cost_matrix[i, j] is the cost of assigning
+                                 warehouse i to store j.
+                                 Lower values are better (minimization problem).
+
+                Returns:
+                    {
+                        "assignments": [(warehouse_index, store_index), ...],
+                        "total_cost": float
+                    }
+                    The assignments list contains tuples where each tuple (i, j) means
+                    warehouse i is assigned to store j.
+
+                Raises:
+                    ValueError: If the matrix is not 2D square.
+                """
+                # STEP 1: Validate input shape
+                # The assignment problem requires a square matrix (N warehouses, N stores)
+                # This ensures we can create a one-to-one assignment (each warehouse to one store)
+                if cost_matrix.ndim != 2 or cost_matrix.shape[0] != cost_matrix.shape[1]:
+                    raise ValueError("cost_matrix must be a square 2D array.")
+
+                # STEP 2: Solve using the Hungarian algorithm
+                # linear_sum_assignment finds the optimal assignment that minimizes total cost
+                # It returns two arrays:
+                #   - row_ind: indices of warehouses (rows) in the optimal assignment
+                #   - col_ind: indices of stores (columns) assigned to those warehouses
+                # These arrays are aligned: row_ind[k] is assigned to col_ind[k]
+                # 
+                # Algorithm complexity: O(n³) for n×n matrix, which is efficient for this problem
+                row_ind, col_ind = linear_sum_assignment(cost_matrix)
+
+                # STEP 3: Format assignments as list of tuples
+                # Convert the aligned arrays into a readable list of (warehouse, store) pairs
+                # This format is easier to work with than separate arrays
+                # Example: row_ind=[0,1,2], col_ind=[1,2,0] → [(0,1), (1,2), (2,0)]
+                assignments: List[Tuple[int, int]] = list(zip(row_ind.tolist(), col_ind.tolist()))
+                
+                # STEP 4: Compute total cost of the optimal assignment
+                # Use NumPy advanced indexing to extract costs: cost_matrix[row_ind, col_ind]
+                # This creates an array of costs for each assignment pair, then we sum them
+                # Example: If assignments are [(0,1), (1,2), (2,0)], we sum cost_matrix[0,1] + 
+                #          cost_matrix[1,2] + cost_matrix[2,0]
+                total_cost = float(cost_matrix[row_ind, col_ind].sum())
+
+                # STEP 5: Return structured result
+                # Dictionary format is clean, serializable (good for APIs, JSON, frontends),
+                # and self-documenting (keys explain what each value represents)
+                return {
+                    "assignments": assignments,  # List of (warehouse_idx, store_idx) pairs
+                    "total_cost": total_cost,  # Sum of costs for all assignments
+                }
+
+            # ============================================================
+
+            # Test algorithm
+
+            # ============================================================
+
+            # if __name__ == "__main__":
+
+            cost_matrix_demo = np.array([
+                [8, 6, 7],
+                [5, 9, 3],
+                [6, 4, 5],
+            ])
+
+            assignment_result = assign_warehouses_to_stores(cost_matrix_demo)
+
+            print("Exercise 3 result:", assignment_result)
+          executionCount: 1
+          id: 59a1180d-a9c9-4ff5-96e5-7da69d0c8db3
+          metadata: {}
+          outputs:
+            - name: stdout
+              output_type: stream
+              text:
+                - >
+                  Exercise 3 result: {'assignments': [(0, 1), (1, 2), (2, 0)],
+                  'total_cost': 15.0}
+          sortingKey: "4"
+          type: code
+      executionMode: block
+      id: f4991f64-1ccd-43a1-baa2-375bb16a48fd
+      isModule: false
+      name: fmcg_distribution_assignment_scipy
+  settings: {}
+version: 1.0.0
