@@ -4,3 +4,6 @@
 - `conda create -n aiagents python-3.12`
 - `pip install uv && uv pip instal -r requirements.txt`
 
+## Resources
+- [Inside OpenAI's in-house data agent](https://openai.com/index/inside-our-in-house-data-agent/)
+
