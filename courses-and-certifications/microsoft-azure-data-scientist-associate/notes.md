@@ -401,7 +401,200 @@ returned_job = ml_client.create_or_update(job)
 To efficiently work with the Python SDK, you will need to use the reference documentation. In the reference documentation, you will find all possible classes, methods, and parameters available within the Python SDK. [The reference documentation on the `MLClient` class](https://learn.microsoft.com/en-us/python/api/azure-ai-ml/azure.ai.ml.mlclient) includes the methods you can use to connect and interact with the workspace. Moreover, it also links to the possible operations for the various entities like how to list the existing datastores in your workspace. [The reference documentation also includes a list of the classes for all entities](https://learn.microsoft.com/en-us/python/api/azure-ai-ml/azure.ai.ml.entities) you can interact with. For example, separate classes exist when you want to create a datastore that links to an Azure Blob Storage, or to an Azure Data Lake Gen 2. By selecting a specific class like `AmlCompute` from the list of entities, you can find [a more detailed page on how to use the class and what parameters it accepts](https://learn.microsoft.com/en-us/python/api/azure-ai-ml/azure.ai.ml.entities.amlcompute).
 
 #### Explore the CLI
-https://learn.microsoft.com/en-us/training/modules/explore-developer-tools-for-workspace-interaction/4-explore-cli
+
+In this exercise, you learn how to:
+
+- Create resources with the Azure CLI
+- Explore the Azure ML workspace with the studio
+- Use the Python SDK to train the model
+
+##### Explore developer tools for workspace interaction
+
+You can use various tools to interact with the Azure ML workspace. Depending on what task you need to perform and your preference for developer tool, you can choose which tool to use when. This lab is designed as an introduction to the developer tools commonly used for workspace interaction. If you want to learn how to use a specific tool in more depth, there are other labs to explore.
+
+###### Before you start
+
+You’ll need an [Azure subscription](https://azure.microsoft.com/free?azure-portal=true) in which you have administrative-level access. The commonly used developer tools for interacting with the Azure ML workspace are:
+
+- **Azure CLI** with the Azure ML extension: Ths command-line approach is ideal for the automation of infrastructure. 
+- **Azure ML studio:** Use the user-friendly UI to explore the workspace and all of its capabilities.
+- **Python SDK** for Azure ML: Use to submit jobs and manage models from an Jupyter notebook, ideal for data scientists.
+
+You will explore each of these tools for tasks that are commonly done with that tool.
+
+###### Provision the infrastructure with the Azure CLI
+
+For a data scientist to train a ML model with the Azure ML, you will need to set up the necessary infrastructure. You can use the Azure CLI with the Azure ML extension to create an Azure ML worspace and resources like a compute instance. To start, open the Azure Cloud Shell, install the Azure ML extension and clone the Git repo.
+
+1. In a browser, open the Azure portal at `https://portal.azure.com`, signing in with your Microsoft account.
+
+2. Select the [>_] (*Cloud Shell*) button at the top of the page to the right of the search box. This opens a Cloud Shell pane at the bottom of the portal. 
+
+3. Select **Bash** if asked. The first time you open the cloud shell, you will be asked to choose the type of shell you want to use (Bash or PowerShell).
+
+4. Check that the correct subscription is specified and that **No storage account required** is selected. Select **Apply**.
+
+5. Remove any ML CLI extensions (both version 1 and 2) to avoid any conflicts with previous versions with the following command. Use `Shift+Insert` to paste your copied code into the Cloud Shell. Ignore any (error) messages that say that the extensions were not installed.
+
+   ```
+   az extension remove -n azure-cli-ml
+   az extension remove -n ml
+   ```
+
+6. Install the Azure ML (v2) extension with the following command:
+
+   ```
+   az extension add -n ml -y
+   ```
+
+7. Create a resource group. Choose a location close to you.
+
+   ```
+   az group create --name "rg-dp100-labs" --location "eastus"
+   ```
+
+8. Create a workspace:
+
+   ```
+   az ml workspace create --name "mlw-dp100-labs"
+   ```
+
+9. Wait for the workspace and its associated resources to be created. This typically takes around 5 minutes. 
+   - Troubleshooting tip: Workspace creation error. If you receive an error when creating a workspace through the CLI, you need to provision the resource manually:
+     1. In the Azure portal home page, select **+ Create a resource**.
+     2. Search for *machine learning* and then select Azure ML. Select **Create**.
+     3. Create a new Azure ML resource with the following settings:
+        - Subscription: Your Azure subscription
+        - Resource group: rg-dp100-labs
+        - Workspace name: mlw-dp-100-labs
+        - Region: Select the geographical region closest to you
+        - Storage account: Note the default new storage account that will be created for your workspace
+        - Key vault: Note the default new key vault that will be created for your workspace
+        - Application insights: Note the default new application insights resource that will be created for your workspace
+        - Container registry: None (one will be created automatically the first time you deploy a model to a container)
+     4. Select **Review + create** and wait for the workspace and its associated resources to be created. This typically takes around 5 minutes. 
+
+###### Create a compute instance with the Azure CLI
+
+Another important part of the infrastructure needed to train a ML model is compute. Though you can train models locally, it's more scalable and cost efficient to use cloud compute. When data scientists are developing a ML model in Azure ML workspace, they want to use a virtual machine on which they can run Jupyter notebooks. For development, a **compute instance** is an ideal fit. After creating an Azure ML workspace, you can also create a compute instance using the Azure CLI. In this exercise, you will create a compute instance with the following settings: 
+
+- **Compute name:** Name of compute instance. Has to be unique and fewer than 24 characters.
+- **Virtual machine size:** STANDARD_DS11_V2
+- **Compute type** (instance or cluster): ComputeInstance
+- **Azure ML workspace name**: mlw-dp100-labs
+- **Resource group**: rg-dp100-labs
+
+- Use the following command to create a compute instance in your workspace. If the compute instance name contains "XXXX", replace it with random numbers to create a unique name. If you get an error message that a compute instance with the name already exists, change the name and retry the command. 
+
+  ```
+  az ml compute create --name "ciXXXX" --size STANDARD_DS11_V2 --type ComputeInstance -w mlw-dp100-labs -g rg-dp100-labs	
+  ```
+
+- Troubleshooting tip: Compute creation error
+  - IF you receive an error when creating a compute instance through the CLI, you need to provision the resource manually:
+    - In the Azure portal, navigate to the Azure Machine Learning workspace named **mlw-dp100-labs**.
+    - Select the Azure Machine Learning workspace, and in its **Overview** page, select **Launch studio**. Another tab will open in your browser to open the Azure Machine Learning studio.
+    - Close any pop-ups that appear in the studio.
+    - Within the Azure Machine Learning studio, navigate to the **Compute** page and select **+ New** under the **Compute instances** tab.
+    - Give the compute instance a unique name and then select **Standard_DS11_v2** as the virtual machine size.
+    - Select **Review + create** and then select **Create**.
+
+###### Create a compute cluster with the Azure CLI
+
+Though a compute instance is ideal for development, a compute cluster is better suited when we want to train ML models. Only when a job is submitted to use the compute cluster will resize to more than 0 notes and run the job. Once the compute cluster is no longer needed, it will automatically resize back to 0 nodes to minimize costs.
+
+To create a compute cluster, you can use the Azure CLI similar to creating a compute instance. You will create a compute cluster with the following settings:
+
+- **Compute name:** aml-cluster
+
+- **Virtual machine size:** STANDARD_DS11_V2
+
+- **Compute type:** AmlCompute (Creates a compute cluster)
+
+- **Maximum instances:** Maximum number of nodes
+
+- **Azure ML workspace name:** mlw-dp100-labs
+
+- **Resource group:** rg-dp100-labs
+
+- Use the following command to create a compute cluster in your workspace.
+
+  ```
+  az ml compute create --name "aml-cluster" --size STANDARD_DS11_V2 --max-instances 2 --type AmlCompute -w mlw-dp100-labs -g rg-dp100-labs
+  ```
+
+###### Configure your workstation with the Azure ML studio
+
+Though the Azure CLI is ideal for automation, you may want to review the output of the commands you executed. You can use the Azure ML studio to check whether resources and assets have been created, and to check whether jobs ran successfully or review why a job failed.
+
+1. In the Azure portal, navigate to the Azure ML workspace named **mlw-dp100-labs**.
+2. Select the Azure ML workspace, and in its Overview page, select Launch studio. Another tab will open in your browser to open the Azure ML studio.
+3. Close any pop-ups that appear in the studio.
+4. Within the Azure ML studio, navigate to the **Compute** page and verify that the compute instance and cluster you created in the previous section exist. The compute instance should be running, the cluster should be in Succeeded state and have 0 nodes running.
+
+###### Use the Python SDK to train a model
+
+Now that you have verified that the necessary compute has been created, you can use the Python SDK to run a training script. You will install and use the Python SDK on the compute instance and train the ML model on the compute cluster.
+
+1. In your **compute instance**, there are a number of options in the **Applications** field. Select the **Terminal** application to launch the terminal 
+
+2. In the terminal, install the Python SDK on the compute instance by running the following commands in the terminal:
+
+   ```
+   pip uninstall azure-ai-ml
+   pip install azure-ai-ml
+   ```
+
+3. Run the following command to clone a Git repository containing notebooks, data, and other files to your workspace:
+
+   ```
+    git clone https://github.com/MicrosoftLearning/mslearn-azure-ml.git azure-ml-labs
+   ```
+
+4. When the command has completed, in the **Files** pane, select **↻** to refresh the view and verify that a new **Users/\*your-user-name\*/azure-ml-labs** folder has been created.
+
+5. Open the **Labs/02/Run training script.ipynb** notebook. (Select **Authenticate** and follow the necessary steps if a notification appears asking you to authenticate.)
+
+6. Verify that the notebook uses the **Python 3.10 - AzureML** kernel on the upper right corner of the notebook environment. Each kernel has its own image with its own set of packages pre-installed.
+
+7. Run all cells in the notebook.
+
+A new job will be created in the Azure Machine Learning workspace. The job tracks the inputs defined in the job configuration, the code used, and the outputs like metrics to evaluate the model.
+
+###### Review your job history in the Azure ML studio
+
+When you submit a job to the Azure Machine Learning workspace, you can review its status in the Azure Machine Learning studio.
+
+1. Either select the job URL provided as output in the notebook, or navigate to the **Jobs** page in the Azure Machine Learning studio.
+
+2. A new experiment is listed named **diabetes-training**. Select the latest job **diabetes-pythonv2-train**.
+
+3. Review the job’s **Properties**. Note the job **Status**:
+
+   - **Queued**: The job is waiting for compute to become available.
+   - **Preparing**: The compute cluster is resizing or the environment is being installed on the compute target.
+   - **Running**: The training script is being executed.
+   - **Finalizing**: The training script ran and the job is being updated with all final information.
+   - **Completed**: The job successfully completed and is terminated.
+   - **Failed**: The job failed and is terminated.
+
+   4. Under **Outputs + logs**, you’ll find the output of the script in **user_logs/std_log.txt**. Outputs from **print** statements in the script will show here. If there’s an error because of a problem with your script, you’ll find the error message here too.
+   5. Under **Code**, you’ll find the folder you specified in the job configuration. This folder includes the training script and dataset.
+
+   ###### Delete Azure resources
+
+   When you finish exploring Azure Machine Learning, you should delete the resources you’ve created to avoid unnecessary Azure costs. 
+
+   1. Close the Azure Machine Learning studio tab and return to the Azure portal.
+   2. In the Azure portal, on the **Home** page, select **Resource groups**.
+   3. Select the **rg-dp100-labs** resource group.
+   4. At the top of the **Overview** page for your resource group, select **Delete resource group**.
+   5. Enter the resource group name to confirm you want to delete it, and select **Delete**.
+
+### Training: Explore and configure the Azure Machine Learning workspace, Module: Make data available in Azure Machine Learning
+
+
+
 
 
 
