@@ -1,0 +1,34 @@
+\documentclass[a4paper,12pt]{book}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\addbibresource{./backmatter/bibliography.bib}
+
+\begin{document}
+
+\author{Mohit Saharan}
+\title{Notes}
+\date{\today}
+
+\frontmatter
+\maketitle
+\tableofcontents
+
+\mainmatter
+\include{./chapters/chapter01}
+\include{./chapters/chapter02}
+%\include{./chapters/appendix}
+
+\backmatter
+% bibliography, glossary and index would go here.
+\printbibliography
+
+\end{document}
