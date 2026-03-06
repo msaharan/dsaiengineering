@@ -3,16 +3,18 @@
 \section{Probability Distributions}
 References: 
 \begin{itemize}
-	\item Luca Lista, Statistical Methods for Data Analysis in Particle Physics, Second Edition, ISBN: 978-3-319-62840-0.
+	\item Lista, Statistical Methods for Data Analysis in Particle Physics, Second Edition, ISBN: 978-3-319-62840-0.
+	\item Hughes, Hase, Measurements and their Uncertainties, ISBN: 978-0-19-956633-4.
 \end{itemize}
 
-\subsection{Chi-Squared Distribution and its Applications}
-A $\chi^2$ random variable with n degrees of freedom is the sum of $n$ standard normal variables. The distribution of a $\chi^2$ variable is given by:
-$$
-f(\chi^2;n)=\dfrac{2^{-n/2}}{\Gamma(n/2)}\chi^{n-2}e^{-\chi^2/2}.
-$$
+\subsection{Chi-Squared Distribution}
+A $\chi^2$ random variable with n degrees of freedom is the sum of $n$ standard normal variables. The normalized probability distribution of a $\chi^2$ variable is given by:
+\begin{align}
+	f(\chi^2;n)=\dfrac{(\chi^2)^{n/2-1}e^{-\chi^2/2}}{2^{n/2}\Gamma(n/2)}.
+	\label{chi-square}
+\end{align}
 
-$\Gamma$ is the so-called \textit{gamma function}, the analytical extension of the fatorial. The expected value of a $\chi^2$ distribution is equal to the number of degrees of freedom $n$ and the variance is equal to $2n$. $\chi^2$ distributions are shown in the following figure for different number of degrees of freedom $n$. Typical applications of the $\chi^2$ distributions are goodness of fit tests, where the cumulative $\chi^2$ distribution is used.
+$\Gamma$ is the so-called \textit{gamma function}, the analytical extension of the fatorial. The expected value of a $\chi^2$ distribution is equal to the number of degrees of freedom $n$ and the variance is equal to $2n$. $\chi^2$ distributions are shown in the following figure for different number of degrees of freedom $n$.
 
 \begin{figure}
     \centering
@@ -21,39 +23,50 @@ $\Gamma$ is the so-called \textit{gamma function}, the analytical extension of t
     \label{fig:chi-square-distribution}
 \end{figure}
 
-For $n=2$, the $\chi^2$ distribution is a special case of the gamma distribution and is identical to an exponential distribution with the mean $\mu=n=2$ and variance of $\sigma^2=2n=4$.
+For $n=2$, the $\chi^2$ distribution is a special case of the gamma distribution and is identical to an exponential distribution with the mean $\mu=n=2$ and variance of $\sigma^2=2n=4$. The cumulative probability function, $P(\chi^2;n)$:
+\begin{align}
+	P(\chi^2_{min} \leq \chi^2 \leq \infty; n) = \int_{\chi^2_\mathrm{min}}^{\infty} f(\chi^2;n) \, d\chi^2 
+	\label{chi-square-cdf}
+\end{align}
+gives the probability that were the sample distribution drawn from the hypothesized parent distribution, one would obtain a value $\chi^2$ equal to, or greater than, $\chi^2_\mathrm{min}$. 
 
-Typical applications of the $\chi^2$ distribution are goodness of fit tests, where the cumulative $\chi^2$ distribution is used. Consider a number $n$ of measurements ($y_1 \pm \sigma_1, \dots, y_n\pm\sigma_n$), and each measurement $y_i\pm\sigma_i$ corresponds to a value $x_i$ of a variable $x$. Assume we have a model for the dependence of $y$ on the variable $x$ given by a function $f$:
+\subsubsection{Using $\chi^2$ as a hypothesis test}
+Equation \ref{chi-square} and \ref{chi-square-cdf} can be used to perform hypothesis test. We expect that if the proposed model is in good aggrement with the data, $\chi^2_\mathrm{min}$ will be close to the \textit{mean} of the $\chi^2$ distribution and so $\chi^2_\mathrm{min} \approx n$. For many degrees of freedom, the $\chi^2$ distribution becomes more symmetric and the median, mode, and mean become similar and we would expect for a good match between sample and parent distributions with a corresponding probability $P(\chi^2_\mathrm{min} \approx n;n) \approx 0.5$.
 
-$$
-y=f(x;\vec{\theta}),
-$$
+
+\subsubsection{Testing the quality of fit using $\chi^2$}
+
+Consider a number $n$ of measurements ($y_1 \pm \sigma_1, \dots, y_n\pm\sigma_n$), and each measurement $y_i\pm\sigma_i$ corresponds to a value $x_i$ of a variable $x$. Assume we have a model for the dependence of $y$ on the variable $x$ given by a function $f$:
+
+\begin{align}
+	y=f(x;\vec{\theta}),
+\end{align}
 
 where $\vec{\theta}={\theta_1, \dots, \theta_m}$ is a set of unknown parameters. If the measurements $y_i$ are distributed around the value $f(x_i, \vec{\theta})$ according to a Gaussian distribution with standard deviation equal to $\sigma_i$, the likelihood function for this problem can be written as the product of $n$ Gaussian PDFs:
 
-$$
-L(\vec{y};\vec{\theta})=\Pi_{i=1}^n \dfrac{1}{\sqrt{2\pi\sigma_i^2}} exp\left[- \dfrac{(y_i-f(x_i;\vec{\theta}))^2}{2\sigma_i^2}\right],
-$$
+\begin{align}
+	L(\vec{y};\vec{\theta})=\Pi_{i=1}^n \dfrac{1}{\sqrt{2\pi\sigma_i^2}} exp\left[- \dfrac{(y_i-f(x_i;\vec{\theta}))^2}{2\sigma_i^2}\right],
+\end{align}
 
 where the notation $\vec{y}={y_1, \dots, y_n}$.
 
 Maximizing $L(\vec{y}, \vec{\theta})$ is squivalent to minimize $-2logL(\vec{y}, \vec{\theta})$:
 
-$$
- -2logL(\vec{y}; \vec{\theta}) = \sum_{i=1}^{n} \dfrac{\left(y_i - f(x_i;\vec{\theta})\right)^2}{\sigma_i^2} + \sum_{i=1}^{n}log2\pi\sigma_i^2.
-$$
+\begin{align}
+	 -2logL(\vec{y}; \vec{\theta}) = \sum_{i=1}^{n} \dfrac{\left(y_i - f(x_i;\vec{\theta})\right)^2}{\sigma_i^2} + \sum_{i=1}^{n}log2\pi\sigma_i^2.
+\end{align}
 
 The last term does not depend on the parameters $\theta$ if the uncertainties $\sigma_i$ are known and fixed, hence it is a constant that can be dropped when performing the minimization. The first term to be minimized is a $\chi^2$ variable:
 
-$$
-\chi^2(\vec{\theta}) = \sum_{i=1}^{n}\dfrac{\left( y_i - f(x_i; \vec{\theta}) \right)^2}{\sigma_i}.
-$$
+\begin{align}
+	\chi^2(\vec{\theta}) = \sum_{i=1}^{n}\dfrac{\left( y_i - f(x_i; \vec{\theta}) \right)^2}{\sigma_i}.
+\end{align}
 
 The terms: 
 
-$$
-r_i=y_i-\hat{y}_i = y_i - f(x_i;\hat{\vec{\theta}}),
-$$
+\begin{align}
+	r_i=y_i-\hat{y}_i = y_i - f(x_i;\hat{\vec{\theta}}),
+\end{align}
 
 evaluated at the fit values $\hat{\vec{\theta}}$ of the parameters $\vec{\theta}$, are called *residuals*. An example of the fit performed on a computer-generated dataset with the minimum $\chi^2$ method is shown in the following figure. 
 
