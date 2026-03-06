@@ -61,7 +61,7 @@ x_smooth = np.linspace(0, 11, 100)
 ax1.errorbar(x_data, y_obs, yerr=y_err, fmt='ko', capsize=3, label='Data')
 ax1.plot(x_smooth, model(x_smooth, *popt), color='darkblue', lw=2, label='Fit')
 ax1.set_ylabel('y')
-ax1.set_title(f'Minimum $\chi^2$ fit (reduced $\chi^2$={chi_sq:.2f}/{df:.2f}={reduced_chi_sq:.2f})')
+ax1.set_title(f'Minimum $\chi^2$ fit (reduced $\chi^2$={chi_sq:.2f}/{df}={reduced_chi_sq:.2f})')
 ax1.text(6, 5, r'$y = A\,x\,e^{-B\,x}$', fontsize=15, color='darkblue')
 ax1.grid(True, alpha=0.2)
 
