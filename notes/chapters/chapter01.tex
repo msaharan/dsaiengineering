@@ -13,7 +13,6 @@ A $\chi^2$ random variable with n degrees of freedom is the sum of $n$ standard 
 	f(\chi^2;n)=\dfrac{(\chi^2)^{n/2-1}e^{-\chi^2/2}}{2^{n/2}\Gamma(n/2)}.
 	\label{eq:chi-square}
 \end{align}
-
 $\Gamma$ is the so-called \textit{gamma function}, the analytical extension of the fatorial. The expected value of a $\chi^2$ distribution is equal to the number of degrees of freedom $n$ and the variance is equal to $2n$. $\chi^2$ distributions are shown in the following figure for different number of degrees of freedom $n$.
 
 \begin{figure}
@@ -46,7 +45,6 @@ Although the probability of finding a value of $\chi^2_\mathrm{min}$ greater tha
 \end{itemize}
 
 \paragraph{The reduced $\chi^2$ statistic:} In order to ascertain whether a particular null hypothesis should be rejected at a particular confidence level, the probabilities of obtaining the observed value of $\chi^2_\mathrm{min}$ or higher given the number of degrees of freedom must be calculated using Equation \ref{eq:chi-square-cdf}. However, we can obtain a quick indication as to whether the nulll hypothesis should be rejected by considering the so-called reduced chi-squared statistic, $\chi^2_\nu$, which is simply the value of $\chi^2$ divided by the number of degrees of freedom:
-
 \begin{align}
 	\chi^2_\nu = \dfrac{\chi^2_\mathrm{min}}{n}.
 \end{align} 
@@ -81,41 +79,30 @@ Although easier to calculate, $\chi^2_\nu$ does not contain as much information 
 	\label{tab:reduced-chi-squared-3sigma}
 \end{table}
 
-
 \subsubsection{Testing the quality of fit using $\chi^2$}
-
 Consider a number $n$ of measurements ($y_1 \pm \sigma_1, \dots, y_n\pm\sigma_n$), and each measurement $y_i\pm\sigma_i$ corresponds to a value $x_i$ of a variable $x$. Assume we have a model for the dependence of $y$ on the variable $x$ given by a function $f$:
-
 \begin{align}
 	y=f(x;\vec{\theta}),
 \end{align}
-
 where $\vec{\theta}={\theta_1, \dots, \theta_m}$ is a set of unknown parameters. If the measurements $y_i$ are distributed around the value $f(x_i, \vec{\theta})$ according to a Gaussian distribution with standard deviation equal to $\sigma_i$, the likelihood function for this problem can be written as the product of $n$ Gaussian PDFs:
-
 \begin{align}
 	L(\vec{y};\vec{\theta})=\Pi_{i=1}^n \dfrac{1}{\sqrt{2\pi\sigma_i^2}} exp\left[- \dfrac{(y_i-f(x_i;\vec{\theta}))^2}{2\sigma_i^2}\right],
 \end{align}
-
 where the notation $\vec{y}={y_1, \dots, y_n}$.
 
 Maximizing $L(\vec{y}, \vec{\theta})$ is squivalent to minimize $-2logL(\vec{y}, \vec{\theta})$:
-
 \begin{align}
 	 -2logL(\vec{y}; \vec{\theta}) = \sum_{i=1}^{n} \dfrac{\left(y_i - f(x_i;\vec{\theta})\right)^2}{\sigma_i^2} + \sum_{i=1}^{n}log2\pi\sigma_i^2.
 \end{align}
-
 The last term does not depend on the parameters $\theta$ if the uncertainties $\sigma_i$ are known and fixed, hence it is a constant that can be dropped when performing the minimization. The first term to be minimized is a $\chi^2$ variable:
-
 \begin{align}
 	\chi^2(\vec{\theta}) = \sum_{i=1}^{n}\dfrac{\left( y_i - f(x_i; \vec{\theta}) \right)^2}{\sigma_i}.
 \end{align}
 
 The terms: 
-
 \begin{align}
 	r_i=y_i-\hat{y}_i = y_i - f(x_i;\hat{\vec{\theta}}),
 \end{align}
-
 evaluated at the fit values $\hat{\vec{\theta}}$ of the parameters $\vec{\theta}$, are called *residuals*. An example of the fit performed on a computer-generated dataset with the minimum $\chi^2$ method is shown in the following figure. 
 
 \begin{figure}
