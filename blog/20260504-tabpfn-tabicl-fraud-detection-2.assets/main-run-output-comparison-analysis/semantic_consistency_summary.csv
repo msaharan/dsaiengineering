@@ -1,0 +1,13 @@
+area,status,evidence,interpretation
+execution,consistent,0 errors in both notebooks,Main run completed cleanly.
+XGBoost device path,improved,mismatched-device warning absent in main and present in CPU-sec7,GPU/CuPy wrapper fixed the warning.
+environment,expected_change,main adds cupy 14.0.1; other core versions match,Change is consistent with GPU XGBoost implementation.
+data split,consistent,split_summary exact match,Temporal workflow did not drift.
+CV folds,semantically_consistent,same fold rows and fraud counts; trailing-zero formatting differs,"Tuning fold topology did not drift, but one-fold fair tuning issue remains."
+embedding dimensions,consistent,Raw 29; TabPFN 192; TabICL 512; both 733 total features,Feature construction shape is stable.
+embedding prep seconds,minor_runtime_drift,"TabPFN +3.08s, TabICL +2.34s, both +5.42s versus CPU-sec7",Expected run-to-run timing variation.
+core ranking,changed,main best full AP is Raw + TabICL 0.8128; CPU-sec7 best was Raw + both 0.8162,Notebook conclusion should use main-run ranking.
+all-history incumbent,changed,full AP 0.8097 main vs 0.7920 CPU-sec7,All-history raw incumbent is stronger in the GPU run.
+figures,changed_consistently,all figure checksums differ; visual review matches metric changes,Figures are consistent with main-run tables.
+leakage diagnostics,consistent,duplicate_diagnostics and leakage_checks exact match,No new leakage concern from rerun.
+display artifacts,needs_improvement,alert_summary remains truncated in notebook display,Notebook should write full result tables during execution.

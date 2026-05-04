@@ -1,0 +1,7 @@
+figure,main_bytes,cpu_bytes,sha_match,notes
+figure_calibration_full.png,58169,58127,false,
+figure_calibration_sampled.png,63307,62499,false,
+figure_precision_recall_full.png,81038,80351,false,
+figure_precision_recall_sampled.png,82605,81108,false,
+figure_runtime_vs_ap_full.png,82976,85566,false,
+figure_runtime_vs_ap_sampled.png,89118,87479,false,

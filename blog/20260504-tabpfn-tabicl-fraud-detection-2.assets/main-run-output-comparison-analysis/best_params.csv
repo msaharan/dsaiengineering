@@ -1,0 +1,6 @@
+Base Model,Feature Set,CV/Validation Average Precision,Best Params
+XGBoost,Raw + TabICL embeddings,0.672660,"{'colsample_bytree': 0.9964126135276502, 'lear..."
+XGBoost,Raw all-history incumbent,0.797369,"{'colsample_bytree': 0.9277873831095045, 'lear..."
+XGBoost,Raw + TabPFN + TabICL embeddings,0.671484,"{'colsample_bytree': 0.7903053218135011, 'lear..."
+XGBoost,Raw,0.676542,"{'colsample_bytree': 0.7513805292809006, 'lear..."
+XGBoost,Raw + TabPFN embeddings,0.675317,"{'colsample_bytree': 0.8109974108447708, 'lear..."

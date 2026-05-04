@@ -1,0 +1,5 @@
+metric,main,cpu_sec7,notes
+execution_errors,0,0,expected 0
+stream_stdout_outputs,23,23,
+stream_stderr_outputs,2,2,main should not have section-7 XGBoost device warning
+xgboost_device_warning_present,false,true,

@@ -1,0 +1,7 @@
+cv_group,fold,train_rows,train_fraud_rows,train_fraud_rate,validation_rows,validation_fraud_rows,validation_fraud_rate
+fair_raw_vs_embedding,1,24185,215,0.0089,4249,9,0.0021
+raw_all_history_incumbent,1,69777,174,0.0025,25917,45,0.0017
+raw_all_history_incumbent,2,95694,219,0.0023,25917,30,0.0012
+raw_all_history_incumbent,3,121611,249,0.0020,25918,34,0.0013
+raw_all_history_incumbent,4,147529,283,0.0019,25917,78,0.0030
+raw_all_history_incumbent,5,173446,361,0.0021,25918,23,0.0009
