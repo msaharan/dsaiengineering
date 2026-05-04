@@ -1,0 +1,23 @@
+Model,Family,Holdout,Average Precision,Brier Score,Log Loss
+XGBoost[Raw + TabPFN + TabICL embeddings],classical,full,0.8162,0.0004,0.0023
+XGBoost[Raw + TabICL embeddings],classical,full,0.8152,0.0004,0.0023
+XGBoost[Raw + TabPFN + TabICL embeddings] Cali...,classical_calibrated,full,0.8046,0.0004,0.0031
+XGBoost[Raw + TabICL embeddings] Calibrated,classical_calibrated,full,0.8042,0.0004,0.0031
+XGBoost[Raw] Calibrated,classical_calibrated,full,0.7995,0.0004,0.0033
+XGBoost[Raw + TabPFN embeddings],classical,full,0.7977,0.0005,0.0059
+XGBoost[Raw + TabPFN embeddings] Calibrated,classical_calibrated,full,0.7954,0.0004,0.003
+XGBoost[Raw all-history incumbent] Calibrated,classical_incumbent_calibrated,full,0.7951,0.0004,0.0032
+XGBoost[Raw all-history incumbent],classical_incumbent,full,0.792,0.0005,0.003
+XGBoost[Raw],classical,full,0.7898,0.0004,0.003
+Dummy[Raw],baseline,full,0.0013,0.0013,0.0101
+XGBoost[Raw + TabPFN + TabICL embeddings],classical,sampled,0.8447,0.001,0.0057
+XGBoost[Raw + TabICL embeddings],classical,sampled,0.8437,0.001,0.0058
+XGBoost[Raw + TabPFN + TabICL embeddings] Cali...,classical_calibrated,sampled,0.8361,0.0011,0.0081
+XGBoost[Raw + TabICL embeddings] Calibrated,classical_calibrated,sampled,0.8349,0.0011,0.0082
+XGBoost[Raw],classical,sampled,0.8294,0.0011,0.008
+XGBoost[Raw all-history incumbent] Calibrated,classical_incumbent_calibrated,sampled,0.8292,0.0011,0.0081
+XGBoost[Raw + TabPFN embeddings],classical,sampled,0.8268,0.001,0.0083
+XGBoost[Raw] Calibrated,classical_calibrated,sampled,0.8238,0.0012,0.0087
+XGBoost[Raw all-history incumbent],classical_incumbent,sampled,0.8227,0.0011,0.0065
+XGBoost[Raw + TabPFN embeddings] Calibrated,classical_calibrated,sampled,0.8219,0.0011,0.0076
+Dummy[Raw],baseline,sampled,0.0037,0.0037,0.0258

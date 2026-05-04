@@ -1,0 +1,12 @@
+Model,Holdout,alert_type,alert_value,alerts,frauds_found,precision,recall
+Dummy[Raw],sampled,top_rate,0.005,101,0,0.0000,0.0000
+Dummy[Raw],sampled,top_rate,0.010,201,0,0.0000,0.0000
+Dummy[Raw],sampled,top_rate,0.020,402,0,0.0000,0.0000
+Dummy[Raw],sampled,top_rate,0.050,1004,4,0.0040,0.0533
+Dummy[Raw],sampled,top_count,100.000,100,0,0.0000,0.0000
+...,...,...,...,...,...,...,...
+XGBoost[Raw + TabPFN + TabICL embeddings] Cali...,full,top_rate,0.050,2849,67,0.0235,0.8933
+XGBoost[Raw + TabPFN + TabICL embeddings] Cali...,full,top_count,100.000,100,58,0.5800,0.7733
+XGBoost[Raw + TabPFN + TabICL embeddings] Cali...,full,top_count,250.000,250,65,0.2600,0.8667
+XGBoost[Raw + TabPFN + TabICL embeddings] Cali...,full,top_count,500.000,500,66,0.1320,0.8800
+XGBoost[Raw + TabPFN + TabICL embeddings] Cali...,full,top_count,1000.000,1000,67,0.0670,0.8933

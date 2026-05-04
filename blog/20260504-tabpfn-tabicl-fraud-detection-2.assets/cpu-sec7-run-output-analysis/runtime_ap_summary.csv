@@ -1,0 +1,21 @@
+Model,Base Model,Feature Set,Calibration,Holdout,Rows,Average Precision,Brier Score,Shared Feature Prep Seconds,Total Seconds,Workflow Seconds
+XGBoost[Raw + TabPFN + TabICL embeddings],XGBoost,Raw + TabPFN + TabICL embeddings,none,full,56962,0.8162,0.0004,490.3983,346.7201,837.1185
+XGBoost[Raw + TabICL embeddings],XGBoost,Raw + TabICL embeddings,none,full,56962,0.8152,0.0004,119.6116,260.3021,379.9137
+XGBoost[Raw + TabPFN + TabICL embeddings] Cali...,XGBoost,Raw + TabPFN + TabICL embeddings,sigmoid,full,56962,0.8046,0.0004,490.3983,366.9962,857.3946
+XGBoost[Raw + TabICL embeddings] Calibrated,XGBoost,Raw + TabICL embeddings,sigmoid,full,56962,0.8042,0.0004,119.6116,274.5181,394.1297
+XGBoost[Raw] Calibrated,XGBoost,Raw,sigmoid,full,56962,0.7995,0.0004,0.0,31.5715,31.5715
+XGBoost[Raw + TabPFN embeddings],XGBoost,Raw + TabPFN embeddings,none,full,56962,0.7977,0.0005,370.7867,115.183,485.9697
+XGBoost[Raw + TabPFN embeddings] Calibrated,XGBoost,Raw + TabPFN embeddings,sigmoid,full,56962,0.7954,0.0004,370.7867,120.584,491.3707
+XGBoost[Raw all-history incumbent] Calibrated,XGBoost,Raw all-history incumbent,sigmoid,full,56962,0.7951,0.0004,0.0,272.1382,272.1382
+XGBoost[Raw all-history incumbent],XGBoost,Raw all-history incumbent,none,full,56962,0.792,0.0005,0.0,270.9114,270.9114
+XGBoost[Raw],XGBoost,Raw,none,full,56962,0.7898,0.0004,0.0,30.5842,30.5842
+XGBoost[Raw + TabPFN + TabICL embeddings],XGBoost,Raw + TabPFN + TabICL embeddings,none,sampled,20075,0.8447,0.001,490.3983,335.6848,826.0831
+XGBoost[Raw + TabICL embeddings],XGBoost,Raw + TabICL embeddings,none,sampled,20075,0.8437,0.001,119.6116,251.7476,371.3592
+XGBoost[Raw + TabPFN + TabICL embeddings] Cali...,XGBoost,Raw + TabPFN + TabICL embeddings,sigmoid,sampled,20075,0.8361,0.0011,490.3983,347.3764,837.7747
+XGBoost[Raw + TabICL embeddings] Calibrated,XGBoost,Raw + TabICL embeddings,sigmoid,sampled,20075,0.8349,0.0011,119.6116,259.9598,379.5715
+XGBoost[Raw],XGBoost,Raw,none,sampled,20075,0.8294,0.0011,0.0,30.1446,30.1446
+XGBoost[Raw all-history incumbent] Calibrated,XGBoost,Raw all-history incumbent,sigmoid,sampled,20075,0.8292,0.0011,0.0,271.2541,271.2541
+XGBoost[Raw + TabPFN embeddings],XGBoost,Raw + TabPFN embeddings,none,sampled,20075,0.8268,0.001,370.7867,111.3983,482.185
+XGBoost[Raw] Calibrated,XGBoost,Raw,sigmoid,sampled,20075,0.8238,0.0012,0.0,30.7205,30.7205
+XGBoost[Raw all-history incumbent],XGBoost,Raw all-history incumbent,none,sampled,20075,0.8227,0.0011,0.0,270.4825,270.4825
+XGBoost[Raw + TabPFN embeddings] Calibrated,XGBoost,Raw + TabPFN embeddings,sigmoid,sampled,20075,0.8219,0.0011,370.7867,114.9638,485.7505

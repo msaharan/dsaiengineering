@@ -1,0 +1,7 @@
+split,rows,fraud_rows,fraud_rate,time_min,time_max
+tfm_embedding_context_sampled,4157,157,0.037768,7.0,47693.0
+classical_train_window_sampled,4203,203,0.048299,47698.0,120390.0
+validation_window_full,28480,24,0.000843,120396.0,132928.0
+calibration_window_full,28481,33,0.001159,132929.0,145247.0
+test_holdout_sampled,20075,75,0.003736,145249.0,172788.0
+test_holdout_full,56962,75,0.001317,145248.0,172792.0
