@@ -1,0 +1,5 @@
+metric,value
+rows,284807.0
+features,30.0
+fraud_rows,492.0
+fraud_rate,0.001727486

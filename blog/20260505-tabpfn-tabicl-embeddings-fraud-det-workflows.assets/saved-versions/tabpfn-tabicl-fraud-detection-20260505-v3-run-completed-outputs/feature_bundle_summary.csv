@@ -1,0 +1,3 @@
+Feature Set,Embedding Source,Feature Count,Shared Feature Prep Seconds,Feature Prep Seconds,Classical Tune Rows,Classical Final Train Rows
+Raw,none,29,0.0,0.0,142403,170884
+Raw + TabICL embeddings,TabICL,541,122.1448456,122.1448456,142403,170884

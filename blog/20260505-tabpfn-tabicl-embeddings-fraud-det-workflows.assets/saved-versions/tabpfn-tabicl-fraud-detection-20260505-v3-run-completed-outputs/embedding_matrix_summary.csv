@@ -1,0 +1,9 @@
+Embedding Source,Matrix,Rows,Embedding Columns,Approx Memory MB
+TabICL,X_classical_final_train,170884,512,333.7578125
+TabICL,X_classical_base_train,142403,512,278.1308594
+TabICL,X_validation,28480,512,55.625
+TabICL,X_calibration,28481,512,55.62695313
+TabICL,X_train,4203,512,8.208984375
+TabICL,X_test_sample,20075,512,39.20898438
+TabICL,X_test_full,56962,512,111.2539063
+TabICL,X_classical_tune,142403,512,278.1308594

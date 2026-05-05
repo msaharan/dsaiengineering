@@ -1,0 +1,2 @@
+Embedding Source,Error
+TabPFN,"tabpfn.errors.TabPFNLicenseError: TabPFN requires a one-time license acceptance to download model weights for local inference, but browser login is disabled (TABPFN_NO_BROWSER is set).  Set the TABPFN_TOKEN environment variable with a valid API key obtained from https://ux.priorlabs.ai"

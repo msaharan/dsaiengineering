@@ -1,0 +1,2 @@
+Embedding Source,Package Version,Model Class,Checkpoint Version,Model Path,Embedding API,Interface Stability,Fit Mode,Device,Embedding Columns,Shared Prep Seconds
+TabICL,2.1.1,TabICLClassifier,tabicl-classifier-v2-20260212.ckpt,/root/.cache/huggingface/hub/models--jingang--TabICL/snapshots/4dcd344ece2c00be9e831fdd35bed57b5ad83e19/tabicl-classifier-v2-20260212.ckpt,"TabICL sklearn internals: X_encoder_, ensemble_generator_, col_embedder, row_interactor",internal_validated,kv_cache=repr,cuda:0,512,122.1448456

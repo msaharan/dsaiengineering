@@ -1,0 +1,7 @@
+Model,Base Model,Feature Set,Calibration,Holdout,Rows,Average Precision,Brier Score,Shared Feature Prep Seconds,Total Seconds,Workflow Seconds,Publication Label
+XGBoost[Raw],XGBoost,Raw,none,sampled,20075,0.836365968,0.001070494,0.0,139.8027853,139.8027853,Raw XGBoost
+XGBoost[Raw all-history incumbent],XGBoost,Raw all-history incumbent,none,sampled,20075,0.841097502,0.000987067,0.0,166.1955065,166.1955065,Raw all-history XGBoost
+XGBoost[Raw + TabICL embeddings],XGBoost,Raw + TabICL embeddings,none,sampled,20075,0.835654301,0.001079198,122.1448456,1067.110601,1189.255447,Raw + TabICL
+XGBoost[Raw],XGBoost,Raw,none,full,56962,0.803442885,0.00040268,0.0,139.8920726,139.8920726,Raw XGBoost
+XGBoost[Raw all-history incumbent],XGBoost,Raw all-history incumbent,none,full,56962,0.809653671,0.000424308,0.0,166.2833695,166.2833695,Raw all-history XGBoost
+XGBoost[Raw + TabICL embeddings],XGBoost,Raw + TabICL embeddings,none,full,56962,0.797029114,0.00045125,122.1448456,1068.767687,1190.912533,Raw + TabICL

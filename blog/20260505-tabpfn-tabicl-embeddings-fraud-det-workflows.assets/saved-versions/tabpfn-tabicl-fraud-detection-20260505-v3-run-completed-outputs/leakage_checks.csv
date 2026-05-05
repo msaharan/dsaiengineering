@@ -1,0 +1,9 @@
+Check,Status,Evidence
+Target excluded from features,pass,target_column=Class; feature_count=29
+Time column preserved for temporal split,pass,Time range 0 to 172792
+Time used as model feature,not_used_as_feature,USE_TIME_AS_FEATURE=False; Time in feature_columns=False
+Chronological split order,pass,"sorted by Time before splitting; equal boundary timestamps can occur; context max=47694, train min=47694, train max=120396, validation min=120396, validation max=132928, calibration min=132929, calibration max=145247, test min=145248"
+Duplicate rows and duplicate model-feature rows,review,"exact_duplicate_rows=1,854; exact_cross_window_groups=0; model_feature_duplicate_rows=14,293; model_feature_cross_window_groups=2,178"
+Future aggregate features,unknown,V1-V28 are anonymized PCA-style features; raw feature lineage is not available in this public dataset.
+Entity-level leakage / customer grouping,unknown,"No customer/card/account identifier is available, so group-based splitting cannot be tested here."
+Label delay / chargeback availability,unknown,The public dataset does not expose when the fraud label became known.

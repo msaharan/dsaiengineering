@@ -1,0 +1,11 @@
+cv_group,fold,train_rows,train_fraud_rows,train_fraud_rate,validation_rows,validation_fraud_rows,validation_fraud_rate
+fair_raw_vs_embedding,1,49841,77,0.001544913,18512,25,0.001350475
+fair_raw_vs_embedding,2,68353,102,0.001492253,18512,19,0.001026361
+fair_raw_vs_embedding,3,86865,121,0.001392966,18513,78,0.004213256
+fair_raw_vs_embedding,4,105378,199,0.00188844,18512,8,0.000432152
+fair_raw_vs_embedding,5,123890,207,0.001670837,18513,20,0.001080322
+raw_all_history_incumbent,1,69777,174,0.002493658,25917,45,0.001736312
+raw_all_history_incumbent,2,95694,219,0.002288545,25917,30,0.001157541
+raw_all_history_incumbent,3,121611,249,0.002047512,25918,34,0.00131183
+raw_all_history_incumbent,4,147529,283,0.001918267,25917,78,0.003009608
+raw_all_history_incumbent,5,173446,361,0.002081339,25918,23,0.000887414

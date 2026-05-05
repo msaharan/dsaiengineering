@@ -1,0 +1,13 @@
+Model,Publication Label,Feature Set,Holdout,target_recall,threshold,alerts,frauds_found,precision,recall
+XGBoost[Raw all-history incumbent],Raw all-history XGBoost,Raw all-history incumbent,sampled,0.8,0.059373725,70,60,0.857142857,0.8
+XGBoost[Raw],Raw XGBoost,Raw,sampled,0.8,0.009374408,79,60,0.759493671,0.8
+XGBoost[Raw + TabICL embeddings],Raw + TabICL,Raw + TabICL embeddings,sampled,0.8,0.08899381,85,60,0.705882353,0.8
+XGBoost[Raw + TabICL embeddings],Raw + TabICL,Raw + TabICL embeddings,sampled,0.9,0.013165375,223,68,0.304932735,0.906666667
+XGBoost[Raw all-history incumbent],Raw all-history XGBoost,Raw all-history incumbent,sampled,0.9,0.000400044,402,68,0.169154229,0.906666667
+XGBoost[Raw],Raw XGBoost,Raw,sampled,0.9,0.00026723,463,68,0.146868251,0.906666667
+XGBoost[Raw all-history incumbent],Raw all-history XGBoost,Raw all-history incumbent,full,0.8,0.059373725,94,60,0.638297872,0.8
+XGBoost[Raw],Raw XGBoost,Raw,full,0.8,0.009374408,116,60,0.517241379,0.8
+XGBoost[Raw + TabICL embeddings],Raw + TabICL,Raw + TabICL embeddings,full,0.8,0.08899381,127,60,0.472440945,0.8
+XGBoost[Raw + TabICL embeddings],Raw + TabICL,Raw + TabICL embeddings,full,0.9,0.013165375,490,68,0.13877551,0.906666667
+XGBoost[Raw all-history incumbent],Raw all-history XGBoost,Raw all-history incumbent,full,0.9,0.000400044,1064,68,0.063909774,0.906666667
+XGBoost[Raw],Raw XGBoost,Raw,full,0.9,0.00026723,1177,68,0.057774002,0.906666667
