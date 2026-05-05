@@ -1,0 +1,3 @@
+comparison,tuning_policy,rows,fraud_rows,context_rows_excluded,uses_sampled_train_window
+fair_raw_vs_embedding,full_train_plus_validation_excluding_tfm_context,142403,227,56961,False
+raw_all_history_incumbent,embedding_context_plus_train_plus_validation_raw_features,199364,384,0,False

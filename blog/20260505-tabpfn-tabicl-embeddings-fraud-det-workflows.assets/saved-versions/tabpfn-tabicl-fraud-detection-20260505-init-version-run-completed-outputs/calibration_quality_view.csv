@@ -1,0 +1,33 @@
+Model,Family,Calibration,Holdout,Average Precision,Brier Score,Log Loss,ECE Quantile 10
+XGBoost[Raw + TabPFN + TabICL embeddings],classical,none,full,0.816877609,0.000382463,0.002474053,0.000277771
+XGBoost[Raw all-history incumbent],classical_incumbent,none,full,0.809653671,0.000424308,0.002824181,0.000104274
+XGBoost[Raw + TabPFN + TabICL embeddings] Calibration Base,classical_calibration_base,none_calibration_base,full,0.806923274,0.000406884,0.002755061,0.000315875
+XGBoost[Raw + TabPFN + TabICL embeddings] Calibrated,classical_calibrated,sigmoid,full,0.806923274,0.000451988,0.003419597,0.000510345
+XGBoost[Raw] Calibration Base,classical_calibration_base,none_calibration_base,full,0.804719418,0.000396216,0.0028351,0.000209312
+XGBoost[Raw] Calibrated,classical_calibrated,sigmoid,full,0.804719418,0.000421954,0.003287176,0.000356468
+XGBoost[Raw],classical,none,full,0.803442885,0.00040268,0.002767519,0.000231209
+XGBoost[Raw all-history incumbent] Calibrated,classical_incumbent_calibrated,sigmoid,full,0.799657157,0.000407216,0.003174264,0.00027445
+XGBoost[Raw all-history incumbent] Calibration Base,classical_incumbent_calibration_base,none_calibration_base,full,0.799657157,0.000447377,0.003060899,0.000177624
+XGBoost[Raw + TabICL embeddings] Calibration Base,classical_calibration_base,none_calibration_base,full,0.797778403,0.00044533,0.002719195,0.000358955
+XGBoost[Raw + TabICL embeddings] Calibrated,classical_calibrated,sigmoid,full,0.797778403,0.00043045,0.003090942,0.000298384
+XGBoost[Raw + TabICL embeddings],classical,none,full,0.797029114,0.00045125,0.002583423,0.000484709
+XGBoost[Raw + TabPFN embeddings],classical,none,full,0.790861299,0.000380732,0.002499646,0.00018397
+XGBoost[Raw + TabPFN embeddings] Calibration Base,classical_calibration_base,none_calibration_base,full,0.789220635,0.000407534,0.002684903,0.000160924
+XGBoost[Raw + TabPFN embeddings] Calibrated,classical_calibrated,sigmoid,full,0.789220635,0.000434866,0.003339883,0.000500759
+Dummy[Raw],baseline,none,full,0.001316667,0.001314976,0.010063268,0.000637845
+XGBoost[Raw + TabPFN + TabICL embeddings],classical,none,sampled,0.844153734,0.001077508,0.006831266,0.00096841
+XGBoost[Raw all-history incumbent],classical_incumbent,none,sampled,0.841097502,0.000987067,0.007146439,0.00066756
+XGBoost[Raw],classical,none,sampled,0.836365968,0.001070494,0.007561354,0.000877112
+XGBoost[Raw + TabICL embeddings],classical,none,sampled,0.835654301,0.001079198,0.005862658,0.000278701
+XGBoost[Raw all-history incumbent] Calibration Base,classical_incumbent_calibration_base,none_calibration_base,sampled,0.833663224,0.001014987,0.0076389,0.000646681
+XGBoost[Raw all-history incumbent] Calibrated,classical_incumbent_calibrated,sigmoid,sampled,0.833663224,0.000996122,0.008023192,0.000892722
+XGBoost[Raw] Calibration Base,classical_calibration_base,none_calibration_base,sampled,0.832182564,0.001025701,0.007662048,0.000842977
+XGBoost[Raw] Calibrated,classical_calibrated,sigmoid,sampled,0.832182564,0.001072964,0.008341978,0.000968072
+XGBoost[Raw + TabPFN + TabICL embeddings] Calibration Base,classical_calibration_base,none_calibration_base,sampled,0.831306458,0.001148004,0.007635517,0.001069682
+XGBoost[Raw + TabPFN + TabICL embeddings] Calibrated,classical_calibrated,sigmoid,sampled,0.831306458,0.001282327,0.009146092,0.001266226
+XGBoost[Raw + TabICL embeddings] Calibration Base,classical_calibration_base,none_calibration_base,sampled,0.827176441,0.001065621,0.006526974,0.000354716
+XGBoost[Raw + TabICL embeddings] Calibrated,classical_calibrated,sigmoid,sampled,0.827176441,0.001139832,0.008067297,0.000839921
+XGBoost[Raw + TabPFN embeddings],classical,none,sampled,0.816608494,0.001053593,0.006610661,0.000954203
+XGBoost[Raw + TabPFN embeddings] Calibration Base,classical_calibration_base,none_calibration_base,sampled,0.816423027,0.001116952,0.007047973,0.000972337
+XGBoost[Raw + TabPFN embeddings] Calibrated,classical_calibrated,sigmoid,sampled,0.816423027,0.001232891,0.008931937,0.001261722
+Dummy[Raw],baseline,none,sampled,0.00373599,0.003726936,0.025756292,0.002319461
