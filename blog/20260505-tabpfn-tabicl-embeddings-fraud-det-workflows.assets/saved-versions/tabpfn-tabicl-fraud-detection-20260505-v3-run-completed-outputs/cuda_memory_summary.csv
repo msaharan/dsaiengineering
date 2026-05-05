@@ -3,9 +3,9 @@ after_imports_and_configuration,0,Tesla T4,0.0,0.0,0.0,14673.8125,14912.6875
 after_imports_and_configuration,1,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
 before_tabpfn_embedding_extraction,0,Tesla T4,0.0,0.0,0.0,14023.8125,14912.6875
 before_tabpfn_embedding_extraction,1,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
-after_tabpfn_embedding_error,0,Tesla T4,0.0,0.0,0.0,14023.8125,14912.6875
-after_tabpfn_embedding_error,1,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
-before_tabicl_embedding_extraction,0,Tesla T4,0.0,0.0,0.0,14023.8125,14912.6875
-before_tabicl_embedding_extraction,1,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
-after_tabicl_embedding_extraction,0,Tesla T4,9.125,4820.0,3657.126465,8407.8125,14912.6875
-after_tabicl_embedding_extraction,1,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
+after_tabpfn_embedding_extraction,0,Tesla T4,9.125,1500.0,936.7641602,12239.8125,14912.6875
+after_tabpfn_embedding_extraction,1,Tesla T4,9.125,1482.0,936.7641602,13297.8125,14912.6875
+before_tabicl_embedding_extraction,0,Tesla T4,9.125,1500.0,9.125,11983.8125,14912.6875
+before_tabicl_embedding_extraction,1,Tesla T4,9.125,1482.0,9.125,13297.8125,14912.6875
+after_tabicl_embedding_extraction,0,Tesla T4,9.125,4548.0,3657.254395,8419.8125,14912.6875
+after_tabicl_embedding_extraction,1,Tesla T4,9.125,22.0,9.125,14757.8125,14912.6875

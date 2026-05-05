@@ -5,6 +5,9 @@ full,Raw XGBoost,XGBoost[Raw],alerts_at_90_recall,1177.0,1230.0,211.775,9821.625
 full,Raw all-history XGBoost,XGBoost[Raw all-history incumbent],average_precision,0.809653671,0.814017346,0.71885344,0.894654552,300,300,0.95
 full,Raw all-history XGBoost,XGBoost[Raw all-history incumbent],alerts_at_80_recall,94.0,99.0,53.475,846.525,300,300,0.95
 full,Raw all-history XGBoost,XGBoost[Raw all-history incumbent],alerts_at_90_recall,1064.0,1045.5,129.425,7311.1,300,300,0.95
-full,Raw + TabICL,XGBoost[Raw + TabICL embeddings],average_precision,0.797029114,0.798435963,0.714219293,0.870981013,300,300,0.95
-full,Raw + TabICL,XGBoost[Raw + TabICL embeddings],alerts_at_80_recall,127.0,140.5,59.0,367.625,300,300,0.95
-full,Raw + TabICL,XGBoost[Raw + TabICL embeddings],alerts_at_90_recall,490.0,499.5,193.95,3462.25,300,300,0.95
+full,Raw + TabPFN,XGBoost[Raw + TabPFN embeddings],average_precision,0.790862759,0.790530026,0.706053733,0.86866784,300,300,0.95
+full,Raw + TabPFN,XGBoost[Raw + TabPFN embeddings],alerts_at_80_recall,199.0,312.0,55.475,872.475,300,300,0.95
+full,Raw + TabPFN,XGBoost[Raw + TabPFN embeddings],alerts_at_90_recall,1598.0,1598.0,450.65,7972.275,300,300,0.95
+full,Raw + TabICL,XGBoost[Raw + TabICL embeddings],average_precision,0.797029114,0.797299793,0.706250164,0.872279739,300,300,0.95
+full,Raw + TabICL,XGBoost[Raw + TabICL embeddings],alerts_at_80_recall,127.0,141.5,54.0,449.575,300,300,0.95
+full,Raw + TabICL,XGBoost[Raw + TabICL embeddings],alerts_at_90_recall,490.0,494.5,253.7,3448.825,300,300,0.95

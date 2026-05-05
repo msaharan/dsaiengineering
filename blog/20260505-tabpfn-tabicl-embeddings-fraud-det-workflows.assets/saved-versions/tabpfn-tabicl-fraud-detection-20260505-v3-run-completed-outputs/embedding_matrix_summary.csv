@@ -1,4 +1,12 @@
 Embedding Source,Matrix,Rows,Embedding Columns,Approx Memory MB
+TabPFN,X_classical_final_train,170884,192,125.1591797
+TabPFN,X_classical_base_train,142403,192,104.2990723
+TabPFN,X_validation,28480,192,20.859375
+TabPFN,X_calibration,28481,192,20.86010742
+TabPFN,X_train,4203,192,3.078369141
+TabPFN,X_test_sample,20075,192,14.70336914
+TabPFN,X_test_full,56962,192,41.72021484
+TabPFN,X_classical_tune,142403,192,104.2990723
 TabICL,X_classical_final_train,170884,512,333.7578125
 TabICL,X_classical_base_train,142403,512,278.1308594
 TabICL,X_validation,28480,512,55.625
