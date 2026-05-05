@@ -4,120 +4,115 @@ ___
 
 # TabPFN and TabICL embeddings for fraud-detection workflows
 
-This post continues my series on tabular foundation models. So far, I have covered the basic vocabulary of tabular foundation models in [P3](https://www.linkedin.com/posts/msaharan_20260415-tabular-foundation-models-1pdf-activity-7450221503234621441-QYwS?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), the posterior predictive distribution in [P4](https://www.linkedin.com/posts/msaharan_20260416-understanding-tfms-ppdpdf-activity-7450580114225938432-9UYN?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), the architecture in [P5](https://www.linkedin.com/posts/msaharan_20260417-understanding-tfm-architecture-tabpfnpdf-activity-7450946343922999318-6Lw_?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), pre-training in [P6](https://www.linkedin.com/posts/msaharan_20260420-understanding-tfms-pretraining-synthetic-datapdf-activity-7452030755720888320-INN6?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), the TabPFN repository in [P7](https://www.linkedin.com/posts/msaharan_20260421-understanding-tfm-tabpfn-repopdf-activity-7452397229723623425-DVO3?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), the hands-on demo's classification and regression examples in [P8](https://www.linkedin.com/posts/msaharan_20260422-understanding-tfms-tabpfn-handson-demopdf-activity-7452807834171387904-s5Ah?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), TabPFN Client in [P9](https://www.linkedin.com/posts/msaharan_20260423-understanding-tfm-trying-tabpfn-clientpdf-activity-7453126821384073216-2bqA?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), TabPFN embeddings in [P10](https://www.linkedin.com/posts/msaharan_tabpfn-tabularfoundationmodels-machinelearning-activity-7453455329779941376-ymp3?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), TabPFN's predictive behavior in [P11](https://open.substack.com/pub/dsaiengineering/p/p11-understanding-tabular-foundation?utm_campaign=post-expanded-share&utm_medium=web), time series forecasting with TabPFN in [P12](https://open.substack.com/pub/dsaiengineering/p/p12-understanding-tabular-foundation?utm_campaign=post-expanded-share&utm_medium=web), using TabPFN for causal inference in [P13](https://open.substack.com/pub/dsaiengineering/p/p13-understanding-tabular-foundation?utm_campaign=post-expanded-share&utm_medium=web), comparing TabPFN, TabICL, and supervised ML models in [P14](https://open.substack.com/pub/dsaiengineering/p/p14-tabular-foundation-models-comparing?utm_campaign=post-expanded-share&utm_medium=web), using TabPFN and TabICL directly for fraud detection in [P15](https://open.substack.com/pub/dsaiengineering/p/p15-tabpfn-and-tabicl-for-fraud-detection?r=535odk&utm_campaign=post-expanded-share&utm_medium=web), and using TabPFN and TabICL embeddings to enhance an existing XGBoost fraud-detection workflow in [P16](./20260504-tabpfn-tabicl-embeddings-fraud-det-workflows.md).
+This post continues my series on tabular foundation models. I started with the vocabulary of tabular foundation models in [P3](https://www.linkedin.com/posts/msaharan_20260415-tabular-foundation-models-1pdf-activity-7450221503234621441-QYwS?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), posterior predictive distributions in [P4](https://www.linkedin.com/posts/msaharan_20260416-understanding-tfms-ppdpdf-activity-7450580114225938432-9UYN?utm_source=share&utm_medium=web), architecture in [P5](https://www.linkedin.com/posts/msaharan_20260417-understanding-tfm-architecture-tabpfnpdf-activity-7450946343922999318-6Lw_?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), and pre-training in [P6](https://www.linkedin.com/posts/msaharan_20260420-understanding-tfms-pretraining-synthetic-datapdf-activity-7452030755720888320-INN6?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g). I then moved through the TabPFN repository in [P7](https://www.linkedin.com/posts/msaharan_20260421-understanding-tfm-tabpfn-repopdf-activity-7452397229723623425-DVO3?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), TabPFN examples and embeddings in [P8](https://www.linkedin.com/posts/msaharan_20260422-understanding-tfms-tabpfn-handson-demopdf-activity-7452807834171387904-s5Ah?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), [P9](https://www.linkedin.com/posts/msaharan_20260423-understanding-tfm-trying-tabpfn-clientpdf-activity-7453126821384073216-2bqA?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), and [P10](https://www.linkedin.com/posts/msaharan_tabpfn-tabularfoundationmodels-machinelearning-activity-7453455329779941376-ymp3?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC8005UBr31urJ8gF7KXefP2-G8r_HNvI2g), and later compared TabPFN, TabICL, and supervised ML models in [P14](https://open.substack.com/pub/dsaiengineering/p/p14-tabular-foundation-models-comparing?utm_campaign=post-expanded-share&utm_medium=web), used TabPFN and TabICL directly for fraud detection in [P15](https://open.substack.com/pub/dsaiengineering/p/p15-tabpfn-and-tabicl-for-fraud-detection?r=535odk&utm_campaign=post-expanded-share&utm_medium=web), and used TabPFN and TabICL embeddings in an XGBoost fraud workflow in [P16](./20260504-tabpfn-tabicl-embeddings-fraud-det-workflows.md).
 
-P16 was an important step for me because it moved the discussion from "can TabPFN or TabICL score this dataset directly?" to "can these models improve a workflow that a data team may already recognize?" The notebook used TabPFN and TabICL as offline embedding generators, appended those embeddings to raw transaction features, and then trained XGBoost as the downstream fraud scorer. That setup is closer to how a company might pilot a tabular foundation model without replacing its whole production model stack.
-
-After reviewing the P16 run and the first May 5 run, I found that the notebook needed to become more disciplined. The earlier version included too many model variations, the figures were too crowded, the fair raw-vs-embedding tuning path needed more chronological data, and the combined `Raw + TabPFN + TabICL` feature set was not aligned with the adoption question I wanted to ask. A team may reasonably test TabPFN embeddings or TabICL embeddings, but operating both representation systems at once is a different and more expensive proposal.
-
-Today's notebook therefore turns the idea into a cleaner workflow testbench. It asks:
+This post builds on that last idea. The question is not whether TabPFN or TabICL should replace XGBoost as the fraud model. The question is more practical:
 
 > Can offline row embeddings from TabPFN or TabICL improve a production-style XGBoost fraud-detection workflow enough to justify the extra representation step?
 
-That question is deliberately modest. I am still learning these models by building examples, so I do not treat one public-dataset run as a benchmark claim about TabPFN, TabICL, XGBoost, or fraud modeling in general. My goal is to demonstrate a reusable pattern, show the results honestly, and highlight the practical nuances that matter when researchers, labs, and data or AI practitioners think about tabular foundation models in real workflows.
+I am still learning these models by building examples, so I treat this as a workflow demonstration rather than a benchmark claim. The goal is to make the integration pattern, the benefits, and the caveats visible. I hope that is useful both for people building tabular foundation models and for data and AI practitioners who want to understand how these models might fit into workflows they already know.
 
-Notebook:
+The notebook is here:
 
 [tabpfn-tabicl-fraud-detection-20260505.ipynb](./20260505-tabpfn-tabicl-embeddings-fraud-det-workflows.assets/tabpfn-tabicl-fraud-detection-20260505.ipynb)
 
-The completed numerical results discussed in this post come from the final v3 rerun saved in the assets directory. This v3 run keeps the compact one-embedding-source comparison and adds stronger reproducibility artifacts: curated publication operating-point tables, bootstrap uncertainty, source/model provenance, embedding matrix memory summaries, and CUDA memory snapshots.
+The results below use the latest notebook in the assets directory. I treat that notebook as the publishable version for this post.
 
 ## Conceptual background
 
-### The supervised ML baseline
+### What stays the same as supervised ML
 
-In an ordinary supervised tabular workflow, we have rows
+For a supervised binary classification problem, we have rows
 
 $$
 (x_i, y_i), \quad i = 1, \ldots, n
 $$
 
-where $x_i$ is the feature vector for row $i$ and $y_i$ is the target. In this fraud example, $y_i \in \{0, 1\}$, where 1 means fraud and 0 means not fraud.
+where $x_i \in \mathbb{R}^{d}$ is the feature vector for row $i$, $d$ is the number of raw input features, and $y_i \in \{0, 1\}$ is the label. In this dataset, $y_i = 1$ means fraud and $y_i = 0$ means not fraud.
 
-A supervised model such as Logistic Regression or XGBoost learns task-specific parameters from the training data. We can write the prediction function as
+A supervised model learns task-specific parameters from the available labelled data. I write that as
 
 $$
 \hat{p}_i = h_\theta(x_i)
 $$
 
-where $\hat{p}_i$ is the model's fraud score or estimated fraud probability, $h_\theta$ is the fitted model, and $\theta$ represents parameters learned from this dataset.
+where $\hat{p}_i$ is the model score or estimated fraud probability, $h_\theta$ is the fitted supervised model, and $\theta$ represents parameters learned for this task.
 
-For XGBoost, the model is an additive ensemble of decision trees. A simplified binary-classification view is
+For XGBoost, a simplified view is that the model learns an additive ensemble of trees:
 
 $$
 s_i = \sum_{m=1}^{M} f_m(x_i)
 $$
 
-where each $f_m$ is a tree and $s_i$ is the raw score. The score can then be mapped to a probability-like value through a sigmoid function:
+where $M$ is the number of trees, $f_m$ is tree $m$, and $s_i$ is the raw score for row $i$. The raw score can be mapped to a probability-like value by
 
 $$
 \hat{p}_i = \sigma(s_i) = \frac{1}{1 + \exp(-s_i)}
 $$
 
-The important point is that XGBoost learns from the current task data. It does not arrive with a broad learned prior over many tabular tasks in the same sense as a tabular foundation model. Its strength is different: it is fast, familiar, strong on many tabular datasets, easy to tune, and widely used in production-style systems.
+where $\sigma(\cdot)$ is the sigmoid function.
 
-That is why the notebook keeps XGBoost as the downstream fraud scorer. If tabular foundation models are useful in this workflow, they need to improve a strong existing supervised ML setup, not only beat a weak baseline.
+That familiar supervised ML structure stays intact in this notebook. XGBoost is still trained on labelled data, selected with chronological validation folds, evaluated on future holdout rows, and judged with fraud-specific metrics.
 
-### What changes when we add tabular foundation model embeddings
+### What changes when TabPFN or TabICL produces embeddings
 
-TabPFN and TabICL enter this notebook in a different role. They are not used as final fraud scorers. They are used to generate row embeddings.
+The new part is the representation step before XGBoost.
 
-An embedding is a numerical vector that represents a row in a learned feature space. In this notebook, the embedding is generated after the tabular foundation model has seen an earlier labelled context:
+TabPFN and TabICL are used as tabular foundation models. In this notebook, they are not used as the final fraud scorers. Instead, each model sees an earlier labelled context:
 
 $$
 C = \{(x_j, y_j)\}_{j=1}^{m}
 $$
 
-Here, $C$ is the representation context. It contains earlier transactions and labels. The tabular foundation model then maps a later row $x_i$ into a representation:
+where $C$ is the representation context, $j$ indexes context rows, and $m$ is the number of context rows.
+
+After conditioning on that context, the tabular foundation model maps a later row $x_i$ into an embedding:
 
 $$
 z_i = g_\phi(x_i; C)
 $$
 
-where $g_\phi$ is the embedding function induced by the pretrained model and its context, $\phi$ represents pretrained model parameters, and $z_i$ is the row embedding.
+where $z_i \in \mathbb{R}^{q}$ is the embedding vector, $q$ is the embedding dimension, $g_\phi$ is the embedding function induced by the pretrained model and the context, and $\phi$ represents pretrained model parameters.
 
-The downstream supervised model then receives an augmented feature vector:
+The downstream XGBoost model then receives an augmented feature vector:
 
 $$
 \tilde{x}_i = [x_i, z_i]
 $$
 
-and XGBoost is trained as
+where $[x_i, z_i]$ means concatenation of the raw features and the embedding features. XGBoost is then trained as
 
 $$
 \hat{p}_i = h_\theta(\tilde{x}_i)
 $$
 
-This is the key similarity and difference from supervised ML:
+This is the main conceptual distinction:
 
-- The downstream fraud scorer is still supervised ML. It still learns from labelled training rows, is tuned on validation rows, and is evaluated on future holdout rows.
-- The new capability comes from the tabular foundation model representation step. TabPFN or TabICL can produce additional row-level features after conditioning on a task context, without training a new XGBoost-like model from scratch inside the TFM itself.
+- Supervised ML capability: XGBoost learns a task-specific scoring function from the fraud dataset.
+- Tabular foundation model capability: TabPFN or TabICL contributes a learned representation of each row after seeing an earlier labelled task context.
+- Workflow question: Does the representation $z_i$ add enough useful information to the raw features $x_i$ to justify the cost and complexity of generating it?
 
-This is why I think embeddings are a useful integration pattern to test. They let a team ask whether a foundation model can improve the representation of the data while keeping the final scorer, monitoring path, and operating metrics closer to an existing classical ML workflow.
+For a practitioner familiar with supervised ML but new to foundation models, the simplest way to read the notebook is this: the production-style scorer remains familiar, but the feature set is augmented by a context-conditioned representation generated by a pretrained tabular model.
 
-### Why the context window matters
+### Why the time split matters
 
-A tabular foundation model uses labelled context rows as part of the task description. That creates an immediate evaluation concern: a row's own label should not be used to create features for that same row.
+The public credit-card fraud dataset has a `Time` column. The notebook sorts rows by `Time` and uses chronological windows:
 
-The notebook therefore sorts the fraud dataset by `Time` and uses five chronological windows:
+- Earliest 20% of transactions: representation context for TabPFN and TabICL.
+- Next 40%: downstream XGBoost training period.
+- Next 10%: validation period for model selection.
+- Next 10%: calibration period for post-hoc probability calibration.
+- Final 20%: full holdout.
 
-- earliest 20% of transactions: TabPFN/TabICL representation context;
-- next 40%: downstream XGBoost training period;
-- next 10%: validation period for model selection;
-- next 10%: calibration period for post-hoc probability calibration;
-- final 20%: full holdout.
+This split matters because TabPFN and TabICL use labelled context rows. If a row's own label were used to generate that row's embedding, the evaluation would be contaminated. The notebook avoids that by giving TabPFN and TabICL only earlier context rows when creating embeddings for later training, validation, calibration, and holdout rows.
 
-TabPFN and TabICL see only the earlier representation-context rows when generating embeddings for the later training, validation, calibration, and holdout rows. XGBoost then sees raw features or raw plus embedding features. The full holdout remains a future window relative to both the representation context and the downstream training process.
-
-This split is still a simplified public-data workflow. A real production fraud project would also need customer, card, account, merchant, device, and label-availability information. This dataset does not expose those fields. Still, the chronological design is more relevant than a random split for a fraud review workflow.
+This is still a simplified public-data workflow. A production fraud project would also need customer, account, card, merchant, device, and label-availability fields. This dataset does not expose those fields, so some production leakage checks remain unresolved.
 
 ### Why Average Precision is not enough
 
-Fraud detection is a rare-event ranking problem. The public credit-card fraud dataset has 284,807 transactions and 492 fraud cases. The fraud rate is about 0.1727%.
+The dataset has 284,807 transactions and 492 fraud cases, so the fraud rate is about 0.1727%. Accuracy is not a useful headline metric because a model that predicts "not fraud" for every transaction would be more than 99% accurate while catching no fraud.
 
-Accuracy is not a useful headline metric here. A model that predicts "not fraud" for every row would be more than 99% accurate and still catch no fraud.
-
-The notebook therefore focuses on precision, recall, Average Precision, and alert counts.
+The notebook therefore focuses on ranking and alert-queue metrics.
 
 Precision is
 
@@ -133,34 +128,34 @@ $$
 
 where $TP$ means true positives, $FP$ means false positives, and $FN$ means false negatives.
 
-Average Precision summarizes the precision-recall curve. One useful way to write it is
+Average Precision summarizes the precision-recall curve:
 
 $$
 AP = \sum_{k=1}^{K} (R_k - R_{k-1})P_k
 $$
 
-where $P_k$ and $R_k$ are precision and recall values along the ranked score curve.
+where $K$ is the number of threshold steps, $R_k$ is recall at step $k$, and $P_k$ is precision at step $k$.
 
-Average Precision is useful, but a fraud team often works with review capacity. That means we also need questions such as:
+Average Precision is useful, but fraud teams also work with review capacity. That leads to operational questions:
 
-- If we review the top 100 alerts, how many frauds do we catch?
-- If we review the top 1% of transactions, what recall do we get?
+- If the team reviews the top 100 alerts, how many frauds are found?
+- If the team reviews the top 1% of transactions, what recall is reached?
 - How many alerts are needed to reach 80% recall?
 - How many alerts are needed to reach 90% recall?
 
-This is where a model can have slightly lower AP but still be operationally interesting. If it reaches a high recall target with fewer alerts, it may help a review team even if its average curve summary is not the best.
+That is why the notebook reports both AP and alert-count metrics.
 
 ### Calibration is a separate question
 
-A fraud score can be useful for ranking without being a well-calibrated probability. Calibration asks whether predicted probabilities match observed frequencies. If a model assigns a group of transactions a fraud probability near 1%, then a calibrated model should see about 1% fraud in that group.
+A fraud score can be useful for ranking without being a well-calibrated probability. Calibration asks whether predicted probabilities match observed frequencies. If a model assigns a group of transactions a predicted fraud probability near 1%, then approximately 1% of those transactions should be fraud if the probabilities are calibrated.
 
-The notebook reports Brier score,
+The notebook reports the Brier score:
 
 $$
 \text{Brier} = \frac{1}{N}\sum_{i=1}^{N}(\hat{p}_i - y_i)^2
 $$
 
-and log loss,
+It also reports log loss:
 
 $$
 \text{LogLoss} =
@@ -170,258 +165,195 @@ y_i\log(\hat{p}_i) + (1-y_i)\log(1-\hat{p}_i)
 \right]
 $$
 
-Lower is better for both. The notebook also reports reliability-bin summaries and expected calibration error. I treat calibration as diagnostic in this post because the public holdout contains only 75 fraud cases. That is enough to inspect behavior, but not enough to claim production probability calibration.
+Here, $N$ is the number of evaluated rows. Lower is better for both Brier score and log loss.
+
+I treat calibration as diagnostic in this post. The full holdout has only 75 fraud cases, which is enough to inspect behavior but not enough to claim production-grade probability calibration.
 
 ## Hands-on demo
 
-### Notebook setup and run state < remove this section. I want to discuss scientific and experiemental results and don't want the blog post to be log book >
+### Experimental design
 
-The notebook is designed to run on Kaggle with GPU enabled. It installs `cudf-cu12`, uses the cuDF pandas accelerator, generates TabPFN and TabICL embeddings on CUDA devices, and uses a GPU XGBoost path for the downstream scorer.
+The notebook compares four publication rows:
 
-The final v3 completed rerun used: 
+- Raw XGBoost: XGBoost trained on the 29 raw model features.
+- Raw all-history XGBoost: an incumbent-style XGBoost row that uses all pre-holdout raw historical data.
+- Raw + TabPFN embeddings: raw features plus 192 TabPFN embedding features, giving 221 total features.
+- Raw + TabICL embeddings: raw features plus 512 TabICL embedding features, giving 541 total features.
 
-| Component | Version |
-|---|---:|
-| Python | 3.12.12 |
-| CUDA devices | 2 |
-| pandas | 2.3.3 |
-| cuDF | 26.2.1 |
-| CuPy | 14.0.1 |
-| NumPy | 2.0.2 |
-| scikit-learn | 1.6.1 |
-| XGBoost | 3.2.0 |
-| torch | 2.10.0+cu128 |
-| TabPFN | 7.1.1 |
-| TabICL | 2.1.1 |
+The combined `Raw + TabPFN + TabICL` feature set is intentionally not part of the publication comparison. A team may test TabPFN embeddings or TabICL embeddings, but operating both embedding systems together is a different adoption choice with additional cost and monitoring burden.
 
-The notebook ran without execution errors. The only stderr output came from Kaggle setup dependency warnings and a cuDF compression auto-detection warning while loading data. The run produced the expected publication tables and figures, including the new bootstrap, memory, and provenance outputs.
+The fair raw-vs-embedding tuning path uses 142,403 downstream tuning rows after excluding 56,961 representation-context rows. Those tuning rows contain 227 fraud cases. The raw all-history incumbent uses 199,364 pre-holdout rows and 384 fraud cases because it does not need to exclude the representation-context rows.
 
-### Split and tuning policy
-
-< there is no need to mention v1 v2 and v3 in the post. Treat the latest version (v3 in this case) as the one and only publishable version and use it for the blog post.
-
-The split and tuning policy are central to the result. The fair raw-vs-embedding comparison excludes the earliest representation-context rows from downstream tuning, because those labels were used to condition TabPFN and TabICL embeddings.
-
-In the v3 rerun:
-
-| Comparison | Tuning rows | Fraud rows | Context rows excluded | Sampled train used |
-|---|---:|---:|---:|---:|
-| fair raw-vs-embedding | 142,403 | 227 | 56,961 | false |
-| raw all-history incumbent | 199,364 | 384 | 0 | false |
-
-The fair raw-vs-embedding path had five valid chronological folds. This matters because the earlier workflow had too little valid chronological tuning evidence after fraud-count checks. The v3 design gives the XGBoost tuner more chronological history while still respecting the TFM context boundary.
-
-### Feature bundles
-
-The v3 rerun evaluated the intended feature bundles:
-
-| Feature set | Embedding source | Feature count | Shared feature prep seconds |
-|---|---|---:|---:|
-| Raw | none | 29 | 0.0 |
-| Raw + TabPFN embeddings | TabPFN | 221 | 371.4 |
-| Raw + TabICL embeddings | TabICL | 541 | 120.5 |
-
-There is no combined `Raw + TabPFN + TabICL` row in the v3 publication workflow. I removed it because the main question is one-embedding-source adoption. This makes the result less dramatic than the initial completed run, where the combined row had the best AP, but I think it makes the comparison more realistic.
-
-The two embedding paths are also technically different. TabPFN exposes a public `get_embeddings` method. TabICL does not expose the same sklearn-level public embedding method, so the notebook extracts representations through the fitted TabICL wrapper internals and records the version/checkpoint metadata. That is useful for experimentation, but it should be treated as a version-sensitive path.
+The fair raw-vs-embedding comparison has five chronological validation folds. The validation fraud counts across those folds are 25, 19, 78, 8, and 20. This is not a large number of positive cases, but it is much better than judging the workflow from a single valid fold.
 
 ### Full-holdout ranking result
 
-The full holdout is the deployment-facing view because it keeps the original final-window fraud base rate. The result is conservative:
+The full holdout is the deployment-facing view because it keeps the final-window fraud base rate. The main ranking result is:
 
-| Model | AP | Workflow seconds | Top 0.5% recall | Top 1% recall | Brier | ECE 10 |
-|---|---:|---:|---:|---:|---:|---:|
-| Raw all-history XGBoost | 0.8097 | 173.3 | 0.8533 | 0.8533 | 0.000424 | 0.000104 |
-| Raw XGBoost | 0.8034 | 147.0 | 0.8400 | 0.8667 | 0.000403 | 0.000231 |
-| Raw + TabICL | 0.7970 | 1147.8 | 0.8267 | 0.9067 | 0.000451 | 0.000485 |
-| Raw + TabPFN | 0.7909 | 840.2 | 0.8000 | 0.8400 | 0.000381 | 0.000184 |
+- Raw all-history XGBoost: AP 0.8097, workflow time 173.3 seconds, Top 0.5% Recall 0.8533, Top 1% Recall 0.8533, Brier 0.000424, ECE 10 0.000104.
+- Raw XGBoost: AP 0.8034, workflow time 147.0 seconds, Top 0.5% Recall 0.8400, Top 1% Recall 0.8667, Brier 0.000403, ECE 10 0.000231.
+- Raw + TabICL: AP 0.7970, workflow time 1147.8 seconds, Top 0.5% Recall 0.8267, Top 1% Recall 0.9067, Brier 0.000451, ECE 10 0.000485.
+- Raw + TabPFN: AP 0.7909, workflow time 840.2 seconds, Top 0.5% Recall 0.8000, Top 1% Recall 0.8400, Brier 0.000381, ECE 10 0.000184.
 
-The raw all-history XGBoost incumbent has the best full-holdout Average Precision. The ordinary raw XGBoost row is close and fastest. Neither single-source embedding workflow improves AP over the raw XGBoost baselines in this run.
+The raw all-history XGBoost row has the best point AP. Raw XGBoost is close and much faster. Neither single-source embedding workflow improves point AP over the raw XGBoost rows in this run.
 
-This is an important outcome. It means that the notebook is not a marketing-style example where the foundation-model feature always wins. It is a workflow test. In this public fraud dataset, the classical incumbent is strong.
-
-The precision-recall figure shows the same situation visually.
+That is an important outcome. The value of the notebook is not that the embedding rows automatically win. The value is that the workflow gives a practical way to test whether a foundation-model representation helps under a realistic baseline.
 
 ![Full-holdout precision-recall curves](./20260505-tabpfn-tabicl-embeddings-fraud-det-workflows.assets/publication_precision_recall_curves_full.png)
 
-The curves are close. The dashed horizontal line is the fraud base rate, which is near zero. When the curves are this close, I do not think the figure alone should carry the interpretation. The operating-point tables are more useful for understanding where a model may matter in practice.
+The precision-recall curves are close. The dashed line is the fraud base rate. When curves are this close, I would not rely on the figure alone. The operating-point view is more useful for interpreting the practical difference.
 
 ### Alert-budget interpretation
 
-At 80% recall, the raw all-history incumbent is best:
+At 80% recall on the full holdout:
 
-| Model | Alerts needed | Frauds found | Precision |
-|---|---:|---:|---:|
-| Raw all-history XGBoost | 94 | 60 | 0.6383 |
-| Raw XGBoost | 116 | 60 | 0.5172 |
-| Raw + TabICL | 127 | 60 | 0.4724 |
-| Raw + TabPFN | 199 | 60 | 0.3015 |
+- Raw all-history XGBoost needs 94 alerts to find 60 frauds, with precision 0.6383.
+- Raw XGBoost needs 116 alerts to find 60 frauds, with precision 0.5172.
+- Raw + TabICL needs 127 alerts to find 60 frauds, with precision 0.4724.
+- Raw + TabPFN needs 199 alerts to find 60 frauds, with precision 0.3015.
 
-At 90% recall, the result changes:
+At 90% recall on the full holdout:
 
-| Model | Alerts needed | Frauds found | Precision |
-|---|---:|---:|---:|
-| Raw + TabICL | 490 | 68 | 0.1388 |
-| Raw all-history XGBoost | 1,064 | 68 | 0.0639 |
-| Raw XGBoost | 1,177 | 68 | 0.0578 |
-| Raw + TabPFN | 1,598 | 68 | 0.0426 |
+- Raw + TabICL needs 490 alerts to find 68 frauds, with precision 0.1388.
+- Raw all-history XGBoost needs 1,064 alerts to find 68 frauds, with precision 0.0639.
+- Raw XGBoost needs 1,177 alerts to find 68 frauds, with precision 0.0578.
+- Raw + TabPFN needs 1,598 alerts to find 68 frauds, with precision 0.0426.
 
-This is the main operational signal from the v3 rerun. TabICL does not win by full-holdout AP, but it needs far fewer alerts to recover 68 of the 75 fraud cases in the full holdout. For a review team targeting very high recall, that is worth further investigation.
+This is the main operational nuance. AP favors the raw all-history incumbent, but the 90% recall operating point favors TabICL. If a fraud team is targeting very high recall, this is the part of the result I would investigate further.
 
-This also shows why an evaluation should not stop at one metric. AP is a useful ranking summary. Alert counts translate the score into a workflow. Both are needed.
+For fixed alert budgets on the full holdout:
 
-### Bootstrap uncertainty
+- At 100 alerts, Raw all-history XGBoost finds 60 frauds and reaches 80.0% recall.
+- At 500 alerts, Raw + TabICL finds 68 frauds and reaches 90.7% recall.
+- At 1000 alerts, Raw + TabICL still finds 68 frauds and remains at 90.7% recall.
+- At the top 0.5% of transactions, Raw all-history XGBoost finds 64 frauds and reaches 85.3% recall.
+- At the top 1% of transactions, Raw + TabICL finds 68 frauds and reaches 90.7% recall.
 
-The v3 notebook adds bootstrap uncertainty for full-holdout AP and for the number of alerts needed at 80% and 90% recall. This matters because the full holdout has only 75 fraud cases. With that few positive examples, small AP differences should not be treated as precise estimates.
+This is why I do not want to summarize the notebook with one metric. AP, fixed alert budgets, and target-recall alert counts each answer a different question.
 
-Full-holdout AP uncertainty:
+### Uncertainty around the result
 
-| Model | Point AP | Bootstrap median | 95% CI lower | 95% CI upper |
-|---|---:|---:|---:|---:|
-| Raw XGBoost | 0.8034 | 0.8032 | 0.6972 | 0.8709 |
-| Raw all-history XGBoost | 0.8097 | 0.8140 | 0.7189 | 0.8947 |
-| Raw + TabPFN | 0.7909 | 0.7905 | 0.7061 | 0.8687 |
-| Raw + TabICL | 0.7970 | 0.7973 | 0.7063 | 0.8723 |
+The notebook uses bootstrap resampling on the full holdout to estimate uncertainty. This is useful because the full holdout has only 75 fraud cases.
 
-The intervals overlap heavily. I read the AP table as a point-estimate ranking, not as a decisive separation between the rows.
+For full-holdout AP:
+
+- Raw XGBoost has point AP 0.8034, bootstrap median 0.8032, and 95% interval from 0.6972 to 0.8709.
+- Raw all-history XGBoost has point AP 0.8097, bootstrap median 0.8140, and 95% interval from 0.7189 to 0.8947.
+- Raw + TabPFN has point AP 0.7909, bootstrap median 0.7905, and 95% interval from 0.7061 to 0.8687.
+- Raw + TabICL has point AP 0.7970, bootstrap median 0.7973, and 95% interval from 0.7063 to 0.8723.
+
+These intervals overlap heavily. My reading is that raw all-history XGBoost has the best point estimate, but the AP differences should not be overstated.
 
 For alerts needed at 90% recall:
 
-| Model | Point estimate | Bootstrap median | 95% CI lower | 95% CI upper |
-|---|---:|---:|---:|---:|
-| Raw XGBoost | 1,177 | 1,230 | 212 | 9,822 |
-| Raw all-history XGBoost | 1,064 | 1,046 | 129 | 7,311 |
-| Raw + TabPFN | 1,598 | 1,598 | 451 | 7,972 |
-| Raw + TabICL | 490 | 495 | 254 | 3,449 |
+- Raw XGBoost has point estimate 1,177, bootstrap median 1,230, and 95% interval from 212 to 9,822 alerts.
+- Raw all-history XGBoost has point estimate 1,064, bootstrap median 1,046, and 95% interval from 129 to 7,311 alerts.
+- Raw + TabPFN has point estimate 1,598, bootstrap median 1,598, and 95% interval from 451 to 7,972 alerts.
+- Raw + TabICL has point estimate 490, bootstrap median 495, and 95% interval from 254 to 3,449 alerts.
 
-The TabICL point estimate is still operationally interesting, but the wide intervals are a reminder that this is one public holdout, not a production decision study.
+The TabICL point estimate remains interesting, but the intervals are wide. This should be read as a workflow signal, not as a production decision.
 
-### Runtime and workflow cost
+### Runtime and memory
 
-The runtime plot makes the tradeoff visible:
+The runtime plot shows the engineering tradeoff:
 
 ![Full-holdout runtime versus Average Precision](./20260505-tabpfn-tabicl-embeddings-fraud-det-workflows.assets/publication_runtime_vs_average_precision_full.png)
 
-The raw and raw all-history rows are much faster. The embedding rows are slower because they add an offline representation step and because the downstream XGBoost search runs on wider matrices.
+The workflow times are:
 
-The timing table is:
+- Raw XGBoost: 147.0 seconds.
+- Raw all-history XGBoost: 173.3 seconds.
+- Raw + TabPFN: 840.2 seconds, including 371.4 seconds of shared TabPFN embedding preparation.
+- Raw + TabICL: 1147.8 seconds, including 120.5 seconds of shared TabICL embedding preparation.
 
-| Feature set | Embedding prep seconds | Total workflow seconds |
-|---|---:|---:|
-| Raw | 0.0 | 147.0 |
-| Raw all-history incumbent | 0.0 | 173.3 |
-| Raw + TabPFN | 371.4 | 840.2 |
-| Raw + TabICL | 120.5 | 1147.8 |
+One subtle point is that TabICL embedding preparation is faster than TabPFN embedding preparation in this run, but the full Raw + TabICL workflow is slower. The likely reason is the downstream XGBoost search over a wider feature matrix: TabICL contributes 512 embedding columns, while TabPFN contributes 192.
 
-One nuance is easy to miss: TabICL embedding preparation was faster than TabPFN embedding preparation in this run, but the total TabICL workflow was slower. The reason is that the TabICL feature matrix was wider, and XGBoost tuning on that matrix took longer.
+The embedding matrix sizes also matter:
 
-This is why I prefer the phrase workflow seconds rather than model seconds. In a production-style test, the representation is only useful if its quality or operating-point gain justifies the whole path: extraction, storage, downstream fitting, prediction, calibration, and monitoring.
+- TabPFN final training embeddings: 170,884 rows, 192 columns, about 125.2 MB.
+- TabPFN full-holdout embeddings: 56,962 rows, 192 columns, about 41.7 MB.
+- TabICL final training embeddings: 170,884 rows, 512 columns, about 333.8 MB.
+- TabICL full-holdout embeddings: 56,962 rows, 512 columns, about 111.3 MB.
 
-### Memory and provenance
+Both embedding paths fit on the Kaggle two-T4 GPU runtime used for the notebook. TabPFN used both CUDA devices and reached about 936.8 MB maximum allocated memory per device during extraction. TabICL used device 0 more heavily, reaching about 3657.3 MB maximum allocated memory and 4548.0 MB reserved memory after extraction.
 
-The v3 notebook also records embedding matrix sizes and CUDA memory snapshots. This is important because a representation workflow can fail for practical reasons even when the score metrics look interesting.
-
-For the largest final training embedding matrices:
-
-| Source | Rows | Embedding columns | Approx memory MB |
-|---|---:|---:|---:|
-| TabPFN | 170,884 | 192 | 125.2 |
-| TabICL | 170,884 | 512 | 333.8 |
-
-For the full holdout embedding matrices:
-
-| Source | Rows | Embedding columns | Approx memory MB |
-|---|---:|---:|---:|
-| TabPFN | 56,962 | 192 | 41.7 |
-| TabICL | 56,962 | 512 | 111.3 |
-
-The CUDA memory snapshots show both embedding paths fitting on the two-T4 Kaggle runtime. TabPFN used both CUDA devices and reached about 936.8 MB max allocated per device during extraction. TabICL used device 0 more heavily, with about 3657.3 MB max allocated and 4548.0 MB reserved after extraction.
-
-The notebook also records source/model provenance. In this Kaggle run, the local paths are not git checkouts, so source commit fields are unavailable. The model metadata is still useful: TabPFN uses the installed `TabPFNClassifier.get_embeddings` path, while TabICL uses the `tabicl-classifier-v2-20260212.ckpt` checkpoint and an internal representation path marked as validated for this notebook.
+For a practitioner, the lesson is that representation quality should be judged together with representation cost. The question is not only "does the embedding help?" It is also "does the embedding help enough to justify extraction, storage, downstream training time, and monitoring?"
 
 ### Calibration diagnostics
 
-Calibration is not a clear win in the v3 rerun.
+Calibration remains diagnostic rather than a clear improvement.
 
-Full-holdout calibration rows:
+On the full holdout:
 
-| Row | AP | Brier | Log loss | ECE 10 |
-|---|---:|---:|---:|---:|
-| Raw all-history none | 0.8097 | 0.000424 | 0.002824 | 0.000104 |
-| Raw base | 0.8047 | 0.000396 | 0.002835 | 0.000209 |
-| Raw calibrated | 0.8047 | 0.000422 | 0.003287 | 0.000356 |
-| Raw + TabPFN none | 0.7909 | 0.000381 | 0.002500 | 0.000184 |
-| Raw + TabPFN base | 0.7918 | 0.000407 | 0.002669 | 0.000163 |
-| Raw + TabPFN calibrated | 0.7918 | 0.000441 | 0.003349 | 0.000528 |
-| Raw + TabICL none | 0.7970 | 0.000451 | 0.002583 | 0.000485 |
-| Raw + TabICL base | 0.7978 | 0.000445 | 0.002719 | 0.000359 |
-| Raw + TabICL calibrated | 0.7978 | 0.000430 | 0.003091 | 0.000298 |
+- Raw all-history uncalibrated: AP 0.8097, Brier 0.000424, log loss 0.002824, ECE 10 0.000104.
+- Raw calibration base: AP 0.8047, Brier 0.000396, log loss 0.002835, ECE 10 0.000209.
+- Raw calibrated: AP 0.8047, Brier 0.000422, log loss 0.003287, ECE 10 0.000356.
+- Raw + TabPFN uncalibrated: AP 0.7909, Brier 0.000381, log loss 0.002500, ECE 10 0.000184.
+- Raw + TabPFN calibration base: AP 0.7918, Brier 0.000407, log loss 0.002669, ECE 10 0.000163.
+- Raw + TabPFN calibrated: AP 0.7918, Brier 0.000441, log loss 0.003349, ECE 10 0.000528.
+- Raw + TabICL uncalibrated: AP 0.7970, Brier 0.000451, log loss 0.002583, ECE 10 0.000485.
+- Raw + TabICL calibration base: AP 0.7978, Brier 0.000445, log loss 0.002719, ECE 10 0.000359.
+- Raw + TabICL calibrated: AP 0.7978, Brier 0.000430, log loss 0.003091, ECE 10 0.000298.
 
-Sigmoid calibration leaves AP unchanged for each calibration-base row, as expected for a monotonic score transform. It worsens log loss for all selected rows. It improves TabICL Brier/ECE relative to the TabICL calibration base, but not enough to make calibration an obvious overall improvement. For TabPFN, sigmoid calibration worsens Brier, log loss, and ECE relative to its calibration-base row.
+Sigmoid calibration leaves AP unchanged for the calibration-base rows because it is a monotonic score transformation. It worsens log loss for all selected rows. It improves TabICL Brier and ECE relative to the TabICL calibration base, but not enough to make calibration a clear overall improvement. For TabPFN, sigmoid calibration worsens Brier, log loss, and ECE relative to its calibration-base row.
 
-The calibration plot is included below, but this is one place where the table is more useful than the figure. Most meaningful probabilities are near zero because fraud is rare.
+The calibration plot is useful as a visual diagnostic, but the reliability-bin CSVs are more important for interpretation because most meaningful probabilities are near zero.
 
 ![Full-holdout calibration curves](./20260505-tabpfn-tabicl-embeddings-fraud-det-workflows.assets/publication_calibration_curves_full.png)
 
-The v3 plot is zoomed into the rare-event probability range, but reliability-bin CSVs remain the primary calibration artifact.
+### Leakage and public-data limits
 
-### Leakage and reuse checks
+The notebook includes a leakage and reuse checklist. The public dataset allows some checks but not all of the checks a production fraud project would need.
 
-The notebook checks the public dataset as far as the available fields allow:
+Checks that pass or are explicit design choices:
 
-| Check | Status | Interpretation |
-|---|---|---|
-| Target excluded from features | pass | `Class` is not used as a model feature |
-| Time preserved for temporal split | pass | `Time` is available for chronological splitting |
-| Time used as model feature | not used | default excludes `Time` |
-| Chronological split order | pass | equal boundary timestamps can occur |
-| Duplicate rows and duplicate model-feature rows | review | requires interpretation |
-| Future aggregate features | unknown | feature lineage hidden |
-| Entity-level leakage | unknown | no customer/card/account ID |
-| Label delay | unknown | label timing hidden |
+- `Class` is excluded from the model features.
+- `Time` is preserved for chronological splitting.
+- `Time` is not used as a model feature in the default run.
+- The chronological split order passes, although equal boundary timestamps can occur.
 
-The duplicate diagnostics are:
+Checks that remain unresolved because of public-data limitations:
 
-| Metric | Value |
-|---|---:|
-| exact duplicate rows including time and target | 1,854 |
-| exact duplicate groups crossing windows | 0 |
-| model-feature duplicate rows | 14,293 |
-| model-feature duplicate groups crossing windows | 2,178 |
-| fraud rows inside cross-window model-feature duplicate groups | 0 |
+- Future aggregate feature lineage is unknown because `V1` to `V28` are anonymized PCA-style features.
+- Entity-level leakage is unknown because there is no customer, card, account, merchant, or device ID.
+- Label delay is unknown because the public dataset does not expose when a fraud label became available.
 
-I read this as a review finding, not as a fatal leakage failure. The public dataset does not expose enough raw identifiers to know whether repeated-looking rows represent real recurring payments, retries, preprocessing artifacts, or duplicates. In a company dataset, this section would need to be much stronger.
+Duplicate diagnostics:
+
+- Exact duplicate rows including time and target: 1,854.
+- Exact duplicate groups crossing windows: 0.
+- Model-feature duplicate rows: 14,293.
+- Model-feature duplicate groups crossing windows: 2,178.
+- Fraud rows inside cross-window model-feature duplicate groups: 0.
+
+I read this as a review finding, not a fatal leakage failure. In a company dataset, I would want entity IDs, feature creation timestamps, and label availability timestamps before treating the leakage review as complete.
 
 ## Known shortcomings
 
-There are several limitations that should be kept in view.
+This is one public dataset, so the result should not be generalized to all fraud datasets, transaction workflows, or tabular foundation models.
 
-First, this is one public dataset. The result should not be generalized to all fraud datasets, all transaction workflows, or all tabular foundation models.
+The dataset is anonymized. The public features are useful for a controlled workflow demonstration, but they limit business interpretation, entity-level validation, delayed-label analysis, and feature-lineage review.
 
-Second, the public credit-card fraud dataset is anonymized. The `V1` to `V28` columns are PCA-style features. There are no customer, card, account, merchant, device, chargeback timing, or feature-lineage fields. That limits leakage analysis, entity-level validation, drift analysis, and business interpretation.
+The full holdout has only 75 fraud cases. The bootstrap intervals help, but they also show why point estimates should be interpreted cautiously.
 
-Third, the full holdout has only 75 fraud cases. That makes AP and alert-count differences sensitive to a small number of ranked examples. The v3 notebook now reports bootstrap uncertainty for AP and target-recall alert counts, and those intervals should be read alongside the point estimates.
+The TabICL embedding path uses model internals rather than a stable public embedding method comparable to TabPFN's `get_embeddings`. That does not make the experiment invalid, but it means the code path should be version-pinned and reviewed.
 
-Fourth, TabICL embedding extraction uses model internals rather than a stable public embedding API equivalent to TabPFN's `get_embeddings`. That does not make the experiment invalid, but it means the code path should be version-pinned and reviewed.
-
-Fifth, one artifact hygiene issue remains in the saved rerun folder: `embedding_error_summary.csv` still contains an old TabPFN token error from a failed intermediate v3 run, even though the final v3 result tables show TabPFN completed successfully. The next notebook version should clean stale output files before writing new artifacts.
-
-Sixth, I have not yet added interpretability methods such as SHAP, missing-data stress tests, categorical stress tests, or drift-by-period analysis. Those are important for a broader testbench, but I kept this notebook focused on the first embedding workflow question.
+I have not yet added interpretability methods such as SHAP, missing-data stress tests, categorical stress tests, drift-by-period analysis, or group-aware splitting. Those are important next steps for a broader testbench.
 
 ## Summary and Conclusion
 
-This notebook tests a practical integration pattern for tabular foundation models:
+This notebook tests a practical integration pattern:
 
-1. keep XGBoost as the downstream fraud scorer;
-2. use TabPFN or TabICL as an offline row-embedding generator;
-3. append those embeddings to raw transaction features;
-4. evaluate the result with chronological splits, AP, alert counts, runtime, calibration diagnostics, and leakage checks.
+1. Keep XGBoost as the downstream fraud scorer.
+2. Use TabPFN or TabICL as an offline row-embedding generator.
+3. Append those embeddings to raw transaction features.
+4. Evaluate the result with chronological splits, AP, alert counts, runtime, memory, calibration diagnostics, and leakage checks.
 
-The completed v3 rerun is not a simple "TFM embeddings win" result. The raw all-history XGBoost incumbent has the best full-holdout point Average Precision, and raw XGBoost is close while being much faster. Single-source TabPFN and TabICL embeddings do not beat the raw baselines by AP in this run. The bootstrap intervals overlap heavily, so I would not overstate the AP ranking.
+The result is not a simple "TFM embeddings win" result. Raw all-history XGBoost has the best full-holdout point AP, and raw XGBoost is close while being much faster. Single-source TabPFN and TabICL embeddings do not beat the raw baselines by AP in this run. The bootstrap intervals overlap heavily, so I would not overstate the AP ranking.
 
-The useful nuance is the high-recall operating point. At 90% recall, Raw + TabICL needed 490 alerts to recover 68 of 75 fraud cases, compared with 1,064 alerts for raw all-history XGBoost and 1,177 alerts for raw XGBoost. That makes TabICL worth investigating for high-recall review-queue settings, even though it is not the best AP/runtime row overall.
+The useful nuance is the high-recall operating point. At 90% recall, Raw + TabICL needs 490 alerts to recover 68 of 75 fraud cases, compared with 1,064 alerts for raw all-history XGBoost and 1,177 alerts for raw XGBoost. That makes TabICL worth investigating for high-recall review-queue settings, even though it is not the best AP/runtime row overall.
 
-My interpretation is cautious. This result suggests that tabular foundation model embeddings should be evaluated as workflow components, not only as standalone model scores. The right question is not only "did the embedding row win AP?" It is also "did the embedding row improve the operating point enough to justify the added representation path?"
+My cautious interpretation is that tabular foundation model embeddings should be evaluated as workflow components, not only as standalone model scores. The important question is not only whether an embedding row wins AP. It is whether the embedding improves a business-relevant operating point enough to justify the added representation path.
 
 For practitioners, the reusable lesson is the evaluation design. A TFM embedding experiment should be compared against a serious classical baseline, with time-aware splitting, alert-budget metrics, calibration diagnostics, runtime accounting, memory accounting, and leakage checks.
 
@@ -429,21 +361,14 @@ For labs and researchers, I hope this kind of notebook is useful as a field-faci
 
 ## Outlook
 
-The v3 rerun now produces the main artifacts I wanted:
+The immediate notebook cleanup is to make output artifacts impossible to confuse across future executions. After that, I want to extend the workflow in directions that matter for real data science teams:
 
-- `publication_alert_summary.csv`;
-- `publication_target_recall_summary.csv`;
-- `publication_bootstrap_uncertainty_full.csv`;
-- `source_provenance_summary.csv`;
-- `embedding_matrix_summary.csv`;
-- `cuda_memory_summary.csv`.
+- interpretability;
+- missing-data behavior;
+- categorical features;
+- time-derived feature policy;
+- drift by time period;
+- group-aware splitting when entity IDs are available;
+- additional datasets beyond this public credit-card fraud dataset.
 
-The main questions from the rerun are now answered:
-
-1. Raw all-history XGBoost still leads by point AP.
-2. TabICL still reduces the alert count at 90% recall.
-3. The AP differences are small relative to bootstrap uncertainty.
-4. Both embedding paths fit on the two-T4 Kaggle runtime; TabICL uses wider embeddings and higher peak/reserved CUDA memory on device 0.
-5. The cleaned publication figures are usable, although reliability-bin tables remain more informative than the calibration figure.
-
-The immediate notebook cleanup is to remove stale output files at the start of each run and add a final publication-completeness check. After that, I want to extend the workflow in directions that matter for real data science teams: interpretability, missing-data behavior, categorical features, time-derived feature policy, drift, group-aware splits, and additional datasets. My current goal is not to prove that one model family is always better. It is to build reusable examples that make the benefits, costs, and caveats visible enough for both model builders and practitioners to reason about them.
+My current goal is not to prove that one model family is always better. It is to build reusable examples that make benefits, costs, and caveats visible enough for both model builders and practitioners to reason about them.
