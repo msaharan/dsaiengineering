@@ -25,14 +25,14 @@ The notebook is now self-standing. It no longer explains itself as "the next ite
 
 > Can offline row embeddings from TabPFN and TabICL improve a production-style XGBoost fraud-detection workflow?
 
-The default model set is now compact:
+The default model set is now compact and matches a more realistic adoption assumption: a team would usually choose one TFM embedding source to operate, monitor, and maintain, not concatenate multiple foundation-model embedding systems.
 
 - raw XGBoost;
 - raw all-history XGBoost incumbent;
-- raw + TabICL embeddings;
-- raw + TabPFN + TabICL embeddings.
+- raw + TabPFN embeddings;
+- raw + TabICL embeddings.
 
-TabPFN-only and Logistic Regression are still available as optional ablations, but they are not default publication rows. This keeps the main workflow focused on the feature sets that matter most for the practical question.
+The combined Raw + TabPFN + TabICL feature set has been removed from the default workflow. Logistic Regression is still available as an optional CPU benchmark, but it is not a default publication row. This keeps the main workflow focused on the feature sets that matter most for the practical question.
 
 The fair raw-vs-embedding tuning path now uses the full train-plus-validation history after the TFM context window by default. That directly addresses the biggest issue from the output review: the previous fair comparison collapsed to one valid chronological fold after fraud-count checks. The new default gives the tuner more chronological data while still excluding rows whose labels condition the TFM context.
 
@@ -69,9 +69,9 @@ The notebook still needs a fresh Kaggle GPU execution. The source is clean and r
 After running it, the next checks are:
 
 1. Did the fair raw-vs-embedding comparison produce more valid chronological folds?
-2. Does Raw + TabICL still beat the fair raw baseline on full-holdout AP and alert efficiency?
+2. Does either single-embedding workflow beat the fair raw baseline on full-holdout AP and alert efficiency?
 3. Does the raw all-history incumbent remain competitive?
-4. Does Raw + TabPFN + TabICL justify its extra embedding cost?
+4. Which single embedding source, TabPFN or TabICL, gives the better quality/runtime tradeoff?
 5. Do the calibration rows improve log loss, Brier score, or reliability-bin behavior relative to their matching calibration-base rows?
 6. Are the publication figures clean enough to include directly in the post?
 
