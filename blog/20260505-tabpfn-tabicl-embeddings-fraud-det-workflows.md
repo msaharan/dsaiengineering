@@ -66,13 +66,15 @@ $$
 
 where $C$ is the representation context, $j$ indexes context rows, and $m$ is the number of context rows.
 
+Here, representation context means the same idea I previously called the TFM context or context set: the labelled rows used to describe the current task to the tabular foundation model. The notebook does not train TabPFN or TabICL from scratch. It uses pretrained tabular foundation models, conditions them on this labelled context, and extracts row representations for later transactions.
+
 After conditioning on that context, the tabular foundation model maps a later row $x_i$ into an embedding:
 
 $$
-z_i = g_\phi(x_i; C)
+z_i = f_{\text{TFM}}(x_i; C)
 $$
 
-where $z_i \in \mathbb{R}^{q}$ is the embedding vector, $q$ is the embedding dimension, $g_\phi$ is the embedding function induced by the pretrained model and the context, and $\phi$ represents pretrained model parameters.
+where $z_i \in \mathbb{R}^{q}$ is the embedding vector, $q$ is the embedding dimension, and $f_{\text{TFM}}$ is the embedding function induced by the pretrained tabular foundation model after conditioning on $C$.
 
 The downstream XGBoost model then receives an augmented feature vector:
 
@@ -167,6 +169,17 @@ $$
 
 Here, $N$ is the number of evaluated rows. Lower is better for both Brier score and log loss.
 
+The notebook also reports expected calibration error with 10 bins, written as ECE 10 in the result lists. For $B$ bins, I use the form
+
+$$
+ECE_B =
+\sum_{b=1}^{B}
+\frac{\lvert I_b \rvert}{N}
+\left\lvert \bar{p}_b - \bar{y}_b \right\rvert
+$$
+
+where $I_b$ is the set of rows in bin $b$, $\lvert I_b \rvert$ is the number of rows in that bin, $\bar{p}_b$ is the average predicted probability in the bin, and $\bar{y}_b$ is the observed fraud rate in the bin. ECE 10 means $B = 10$. Lower is better, but ECE can be unstable when the positive class is rare and bins contain few fraud cases.
+
 I treat calibration as diagnostic in this post. The full holdout has only 75 fraud cases, which is enough to inspect behavior but not enough to claim production-grade probability calibration.
 
 ## Hands-on demo
@@ -181,6 +194,13 @@ The notebook compares four publication rows:
 - Raw + TabICL embeddings: raw features plus 512 TabICL embedding features, giving 541 total features.
 
 The combined `Raw + TabPFN + TabICL` feature set is intentionally not part of the publication comparison. A team may test TabPFN embeddings or TabICL embeddings, but operating both embedding systems together is a different adoption choice with additional cost and monitoring burden.
+
+For a practitioner reading the comparison, the four rows answer four different questions:
+
+- Raw XGBoost asks whether the ordinary supervised-learning baseline is already strong enough.
+- Raw all-history XGBoost asks how much is gained by using all available pre-holdout labelled history without any foundation-model embedding step.
+- Raw + TabPFN asks whether TabPFN's context-conditioned row representation adds useful information to the raw features.
+- Raw + TabICL asks the same question for TabICL's context-conditioned row representation.
 
 The fair raw-vs-embedding tuning path uses 142,403 downstream tuning rows after excluding 56,961 representation-context rows. Those tuning rows contain 227 fraud cases. The raw all-history incumbent uses 199,364 pre-holdout rows and 384 fraud cases because it does not need to exclude the representation-context rows.
 
