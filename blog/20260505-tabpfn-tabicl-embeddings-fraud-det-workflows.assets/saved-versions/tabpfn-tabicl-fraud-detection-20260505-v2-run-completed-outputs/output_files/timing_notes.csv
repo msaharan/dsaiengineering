@@ -1,0 +1,14 @@
+Model,Feature Set,Calibration,Timing Notes
+XGBoost[Raw all-history incumbent],Raw all-history incumbent,none,raw all-history rolling chronological tuning + final pre-holdout refit
+XGBoost[Raw] Calibration Base,Raw,none_calibration_base,validation tuning + train/validation base fit without calibration-window labels
+XGBoost[Raw] Calibrated,Raw,sigmoid,validation tuning + train/validation base fit + separate calibration-window sigmoid calibration
+XGBoost[Raw],Raw,none,rolling chronological tuning + final pre-holdout refit
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history incumbent,sigmoid,validation tuning + train/validation base fit + separate calibration-window sigmoid calibration
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history incumbent,none_calibration_base,validation tuning + train/validation base fit without calibration-window labels
+XGBoost[Raw + TabICL embeddings] Calibration Base,Raw + TabICL embeddings,none_calibration_base,validation tuning + train/validation base fit without calibration-window labels; shared offline embedding feature prep
+XGBoost[Raw + TabICL embeddings] Calibrated,Raw + TabICL embeddings,sigmoid,validation tuning + train/validation base fit + separate calibration-window sigmoid calibration; shared offline embedding feature prep
+XGBoost[Raw + TabICL embeddings],Raw + TabICL embeddings,none,rolling chronological tuning + final pre-holdout refit; shared offline embedding feature prep
+XGBoost[Raw + TabPFN embeddings],Raw + TabPFN embeddings,none,rolling chronological tuning + final pre-holdout refit; shared offline embedding feature prep
+XGBoost[Raw + TabPFN embeddings] Calibration Base,Raw + TabPFN embeddings,none_calibration_base,validation tuning + train/validation base fit without calibration-window labels; shared offline embedding feature prep
+XGBoost[Raw + TabPFN embeddings] Calibrated,Raw + TabPFN embeddings,sigmoid,validation tuning + train/validation base fit + separate calibration-window sigmoid calibration; shared offline embedding feature prep
+Dummy[Raw],Raw,none,simple baseline fit on pre-holdout data

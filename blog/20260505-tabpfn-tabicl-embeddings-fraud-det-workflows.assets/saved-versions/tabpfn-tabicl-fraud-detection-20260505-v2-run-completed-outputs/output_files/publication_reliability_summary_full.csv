@@ -1,0 +1,81 @@
+Model,Publication Label,Holdout,bin,rows,fraud_rows,score_min,score_max,mean_score,observed_fraud_rate,abs_calibration_error
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history XGBoost base,full,1,5697,0,1.000000012e-07,1.000000012e-07,1.000000012e-07,0.0,1.000000012e-07
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history XGBoost base,full,2,5697,0,1.000000012e-07,2.323207724e-07,1.543424646e-07,0.0,1.543424646e-07
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history XGBoost base,full,3,5696,0,2.324320292e-07,4.726622649e-07,3.412055417e-07,0.0,3.412055417e-07
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history XGBoost base,full,4,5696,0,4.727109797e-07,8.681143413e-07,6.533257988e-07,0.0,6.533257988e-07
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history XGBoost base,full,5,5696,1,8.681358281e-07,1.511639539e-06,1.161036488e-06,0.000175562,0.000174401
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history XGBoost base,full,6,5696,0,1.511705818e-06,2.602819904e-06,2.011579896e-06,0.0,2.011579896e-06
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history XGBoost base,full,7,5696,1,2.602941777e-06,4.732261004e-06,3.54020963e-06,0.000175562,0.000172022
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history XGBoost base,full,8,5696,2,4.732721663e-06,1.005279955e-05,6.909839883e-06,0.000351124,0.000344214
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history XGBoost base,full,9,5696,2,1.005291324e-05,3.063378608e-05,1.758752224e-05,0.000351124,0.000333536
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history XGBoost base,full,10,5696,69,3.063869735e-05,0.999999523,0.012862631,0.012113764,0.000748867
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history XGBoost calibrated,full,1,5697,0,0.000254932,0.000254932,0.000254932,0.0,0.000254932
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history XGBoost calibrated,full,2,5697,0,0.000254932,0.000254932,0.000254932,0.0,0.000254932
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history XGBoost calibrated,full,3,5696,0,0.000254932,0.000254933,0.000254933,0.0,0.000254933
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history XGBoost calibrated,full,4,5696,0,0.000254933,0.000254934,0.000254934,0.0,0.000254934
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history XGBoost calibrated,full,5,5696,1,0.000254934,0.000254936,0.000254935,0.000175562,7.937340404e-05
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history XGBoost calibrated,full,6,5696,0,0.000254936,0.00025494,0.000254938,0.0,0.000254938
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history XGBoost calibrated,full,7,5696,1,0.00025494,0.000254946,0.000254942,0.000175562,7.938051324e-05
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history XGBoost calibrated,full,8,5696,2,0.000254946,0.000254962,0.000254952,0.000351124,9.617121538e-05
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history XGBoost calibrated,full,9,5696,2,0.000254962,0.000255023,0.000254984,0.000351124,9.613930525e-05
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history XGBoost calibrated,full,10,5696,69,0.000255023,0.969217648,0.010994991,0.012113764,0.001118773
+XGBoost[Raw] Calibration Base,Raw XGBoost base,full,1,5697,0,1.000000012e-07,6.826403478e-07,4.023106173e-07,0.0,4.023106173e-07
+XGBoost[Raw] Calibration Base,Raw XGBoost base,full,2,5697,0,6.826403478e-07,1.191563001e-06,9.391962436e-07,0.0,9.391962436e-07
+XGBoost[Raw] Calibration Base,Raw XGBoost base,full,3,5696,0,1.191620868e-06,1.807406647e-06,1.493881359e-06,0.0,1.493881359e-06
+XGBoost[Raw] Calibration Base,Raw XGBoost base,full,4,5696,0,1.807598096e-06,2.561279871e-06,2.174527135e-06,0.0,2.174527135e-06
+XGBoost[Raw] Calibration Base,Raw XGBoost base,full,5,5696,0,2.561328529e-06,3.580041493e-06,3.03547833e-06,0.0,3.03547833e-06
+XGBoost[Raw] Calibration Base,Raw XGBoost base,full,6,5696,1,3.580239763e-06,5.105790933e-06,4.278562944e-06,0.000175562,0.000171283
+XGBoost[Raw] Calibration Base,Raw XGBoost base,full,7,5696,0,5.10688642e-06,7.83944779e-06,6.326283173e-06,0.0,6.326283173e-06
+XGBoost[Raw] Calibration Base,Raw XGBoost base,full,8,5696,3,7.840046237e-06,1.32146306e-05,1.017137592e-05,0.000526685,0.000516514
+XGBoost[Raw] Calibration Base,Raw XGBoost base,full,9,5696,2,1.321658237e-05,3.023711179e-05,1.974333201e-05,0.000351124,0.00033138
+XGBoost[Raw] Calibration Base,Raw XGBoost base,full,10,5696,69,3.024553189e-05,0.999943733,0.011054122,0.012113764,0.001059642
+XGBoost[Raw] Calibrated,Raw XGBoost calibrated,full,1,5697,0,0.000299532,0.000299535,0.000299533,0.0,0.000299533
+XGBoost[Raw] Calibrated,Raw XGBoost calibrated,full,2,5697,0,0.000299535,0.000299537,0.000299536,0.0,0.000299536
+XGBoost[Raw] Calibrated,Raw XGBoost calibrated,full,3,5696,0,0.000299537,0.000299539,0.000299538,0.0,0.000299538
+XGBoost[Raw] Calibrated,Raw XGBoost calibrated,full,4,5696,0,0.000299539,0.000299542,0.000299541,0.0,0.000299541
+XGBoost[Raw] Calibrated,Raw XGBoost calibrated,full,5,5696,0,0.000299542,0.000299547,0.000299544,0.0,0.000299544
+XGBoost[Raw] Calibrated,Raw XGBoost calibrated,full,6,5696,1,0.000299547,0.000299553,0.00029955,0.000175562,0.000123988
+XGBoost[Raw] Calibrated,Raw XGBoost calibrated,full,7,5696,0,0.000299553,0.000299565,0.000299558,0.0,0.000299558
+XGBoost[Raw] Calibrated,Raw XGBoost calibrated,full,8,5696,3,0.000299565,0.000299587,0.000299575,0.000526685,0.000227111
+XGBoost[Raw] Calibrated,Raw XGBoost calibrated,full,9,5696,2,0.000299587,0.000299659,0.000299615,0.000351124,5.15086507e-05
+XGBoost[Raw] Calibrated,Raw XGBoost calibrated,full,10,5696,69,0.000299659,0.997468203,0.01074892,0.012113764,0.001364844
+XGBoost[Raw + TabPFN embeddings] Calibration Base,Raw + TabPFN base,full,1,5697,0,2.284177185e-07,3.286378842e-06,1.975023372e-06,0.0,1.975023372e-06
+XGBoost[Raw + TabPFN embeddings] Calibration Base,Raw + TabPFN base,full,2,5697,0,3.287795607e-06,5.907680588e-06,4.583025981e-06,0.0,4.583025981e-06
+XGBoost[Raw + TabPFN embeddings] Calibration Base,Raw + TabPFN base,full,3,5696,0,5.90771424e-06,9.090056665e-06,7.441158642e-06,0.0,7.441158642e-06
+XGBoost[Raw + TabPFN embeddings] Calibration Base,Raw + TabPFN base,full,4,5696,0,9.09033497e-06,1.287154009e-05,1.091441455e-05,0.0,1.091441455e-05
+XGBoost[Raw + TabPFN embeddings] Calibration Base,Raw + TabPFN base,full,5,5696,1,1.28728916e-05,1.831629015e-05,1.546233294e-05,0.000175562,0.000160099
+XGBoost[Raw + TabPFN embeddings] Calibration Base,Raw + TabPFN base,full,6,5696,0,1.831686495e-05,2.695580042e-05,2.217438671e-05,0.0,2.217438671e-05
+XGBoost[Raw + TabPFN embeddings] Calibration Base,Raw + TabPFN base,full,7,5696,0,2.695742296e-05,4.259080742e-05,3.389488185e-05,0.0,3.389488185e-05
+XGBoost[Raw + TabPFN embeddings] Calibration Base,Raw + TabPFN base,full,8,5696,3,4.25920698e-05,7.968865975e-05,5.805010174e-05,0.000526685,0.000468635
+XGBoost[Raw + TabPFN embeddings] Calibration Base,Raw + TabPFN base,full,9,5696,2,7.969292346e-05,0.000232542,0.000134395,0.000351124,0.000216729
+XGBoost[Raw + TabPFN embeddings] Calibration Base,Raw + TabPFN base,full,10,5696,69,0.000232577,0.997367799,0.011430911,0.012113764,0.000682853
+XGBoost[Raw + TabPFN embeddings] Calibrated,Raw + TabPFN calibrated,full,1,5697,0,0.000289619,0.000289631,0.000289626,0.0,0.000289626
+XGBoost[Raw + TabPFN embeddings] Calibrated,Raw + TabPFN calibrated,full,2,5697,0,0.000289631,0.000289641,0.000289636,0.0,0.000289636
+XGBoost[Raw + TabPFN embeddings] Calibrated,Raw + TabPFN calibrated,full,3,5696,0,0.000289641,0.000289654,0.000289647,0.0,0.000289647
+XGBoost[Raw + TabPFN embeddings] Calibrated,Raw + TabPFN calibrated,full,4,5696,0,0.000289654,0.000289668,0.000289661,0.0,0.000289661
+XGBoost[Raw + TabPFN embeddings] Calibrated,Raw + TabPFN calibrated,full,5,5696,1,0.000289668,0.00028969,0.000289678,0.000175562,0.000114117
+XGBoost[Raw + TabPFN embeddings] Calibrated,Raw + TabPFN calibrated,full,6,5696,0,0.00028969,0.000289723,0.000289704,0.0,0.000289704
+XGBoost[Raw + TabPFN embeddings] Calibrated,Raw + TabPFN calibrated,full,7,5696,0,0.000289723,0.000289784,0.00028975,0.0,0.00028975
+XGBoost[Raw + TabPFN embeddings] Calibrated,Raw + TabPFN calibrated,full,8,5696,3,0.000289784,0.000289928,0.000289844,0.000526685,0.000236842
+XGBoost[Raw + TabPFN embeddings] Calibrated,Raw + TabPFN calibrated,full,9,5696,2,0.000289928,0.000290521,0.00029014,0.000351124,6.098352981e-05
+XGBoost[Raw + TabPFN embeddings] Calibrated,Raw + TabPFN calibrated,full,10,5696,69,0.000290522,0.994562996,0.009256064,0.012113764,0.0028577
+XGBoost[Raw + TabICL embeddings] Calibration Base,Raw + TabICL base,full,1,5697,0,1.000000012e-07,8.809058158e-07,4.284572433e-07,0.0,4.284572433e-07
+XGBoost[Raw + TabICL embeddings] Calibration Base,Raw + TabICL base,full,2,5697,0,8.809629435e-07,2.202483529e-06,1.487125534e-06,0.0,1.487125534e-06
+XGBoost[Raw + TabICL embeddings] Calibration Base,Raw + TabICL base,full,3,5696,0,2.202516953e-06,4.04788625e-06,3.058966416e-06,0.0,3.058966416e-06
+XGBoost[Raw + TabICL embeddings] Calibration Base,Raw + TabICL base,full,4,5696,1,4.04839966e-06,6.920261058e-06,5.337606365e-06,0.000175562,0.000170224
+XGBoost[Raw + TabICL embeddings] Calibration Base,Raw + TabICL base,full,5,5696,0,6.921244676e-06,1.172569955e-05,9.078936149e-06,0.0,9.078936149e-06
+XGBoost[Raw + TabICL embeddings] Calibration Base,Raw + TabICL base,full,6,5696,1,1.172760039e-05,2.052208765e-05,1.574905384e-05,0.000175562,0.000159813
+XGBoost[Raw + TabICL embeddings] Calibration Base,Raw + TabICL base,full,7,5696,1,2.052467244e-05,3.761950938e-05,2.797321812e-05,0.000175562,0.000147589
+XGBoost[Raw + TabICL embeddings] Calibration Base,Raw + TabICL base,full,8,5696,1,3.762216511e-05,8.522791904e-05,5.702551799e-05,0.000175562,0.000118536
+XGBoost[Raw + TabICL embeddings] Calibration Base,Raw + TabICL base,full,9,5696,1,8.522938151e-05,0.000273285,0.000153707,0.000175562,2.185440451e-05
+XGBoost[Raw + TabICL embeddings] Calibration Base,Raw + TabICL base,full,10,5696,70,0.000273299,0.999566615,0.015246937,0.012289326,0.002957612
+XGBoost[Raw + TabICL embeddings] Calibrated,Raw + TabICL calibrated,full,1,5697,0,0.000262695,0.000262698,0.000262697,0.0,0.000262697
+XGBoost[Raw + TabICL embeddings] Calibrated,Raw + TabICL calibrated,full,2,5697,0,0.000262698,0.000262702,0.0002627,0.0,0.0002627
+XGBoost[Raw + TabICL embeddings] Calibrated,Raw + TabICL calibrated,full,3,5696,0,0.000262702,0.000262708,0.000262705,0.0,0.000262705
+XGBoost[Raw + TabICL embeddings] Calibrated,Raw + TabICL calibrated,full,4,5696,1,0.000262708,0.000262718,0.000262713,0.000175562,8.715076301e-05
+XGBoost[Raw + TabICL embeddings] Calibrated,Raw + TabICL calibrated,full,5,5696,0,0.000262718,0.000262733,0.000262725,0.0,0.000262725
+XGBoost[Raw + TabICL embeddings] Calibrated,Raw + TabICL calibrated,full,6,5696,1,0.000262733,0.000262762,0.000262746,0.000175562,8.718449132e-05
+XGBoost[Raw + TabICL embeddings] Calibrated,Raw + TabICL calibrated,full,7,5696,1,0.000262762,0.000262817,0.000262786,0.000175562,8.722409776e-05
+XGBoost[Raw + TabICL embeddings] Calibrated,Raw + TabICL calibrated,full,8,5696,1,0.000262817,0.000262971,0.00026288,0.000175562,8.731825385e-05
+XGBoost[Raw + TabICL embeddings] Calibrated,Raw + TabICL calibrated,full,9,5696,1,0.000262971,0.000263582,0.000263194,0.000175562,8.763187545e-05
+XGBoost[Raw + TabICL embeddings] Calibrated,Raw + TabICL calibrated,full,10,5696,70,0.000263582,0.983437812,0.010792538,0.012289326,0.001496788
