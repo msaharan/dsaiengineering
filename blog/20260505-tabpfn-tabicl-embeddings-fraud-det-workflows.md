@@ -20,7 +20,7 @@ Notebook:
 
 [tabpfn-tabicl-fraud-detection-20260505.ipynb](./20260505-tabpfn-tabicl-embeddings-fraud-det-workflows.assets/tabpfn-tabicl-fraud-detection-20260505.ipynb)
 
-The current notebook source is marked `P17, v3`. The completed numerical results discussed in this post come from the v2 run saved in the assets directory. The v3 source keeps the same core workflow, adds stronger reproducibility and uncertainty artifacts, and is ready for a fresh Kaggle GPU execution.
+The completed numerical results discussed in this post come from the final v3 rerun saved in the assets directory. This v3 run keeps the compact one-embedding-source comparison and adds stronger reproducibility artifacts: curated publication operating-point tables, bootstrap uncertainty, source/model provenance, embedding matrix memory summaries, and CUDA memory snapshots.
 
 ## Conceptual background
 
@@ -174,11 +174,11 @@ Lower is better for both. The notebook also reports reliability-bin summaries an
 
 ## Hands-on demo
 
-### Notebook setup and run state
+### Notebook setup and run state < remove this section. I want to discuss scientific and experiemental results and don't want the blog post to be log book >
 
 The notebook is designed to run on Kaggle with GPU enabled. It installs `cudf-cu12`, uses the cuDF pandas accelerator, generates TabPFN and TabICL embeddings on CUDA devices, and uses a GPU XGBoost path for the downstream scorer.
 
-The v2 completed run used:
+The final v3 completed rerun used: 
 
 | Component | Version |
 |---|---:|
@@ -194,32 +194,34 @@ The v2 completed run used:
 | TabPFN | 7.1.1 |
 | TabICL | 2.1.1 |
 
-The v2 notebook ran without notebook execution errors. The current v3 source adds more provenance, memory, and uncertainty outputs, but those v3 outputs still need a fresh completed GPU run.
+The notebook ran without execution errors. The only stderr output came from Kaggle setup dependency warnings and a cuDF compression auto-detection warning while loading data. The run produced the expected publication tables and figures, including the new bootstrap, memory, and provenance outputs.
 
 ### Split and tuning policy
 
+< there is no need to mention v1 v2 and v3 in the post. Treat the latest version (v3 in this case) as the one and only publishable version and use it for the blog post.
+
 The split and tuning policy are central to the result. The fair raw-vs-embedding comparison excludes the earliest representation-context rows from downstream tuning, because those labels were used to condition TabPFN and TabICL embeddings.
 
-In the v2 run:
+In the v3 rerun:
 
 | Comparison | Tuning rows | Fraud rows | Context rows excluded | Sampled train used |
 |---|---:|---:|---:|---:|
 | fair raw-vs-embedding | 142,403 | 227 | 56,961 | false |
 | raw all-history incumbent | 199,364 | 384 | 0 | false |
 
-The fair raw-vs-embedding path had five valid chronological folds. This matters because the earlier workflow had too little valid chronological tuning evidence after fraud-count checks. The v2/v3 design gives the XGBoost tuner more chronological history while still respecting the TFM context boundary.
+The fair raw-vs-embedding path had five valid chronological folds. This matters because the earlier workflow had too little valid chronological tuning evidence after fraud-count checks. The v3 design gives the XGBoost tuner more chronological history while still respecting the TFM context boundary.
 
 ### Feature bundles
 
-The v2 run evaluated the intended feature bundles:
+The v3 rerun evaluated the intended feature bundles:
 
 | Feature set | Embedding source | Feature count | Shared feature prep seconds |
 |---|---|---:|---:|
 | Raw | none | 29 | 0.0 |
-| Raw + TabPFN embeddings | TabPFN | 221 | 373.2 |
-| Raw + TabICL embeddings | TabICL | 541 | 120.3 |
+| Raw + TabPFN embeddings | TabPFN | 221 | 371.4 |
+| Raw + TabICL embeddings | TabICL | 541 | 120.5 |
 
-There is no combined `Raw + TabPFN + TabICL` row in the v2 publication workflow. I removed it because the main question is one-embedding-source adoption. This makes the result less dramatic than the initial completed run, where the combined row had the best AP, but I think it makes the comparison more realistic.
+There is no combined `Raw + TabPFN + TabICL` row in the v3 publication workflow. I removed it because the main question is one-embedding-source adoption. This makes the result less dramatic than the initial completed run, where the combined row had the best AP, but I think it makes the comparison more realistic.
 
 The two embedding paths are also technically different. TabPFN exposes a public `get_embeddings` method. TabICL does not expose the same sklearn-level public embedding method, so the notebook extracts representations through the fitted TabICL wrapper internals and records the version/checkpoint metadata. That is useful for experimentation, but it should be treated as a version-sensitive path.
 
@@ -229,10 +231,10 @@ The full holdout is the deployment-facing view because it keeps the original fin
 
 | Model | AP | Workflow seconds | Top 0.5% recall | Top 1% recall | Brier | ECE 10 |
 |---|---:|---:|---:|---:|---:|---:|
-| Raw all-history XGBoost | 0.8097 | 166.5 | 0.8533 | 0.8533 | 0.000424 | 0.000104 |
-| Raw XGBoost | 0.8034 | 139.2 | 0.8400 | 0.8667 | 0.000403 | 0.000231 |
-| Raw + TabICL | 0.7970 | 1134.1 | 0.8267 | 0.9067 | 0.000451 | 0.000485 |
-| Raw + TabPFN | 0.7909 | 825.3 | 0.8000 | 0.8400 | 0.000381 | 0.000184 |
+| Raw all-history XGBoost | 0.8097 | 173.3 | 0.8533 | 0.8533 | 0.000424 | 0.000104 |
+| Raw XGBoost | 0.8034 | 147.0 | 0.8400 | 0.8667 | 0.000403 | 0.000231 |
+| Raw + TabICL | 0.7970 | 1147.8 | 0.8267 | 0.9067 | 0.000451 | 0.000485 |
+| Raw + TabPFN | 0.7909 | 840.2 | 0.8000 | 0.8400 | 0.000381 | 0.000184 |
 
 The raw all-history XGBoost incumbent has the best full-holdout Average Precision. The ordinary raw XGBoost row is close and fastest. Neither single-source embedding workflow improves AP over the raw XGBoost baselines in this run.
 
@@ -264,9 +266,35 @@ At 90% recall, the result changes:
 | Raw XGBoost | 1,177 | 68 | 0.0578 |
 | Raw + TabPFN | 1,598 | 68 | 0.0426 |
 
-This is the main operational signal from the v2 run. TabICL does not win by full-holdout AP, but it needs far fewer alerts to recover 68 of the 75 fraud cases in the full holdout. For a review team targeting very high recall, that is worth further investigation.
+This is the main operational signal from the v3 rerun. TabICL does not win by full-holdout AP, but it needs far fewer alerts to recover 68 of the 75 fraud cases in the full holdout. For a review team targeting very high recall, that is worth further investigation.
 
 This also shows why an evaluation should not stop at one metric. AP is a useful ranking summary. Alert counts translate the score into a workflow. Both are needed.
+
+### Bootstrap uncertainty
+
+The v3 notebook adds bootstrap uncertainty for full-holdout AP and for the number of alerts needed at 80% and 90% recall. This matters because the full holdout has only 75 fraud cases. With that few positive examples, small AP differences should not be treated as precise estimates.
+
+Full-holdout AP uncertainty:
+
+| Model | Point AP | Bootstrap median | 95% CI lower | 95% CI upper |
+|---|---:|---:|---:|---:|
+| Raw XGBoost | 0.8034 | 0.8032 | 0.6972 | 0.8709 |
+| Raw all-history XGBoost | 0.8097 | 0.8140 | 0.7189 | 0.8947 |
+| Raw + TabPFN | 0.7909 | 0.7905 | 0.7061 | 0.8687 |
+| Raw + TabICL | 0.7970 | 0.7973 | 0.7063 | 0.8723 |
+
+The intervals overlap heavily. I read the AP table as a point-estimate ranking, not as a decisive separation between the rows.
+
+For alerts needed at 90% recall:
+
+| Model | Point estimate | Bootstrap median | 95% CI lower | 95% CI upper |
+|---|---:|---:|---:|---:|
+| Raw XGBoost | 1,177 | 1,230 | 212 | 9,822 |
+| Raw all-history XGBoost | 1,064 | 1,046 | 129 | 7,311 |
+| Raw + TabPFN | 1,598 | 1,598 | 451 | 7,972 |
+| Raw + TabICL | 490 | 495 | 254 | 3,449 |
+
+The TabICL point estimate is still operationally interesting, but the wide intervals are a reminder that this is one public holdout, not a production decision study.
 
 ### Runtime and workflow cost
 
@@ -280,18 +308,40 @@ The timing table is:
 
 | Feature set | Embedding prep seconds | Total workflow seconds |
 |---|---:|---:|
-| Raw | 0.0 | 139.2 |
-| Raw all-history incumbent | 0.0 | 166.5 |
-| Raw + TabPFN | 373.2 | 825.3 |
-| Raw + TabICL | 120.3 | 1134.1 |
+| Raw | 0.0 | 147.0 |
+| Raw all-history incumbent | 0.0 | 173.3 |
+| Raw + TabPFN | 371.4 | 840.2 |
+| Raw + TabICL | 120.5 | 1147.8 |
 
 One nuance is easy to miss: TabICL embedding preparation was faster than TabPFN embedding preparation in this run, but the total TabICL workflow was slower. The reason is that the TabICL feature matrix was wider, and XGBoost tuning on that matrix took longer.
 
 This is why I prefer the phrase workflow seconds rather than model seconds. In a production-style test, the representation is only useful if its quality or operating-point gain justifies the whole path: extraction, storage, downstream fitting, prediction, calibration, and monitoring.
 
+### Memory and provenance
+
+The v3 notebook also records embedding matrix sizes and CUDA memory snapshots. This is important because a representation workflow can fail for practical reasons even when the score metrics look interesting.
+
+For the largest final training embedding matrices:
+
+| Source | Rows | Embedding columns | Approx memory MB |
+|---|---:|---:|---:|
+| TabPFN | 170,884 | 192 | 125.2 |
+| TabICL | 170,884 | 512 | 333.8 |
+
+For the full holdout embedding matrices:
+
+| Source | Rows | Embedding columns | Approx memory MB |
+|---|---:|---:|---:|
+| TabPFN | 56,962 | 192 | 41.7 |
+| TabICL | 56,962 | 512 | 111.3 |
+
+The CUDA memory snapshots show both embedding paths fitting on the two-T4 Kaggle runtime. TabPFN used both CUDA devices and reached about 936.8 MB max allocated per device during extraction. TabICL used device 0 more heavily, with about 3657.3 MB max allocated and 4548.0 MB reserved after extraction.
+
+The notebook also records source/model provenance. In this Kaggle run, the local paths are not git checkouts, so source commit fields are unavailable. The model metadata is still useful: TabPFN uses the installed `TabPFNClassifier.get_embeddings` path, while TabICL uses the `tabicl-classifier-v2-20260212.ckpt` checkpoint and an internal representation path marked as validated for this notebook.
+
 ### Calibration diagnostics
 
-Calibration is not a clear win in the v2 run.
+Calibration is not a clear win in the v3 rerun.
 
 Full-holdout calibration rows:
 
@@ -301,19 +351,19 @@ Full-holdout calibration rows:
 | Raw base | 0.8047 | 0.000396 | 0.002835 | 0.000209 |
 | Raw calibrated | 0.8047 | 0.000422 | 0.003287 | 0.000356 |
 | Raw + TabPFN none | 0.7909 | 0.000381 | 0.002500 | 0.000184 |
-| Raw + TabPFN base | 0.7892 | 0.000408 | 0.002685 | 0.000161 |
-| Raw + TabPFN calibrated | 0.7892 | 0.000435 | 0.003340 | 0.000501 |
+| Raw + TabPFN base | 0.7918 | 0.000407 | 0.002669 | 0.000163 |
+| Raw + TabPFN calibrated | 0.7918 | 0.000441 | 0.003349 | 0.000528 |
 | Raw + TabICL none | 0.7970 | 0.000451 | 0.002583 | 0.000485 |
 | Raw + TabICL base | 0.7978 | 0.000445 | 0.002719 | 0.000359 |
 | Raw + TabICL calibrated | 0.7978 | 0.000430 | 0.003091 | 0.000298 |
 
-Sigmoid calibration leaves AP unchanged for each calibration-base row, as expected for a monotonic score transform. It worsens log loss for the selected rows. It improves TabICL Brier/ECE relative to the TabICL calibration base, but not enough to make calibration an obvious overall improvement.
+Sigmoid calibration leaves AP unchanged for each calibration-base row, as expected for a monotonic score transform. It worsens log loss for all selected rows. It improves TabICL Brier/ECE relative to the TabICL calibration base, but not enough to make calibration an obvious overall improvement. For TabPFN, sigmoid calibration worsens Brier, log loss, and ECE relative to its calibration-base row.
 
 The calibration plot is included below, but this is one place where the table is more useful than the figure. Most meaningful probabilities are near zero because fraud is rare.
 
 ![Full-holdout calibration curves](./20260505-tabpfn-tabicl-embeddings-fraud-det-workflows.assets/publication_calibration_curves_full.png)
 
-The v3 notebook tightens this plot and keeps reliability-bin CSVs as the primary calibration artifact.
+The v3 plot is zoomed into the rare-event probability range, but reliability-bin CSVs remain the primary calibration artifact.
 
 ### Leakage and reuse checks
 
@@ -350,11 +400,11 @@ First, this is one public dataset. The result should not be generalized to all f
 
 Second, the public credit-card fraud dataset is anonymized. The `V1` to `V28` columns are PCA-style features. There are no customer, card, account, merchant, device, chargeback timing, or feature-lineage fields. That limits leakage analysis, entity-level validation, drift analysis, and business interpretation.
 
-Third, the full holdout has only 75 fraud cases. That makes AP and alert-count differences sensitive to a small number of ranked examples. The v3 notebook adds bootstrap uncertainty for AP and target-recall alert counts so the next completed run can make this uncertainty visible.
+Third, the full holdout has only 75 fraud cases. That makes AP and alert-count differences sensitive to a small number of ranked examples. The v3 notebook now reports bootstrap uncertainty for AP and target-recall alert counts, and those intervals should be read alongside the point estimates.
 
 Fourth, TabICL embedding extraction uses model internals rather than a stable public embedding API equivalent to TabPFN's `get_embeddings`. That does not make the experiment invalid, but it means the code path should be version-pinned and reviewed.
 
-Fifth, the current post discusses completed v2 outputs while the notebook source is now v3. The v3 notebook adds memory, provenance, publication operating-point tables, and bootstrap uncertainty, but it still needs a fresh Kaggle GPU execution before those new artifacts can be interpreted.
+Fifth, one artifact hygiene issue remains in the saved rerun folder: `embedding_error_summary.csv` still contains an old TabPFN token error from a failed intermediate v3 run, even though the final v3 result tables show TabPFN completed successfully. The next notebook version should clean stale output files before writing new artifacts.
 
 Sixth, I have not yet added interpretability methods such as SHAP, missing-data stress tests, categorical stress tests, or drift-by-period analysis. Those are important for a broader testbench, but I kept this notebook focused on the first embedding workflow question.
 
@@ -367,7 +417,7 @@ This notebook tests a practical integration pattern for tabular foundation model
 3. append those embeddings to raw transaction features;
 4. evaluate the result with chronological splits, AP, alert counts, runtime, calibration diagnostics, and leakage checks.
 
-The completed v2 result is not a simple "TFM embeddings win" result. The raw all-history XGBoost incumbent has the best full-holdout Average Precision, and raw XGBoost is close while being much faster. Single-source TabPFN and TabICL embeddings do not beat the raw baselines by AP in this run.
+The completed v3 rerun is not a simple "TFM embeddings win" result. The raw all-history XGBoost incumbent has the best full-holdout point Average Precision, and raw XGBoost is close while being much faster. Single-source TabPFN and TabICL embeddings do not beat the raw baselines by AP in this run. The bootstrap intervals overlap heavily, so I would not overstate the AP ranking.
 
 The useful nuance is the high-recall operating point. At 90% recall, Raw + TabICL needed 490 alerts to recover 68 of 75 fraud cases, compared with 1,064 alerts for raw all-history XGBoost and 1,177 alerts for raw XGBoost. That makes TabICL worth investigating for high-recall review-queue settings, even though it is not the best AP/runtime row overall.
 
@@ -379,7 +429,7 @@ For labs and researchers, I hope this kind of notebook is useful as a field-faci
 
 ## Outlook
 
-The next step is to run the v3 notebook on Kaggle and review the new artifacts:
+The v3 rerun now produces the main artifacts I wanted:
 
 - `publication_alert_summary.csv`;
 - `publication_target_recall_summary.csv`;
@@ -388,12 +438,12 @@ The next step is to run the v3 notebook on Kaggle and review the new artifacts:
 - `embedding_matrix_summary.csv`;
 - `cuda_memory_summary.csv`.
 
-The main questions for the rerun are:
+The main questions from the rerun are now answered:
 
-1. Does raw all-history XGBoost still lead by AP?
-2. Does TabICL still reduce the alert count at 90% recall?
-3. Are the AP differences small relative to bootstrap uncertainty?
-4. How much CUDA memory do the TabPFN and TabICL embedding paths use?
-5. Are the cleaned publication figures ready to include directly?
+1. Raw all-history XGBoost still leads by point AP.
+2. TabICL still reduces the alert count at 90% recall.
+3. The AP differences are small relative to bootstrap uncertainty.
+4. Both embedding paths fit on the two-T4 Kaggle runtime; TabICL uses wider embeddings and higher peak/reserved CUDA memory on device 0.
+5. The cleaned publication figures are usable, although reliability-bin tables remain more informative than the calibration figure.
 
-After that, I want to extend the workflow in directions that matter for real data science teams: interpretability, missing-data behavior, categorical features, time-derived feature policy, drift, group-aware splits, and additional datasets. My current goal is not to prove that one model family is always better. It is to build reusable examples that make the benefits, costs, and caveats visible enough for both model builders and practitioners to reason about them.
+The immediate notebook cleanup is to remove stale output files at the start of each run and add a final publication-completeness check. After that, I want to extend the workflow in directions that matter for real data science teams: interpretability, missing-data behavior, categorical features, time-derived feature policy, drift, group-aware splits, and additional datasets. My current goal is not to prove that one model family is always better. It is to build reusable examples that make the benefits, costs, and caveats visible enough for both model builders and practitioners to reason about them.
