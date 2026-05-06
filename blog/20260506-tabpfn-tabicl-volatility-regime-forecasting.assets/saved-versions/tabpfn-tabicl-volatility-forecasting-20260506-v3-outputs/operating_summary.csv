@@ -1,0 +1,153 @@
+Model,Evaluation Window,Type,Value,Alerts,Precision,Recall
+Dummy[Prior probability],holdout,top_rate,0.05,79,0.35443037974683544,0.07650273224043716
+Dummy[Prior probability],holdout,top_rate,0.1,158,0.4240506329113924,0.1830601092896175
+Dummy[Prior probability],holdout,top_rate,0.2,315,0.32063492063492066,0.27595628415300544
+Dummy[Prior probability],holdout,top_rate,0.3,472,0.22033898305084745,0.28415300546448086
+Dummy[Prior probability],holdout,target_recall,0.5,604,0.3029801324503311,0.5
+Dummy[Prior probability],holdout,target_recall,0.7,705,0.3645390070921986,0.7021857923497268
+Dummy[Prior probability],holdout,target_recall,0.8,1133,0.2586054721977052,0.8005464480874317
+Dummy[Prior probability],holdout,target_recall,0.9,1340,0.2462686567164179,0.9016393442622951
+Rule[SPY realized volatility 20d],holdout,top_rate,0.05,79,0.7721518987341772,0.16666666666666666
+Rule[SPY realized volatility 20d],holdout,top_rate,0.1,158,0.6708860759493671,0.2896174863387978
+Rule[SPY realized volatility 20d],holdout,top_rate,0.2,315,0.5968253968253968,0.5136612021857924
+Rule[SPY realized volatility 20d],holdout,top_rate,0.3,472,0.5508474576271186,0.7103825136612022
+Rule[SPY realized volatility 20d],holdout,target_recall,0.5,299,0.6120401337792643,0.5
+Rule[SPY realized volatility 20d],holdout,target_recall,0.7,452,0.5685840707964602,0.7021857923497268
+Rule[SPY realized volatility 20d],holdout,target_recall,0.8,659,0.44461305007587254,0.8005464480874317
+Rule[SPY realized volatility 20d],holdout,target_recall,0.9,1124,0.29359430604982206,0.9016393442622951
+Rule[VIX close],holdout,top_rate,0.05,79,0.7341772151898734,0.15846994535519127
+Rule[VIX close],holdout,top_rate,0.1,158,0.7151898734177216,0.3087431693989071
+Rule[VIX close],holdout,top_rate,0.2,315,0.6444444444444445,0.5546448087431693
+Rule[VIX close],holdout,top_rate,0.3,472,0.5360169491525424,0.6912568306010929
+Rule[VIX close],holdout,target_recall,0.5,282,0.648936170212766,0.5
+Rule[VIX close],holdout,target_recall,0.7,476,0.5399159663865546,0.7021857923497268
+Rule[VIX close],holdout,target_recall,0.8,611,0.4795417348608838,0.8005464480874317
+Rule[VIX close],holdout,target_recall,0.9,865,0.3815028901734104,0.9016393442622951
+XGBoost[Raw all-history incumbent],holdout,top_rate,0.05,79,0.810126582278481,0.17486338797814208
+XGBoost[Raw all-history incumbent],holdout,top_rate,0.1,158,0.7468354430379747,0.3224043715846995
+XGBoost[Raw all-history incumbent],holdout,top_rate,0.2,315,0.6412698412698413,0.5519125683060109
+XGBoost[Raw all-history incumbent],holdout,top_rate,0.3,472,0.5233050847457628,0.674863387978142
+XGBoost[Raw all-history incumbent],holdout,target_recall,0.5,273,0.6703296703296703,0.5
+XGBoost[Raw all-history incumbent],holdout,target_recall,0.7,533,0.4821763602251407,0.7021857923497268
+XGBoost[Raw all-history incumbent],holdout,target_recall,0.8,725,0.40413793103448276,0.8005464480874317
+XGBoost[Raw all-history incumbent],holdout,target_recall,0.9,1037,0.31822565091610416,0.9016393442622951
+XGBoost[Raw all-history incumbent] Calibration Base,holdout,top_rate,0.05,79,0.8860759493670886,0.1912568306010929
+XGBoost[Raw all-history incumbent] Calibration Base,holdout,top_rate,0.1,158,0.7341772151898734,0.31693989071038253
+XGBoost[Raw all-history incumbent] Calibration Base,holdout,top_rate,0.2,315,0.6571428571428571,0.5655737704918032
+XGBoost[Raw all-history incumbent] Calibration Base,holdout,top_rate,0.3,472,0.5190677966101694,0.6693989071038251
+XGBoost[Raw all-history incumbent] Calibration Base,holdout,target_recall,0.5,265,0.690566037735849,0.5
+XGBoost[Raw all-history incumbent] Calibration Base,holdout,target_recall,0.7,504,0.5099206349206349,0.7021857923497268
+XGBoost[Raw all-history incumbent] Calibration Base,holdout,target_recall,0.8,661,0.443267776096823,0.8005464480874317
+XGBoost[Raw all-history incumbent] Calibration Base,holdout,target_recall,0.9,1018,0.3241650294695481,0.9016393442622951
+XGBoost[Raw all-history incumbent] Calibrated,holdout,top_rate,0.05,79,0.8860759493670886,0.1912568306010929
+XGBoost[Raw all-history incumbent] Calibrated,holdout,top_rate,0.1,158,0.7341772151898734,0.31693989071038253
+XGBoost[Raw all-history incumbent] Calibrated,holdout,top_rate,0.2,315,0.6571428571428571,0.5655737704918032
+XGBoost[Raw all-history incumbent] Calibrated,holdout,top_rate,0.3,472,0.5190677966101694,0.6693989071038251
+XGBoost[Raw all-history incumbent] Calibrated,holdout,target_recall,0.5,265,0.690566037735849,0.5
+XGBoost[Raw all-history incumbent] Calibrated,holdout,target_recall,0.7,504,0.5099206349206349,0.7021857923497268
+XGBoost[Raw all-history incumbent] Calibrated,holdout,target_recall,0.8,661,0.443267776096823,0.8005464480874317
+XGBoost[Raw all-history incumbent] Calibrated,holdout,target_recall,0.9,1018,0.3241650294695481,0.9016393442622951
+XGBoost[Raw],holdout,top_rate,0.05,79,0.7974683544303798,0.1721311475409836
+XGBoost[Raw],holdout,top_rate,0.1,158,0.689873417721519,0.2978142076502732
+XGBoost[Raw],holdout,top_rate,0.2,315,0.5238095238095238,0.45081967213114754
+XGBoost[Raw],holdout,top_rate,0.3,472,0.4216101694915254,0.5437158469945356
+XGBoost[Raw],holdout,target_recall,0.5,374,0.4893048128342246,0.5
+XGBoost[Raw],holdout,target_recall,0.7,796,0.3228643216080402,0.7021857923497268
+XGBoost[Raw],holdout,target_recall,0.8,1042,0.28119001919385794,0.8005464480874317
+XGBoost[Raw],holdout,target_recall,0.9,1259,0.2621127879269261,0.9016393442622951
+XGBoost[Raw] Calibration Base,holdout,top_rate,0.05,79,0.7468354430379747,0.16120218579234974
+XGBoost[Raw] Calibration Base,holdout,top_rate,0.1,158,0.7974683544303798,0.3442622950819672
+XGBoost[Raw] Calibration Base,holdout,top_rate,0.2,315,0.7015873015873015,0.6038251366120219
+XGBoost[Raw] Calibration Base,holdout,top_rate,0.3,472,0.5063559322033898,0.6530054644808743
+XGBoost[Raw] Calibration Base,holdout,target_recall,0.5,230,0.7956521739130434,0.5
+XGBoost[Raw] Calibration Base,holdout,target_recall,0.7,526,0.48859315589353614,0.7021857923497268
+XGBoost[Raw] Calibration Base,holdout,target_recall,0.8,842,0.3479809976247031,0.8005464480874317
+XGBoost[Raw] Calibration Base,holdout,target_recall,0.9,1152,0.2864583333333333,0.9016393442622951
+XGBoost[Raw] Calibrated,holdout,top_rate,0.05,79,0.7468354430379747,0.16120218579234974
+XGBoost[Raw] Calibrated,holdout,top_rate,0.1,158,0.7974683544303798,0.3442622950819672
+XGBoost[Raw] Calibrated,holdout,top_rate,0.2,315,0.7015873015873015,0.6038251366120219
+XGBoost[Raw] Calibrated,holdout,top_rate,0.3,472,0.5063559322033898,0.6530054644808743
+XGBoost[Raw] Calibrated,holdout,target_recall,0.5,230,0.7956521739130434,0.5
+XGBoost[Raw] Calibrated,holdout,target_recall,0.7,526,0.48859315589353614,0.7021857923497268
+XGBoost[Raw] Calibrated,holdout,target_recall,0.8,842,0.3479809976247031,0.8005464480874317
+XGBoost[Raw] Calibrated,holdout,target_recall,0.9,1152,0.2864583333333333,0.9016393442622951
+XGBoost[Raw + TabPFN embeddings],holdout,top_rate,0.05,79,0.8354430379746836,0.18032786885245902
+XGBoost[Raw + TabPFN embeddings],holdout,top_rate,0.1,158,0.6455696202531646,0.2786885245901639
+XGBoost[Raw + TabPFN embeddings],holdout,top_rate,0.2,315,0.5079365079365079,0.4371584699453552
+XGBoost[Raw + TabPFN embeddings],holdout,top_rate,0.3,472,0.4067796610169492,0.5245901639344263
+XGBoost[Raw + TabPFN embeddings],holdout,target_recall,0.5,408,0.4485294117647059,0.5
+XGBoost[Raw + TabPFN embeddings],holdout,target_recall,0.7,899,0.28587319243604004,0.7021857923497268
+XGBoost[Raw + TabPFN embeddings],holdout,target_recall,0.8,1210,0.2421487603305785,0.8005464480874317
+XGBoost[Raw + TabPFN embeddings],holdout,target_recall,0.9,1379,0.23930384336475707,0.9016393442622951
+XGBoost[Raw + TabPFN embeddings] Calibration Base,holdout,top_rate,0.05,79,0.7721518987341772,0.16666666666666666
+XGBoost[Raw + TabPFN embeddings] Calibration Base,holdout,top_rate,0.1,158,0.7025316455696202,0.30327868852459017
+XGBoost[Raw + TabPFN embeddings] Calibration Base,holdout,top_rate,0.2,315,0.5936507936507937,0.5109289617486339
+XGBoost[Raw + TabPFN embeddings] Calibration Base,holdout,top_rate,0.3,472,0.5233050847457628,0.674863387978142
+XGBoost[Raw + TabPFN embeddings] Calibration Base,holdout,target_recall,0.5,309,0.5922330097087378,0.5
+XGBoost[Raw + TabPFN embeddings] Calibration Base,holdout,target_recall,0.7,518,0.49613899613899615,0.7021857923497268
+XGBoost[Raw + TabPFN embeddings] Calibration Base,holdout,target_recall,0.8,795,0.36855345911949683,0.8005464480874317
+XGBoost[Raw + TabPFN embeddings] Calibration Base,holdout,target_recall,0.9,1108,0.29783393501805056,0.9016393442622951
+XGBoost[Raw + TabPFN embeddings] Calibrated,holdout,top_rate,0.05,79,0.7721518987341772,0.16666666666666666
+XGBoost[Raw + TabPFN embeddings] Calibrated,holdout,top_rate,0.1,158,0.7025316455696202,0.30327868852459017
+XGBoost[Raw + TabPFN embeddings] Calibrated,holdout,top_rate,0.2,315,0.5936507936507937,0.5109289617486339
+XGBoost[Raw + TabPFN embeddings] Calibrated,holdout,top_rate,0.3,472,0.5233050847457628,0.674863387978142
+XGBoost[Raw + TabPFN embeddings] Calibrated,holdout,target_recall,0.5,309,0.5922330097087378,0.5
+XGBoost[Raw + TabPFN embeddings] Calibrated,holdout,target_recall,0.7,518,0.49613899613899615,0.7021857923497268
+XGBoost[Raw + TabPFN embeddings] Calibrated,holdout,target_recall,0.8,795,0.36855345911949683,0.8005464480874317
+XGBoost[Raw + TabPFN embeddings] Calibrated,holdout,target_recall,0.9,1108,0.29783393501805056,0.9016393442622951
+XGBoost[Raw + TabICL embeddings],holdout,top_rate,0.05,79,0.5569620253164557,0.12021857923497267
+XGBoost[Raw + TabICL embeddings],holdout,top_rate,0.1,158,0.5506329113924051,0.23770491803278687
+XGBoost[Raw + TabICL embeddings],holdout,top_rate,0.2,315,0.5079365079365079,0.4371584699453552
+XGBoost[Raw + TabICL embeddings],holdout,top_rate,0.3,472,0.4555084745762712,0.587431693989071
+XGBoost[Raw + TabICL embeddings],holdout,target_recall,0.5,376,0.4867021276595745,0.5
+XGBoost[Raw + TabICL embeddings],holdout,target_recall,0.7,739,0.34776725304465494,0.7021857923497268
+XGBoost[Raw + TabICL embeddings],holdout,target_recall,0.8,952,0.3077731092436975,0.8005464480874317
+XGBoost[Raw + TabICL embeddings],holdout,target_recall,0.9,1319,0.25018953752843065,0.9016393442622951
+XGBoost[Raw + TabICL embeddings] Calibration Base,holdout,top_rate,0.05,79,0.8607594936708861,0.18579234972677597
+XGBoost[Raw + TabICL embeddings] Calibration Base,holdout,top_rate,0.1,158,0.7025316455696202,0.30327868852459017
+XGBoost[Raw + TabICL embeddings] Calibration Base,holdout,top_rate,0.2,315,0.6031746031746031,0.5191256830601093
+XGBoost[Raw + TabICL embeddings] Calibration Base,holdout,top_rate,0.3,472,0.4830508474576271,0.6229508196721312
+XGBoost[Raw + TabICL embeddings] Calibration Base,holdout,target_recall,0.5,301,0.6079734219269103,0.5
+XGBoost[Raw + TabICL embeddings] Calibration Base,holdout,target_recall,0.7,699,0.3676680972818312,0.7021857923497268
+XGBoost[Raw + TabICL embeddings] Calibration Base,holdout,target_recall,0.8,1098,0.2668488160291439,0.8005464480874317
+XGBoost[Raw + TabICL embeddings] Calibration Base,holdout,target_recall,0.9,1274,0.25902668759811615,0.9016393442622951
+XGBoost[Raw + TabICL embeddings] Calibrated,holdout,top_rate,0.05,79,0.8607594936708861,0.18579234972677597
+XGBoost[Raw + TabICL embeddings] Calibrated,holdout,top_rate,0.1,158,0.7025316455696202,0.30327868852459017
+XGBoost[Raw + TabICL embeddings] Calibrated,holdout,top_rate,0.2,315,0.6031746031746031,0.5191256830601093
+XGBoost[Raw + TabICL embeddings] Calibrated,holdout,top_rate,0.3,472,0.4830508474576271,0.6229508196721312
+XGBoost[Raw + TabICL embeddings] Calibrated,holdout,target_recall,0.5,301,0.6079734219269103,0.5
+XGBoost[Raw + TabICL embeddings] Calibrated,holdout,target_recall,0.7,699,0.3676680972818312,0.7021857923497268
+XGBoost[Raw + TabICL embeddings] Calibrated,holdout,target_recall,0.8,1098,0.2668488160291439,0.8005464480874317
+XGBoost[Raw + TabICL embeddings] Calibrated,holdout,target_recall,0.9,1274,0.25902668759811615,0.9016393442622951
+TabPFN[Direct all-history],holdout,top_rate,0.05,79,0.8354430379746836,0.18032786885245902
+TabPFN[Direct all-history],holdout,top_rate,0.1,158,0.7658227848101266,0.33060109289617484
+TabPFN[Direct all-history],holdout,top_rate,0.2,315,0.6507936507936508,0.5601092896174863
+TabPFN[Direct all-history],holdout,top_rate,0.3,472,0.5572033898305084,0.7185792349726776
+TabPFN[Direct all-history],holdout,target_recall,0.5,271,0.6752767527675276,0.5
+TabPFN[Direct all-history],holdout,target_recall,0.7,446,0.5762331838565022,0.7021857923497268
+TabPFN[Direct all-history],holdout,target_recall,0.8,639,0.458528951486698,0.8005464480874317
+TabPFN[Direct all-history],holdout,target_recall,0.9,1061,0.3110273327049953,0.9016393442622951
+TabPFN[Direct all-history] Calibration Base,holdout,top_rate,0.05,79,0.7848101265822784,0.16939890710382513
+TabPFN[Direct all-history] Calibration Base,holdout,top_rate,0.1,158,0.7468354430379747,0.3224043715846995
+TabPFN[Direct all-history] Calibration Base,holdout,top_rate,0.2,315,0.6317460317460317,0.5437158469945356
+TabPFN[Direct all-history] Calibration Base,holdout,top_rate,0.3,472,0.5296610169491526,0.6830601092896175
+TabPFN[Direct all-history] Calibration Base,holdout,target_recall,0.5,274,0.6678832116788321,0.5
+TabPFN[Direct all-history] Calibration Base,holdout,target_recall,0.7,493,0.5212981744421906,0.7021857923497268
+TabPFN[Direct all-history] Calibration Base,holdout,target_recall,0.8,659,0.44461305007587254,0.8005464480874317
+TabPFN[Direct all-history] Calibration Base,holdout,target_recall,0.9,1090,0.30275229357798167,0.9016393442622951
+TabICL[Direct all-history],holdout,top_rate,0.05,79,0.8354430379746836,0.18032786885245902
+TabICL[Direct all-history],holdout,top_rate,0.1,158,0.7215189873417721,0.3114754098360656
+TabICL[Direct all-history],holdout,top_rate,0.2,315,0.5904761904761905,0.5081967213114754
+TabICL[Direct all-history],holdout,top_rate,0.3,472,0.5169491525423728,0.6666666666666666
+TabICL[Direct all-history],holdout,target_recall,0.5,305,0.6,0.5
+TabICL[Direct all-history],holdout,target_recall,0.7,543,0.4732965009208103,0.7021857923497268
+TabICL[Direct all-history],holdout,target_recall,0.8,724,0.4046961325966851,0.8005464480874317
+TabICL[Direct all-history],holdout,target_recall,0.9,1065,0.30985915492957744,0.9016393442622951
+TabICL[Direct all-history] Calibration Base,holdout,top_rate,0.05,79,0.8734177215189873,0.1885245901639344
+TabICL[Direct all-history] Calibration Base,holdout,top_rate,0.1,158,0.7911392405063291,0.34153005464480873
+TabICL[Direct all-history] Calibration Base,holdout,top_rate,0.2,315,0.6666666666666666,0.5737704918032787
+TabICL[Direct all-history] Calibration Base,holdout,top_rate,0.3,472,0.565677966101695,0.7295081967213115
+TabICL[Direct all-history] Calibration Base,holdout,target_recall,0.5,259,0.7065637065637066,0.5
+TabICL[Direct all-history] Calibration Base,holdout,target_recall,0.7,435,0.5908045977011495,0.7021857923497268
+TabICL[Direct all-history] Calibration Base,holdout,target_recall,0.8,621,0.4718196457326892,0.8005464480874317
+TabICL[Direct all-history] Calibration Base,holdout,target_recall,0.9,922,0.3579175704989154,0.9016393442622951

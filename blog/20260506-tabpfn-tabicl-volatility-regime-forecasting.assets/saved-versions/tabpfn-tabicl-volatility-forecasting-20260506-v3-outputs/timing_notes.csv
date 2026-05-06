@@ -1,0 +1,32 @@
+Model,Feature Set,Calibration,Evaluation Window,Timing Notes
+XGBoost[Raw + TabICL embeddings] Calibration Base,Raw + TabICL embeddings,none_calibration_base,calibration,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; base model excludes calibration-window labels
+XGBoost[Raw + TabICL embeddings] Calibrated,Raw + TabICL embeddings,sigmoid,calibration,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; sigmoid calibration fitted on calibration window
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history incumbent,none_calibration_base,calibration,raw all-history incumbent uses all pre-holdout raw labels available to the classical workflow; base model excludes calibration-window labels
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history incumbent,sigmoid,calibration,raw all-history incumbent uses all pre-holdout raw labels available to the classical workflow; sigmoid calibration fitted on calibration window
+XGBoost[Raw] Calibration Base,Raw,none_calibration_base,calibration,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; base model excludes calibration-window labels
+XGBoost[Raw] Calibrated,Raw,sigmoid,calibration,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; sigmoid calibration fitted on calibration window
+Rule[VIX close],vix_close,none,calibration,deterministic domain-rule score; not a probability
+TabPFN[Direct all-history] Calibration Base,Raw all-history direct TFM context,none_calibration_base,calibration,direct TFM base context excludes calibration-window labels
+TabICL[Direct all-history] Calibration Base,Raw all-history direct TFM context,none_calibration_base,calibration,direct TFM base context excludes calibration-window labels
+XGBoost[Raw + TabPFN embeddings] Calibration Base,Raw + TabPFN embeddings,none_calibration_base,calibration,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; base model excludes calibration-window labels
+XGBoost[Raw + TabPFN embeddings] Calibrated,Raw + TabPFN embeddings,sigmoid,calibration,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; sigmoid calibration fitted on calibration window
+Rule[SPY realized volatility 20d],spy_rv_20d,none,calibration,deterministic domain-rule score; not a probability
+TabICL[Direct all-history] Calibration Base,Raw all-history direct TFM context,none_calibration_base,holdout,direct TFM base context excludes calibration-window labels
+TabPFN[Direct all-history],Raw all-history direct TFM context,none,holdout,direct TFM classifier fitted on all pre-holdout labels; no task-specific weight training claim is made
+TabPFN[Direct all-history] Calibration Base,Raw all-history direct TFM context,none_calibration_base,holdout,direct TFM base context excludes calibration-window labels
+Rule[VIX close],vix_close,none,holdout,deterministic domain-rule score; not a probability
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history incumbent,none_calibration_base,holdout,raw all-history incumbent uses all pre-holdout raw labels available to the classical workflow; base model excludes calibration-window labels
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history incumbent,sigmoid,holdout,raw all-history incumbent uses all pre-holdout raw labels available to the classical workflow; sigmoid calibration fitted on calibration window
+XGBoost[Raw] Calibration Base,Raw,none_calibration_base,holdout,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; base model excludes calibration-window labels
+XGBoost[Raw] Calibrated,Raw,sigmoid,holdout,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; sigmoid calibration fitted on calibration window
+XGBoost[Raw all-history incumbent],Raw all-history incumbent,none,holdout,raw all-history incumbent uses all pre-holdout raw labels available to the classical workflow; tuned chronologically and refit on final pre-holdout labels
+TabICL[Direct all-history],Raw all-history direct TFM context,none,holdout,direct TFM classifier fitted on all pre-holdout labels; no task-specific weight training claim is made
+Rule[SPY realized volatility 20d],spy_rv_20d,none,holdout,deterministic domain-rule score; not a probability
+XGBoost[Raw + TabICL embeddings] Calibration Base,Raw + TabICL embeddings,none_calibration_base,holdout,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; base model excludes calibration-window labels
+XGBoost[Raw + TabICL embeddings] Calibrated,Raw + TabICL embeddings,sigmoid,holdout,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; sigmoid calibration fitted on calibration window
+XGBoost[Raw + TabPFN embeddings] Calibration Base,Raw + TabPFN embeddings,none_calibration_base,holdout,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; base model excludes calibration-window labels
+XGBoost[Raw + TabPFN embeddings] Calibrated,Raw + TabPFN embeddings,sigmoid,holdout,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; sigmoid calibration fitted on calibration window
+XGBoost[Raw],Raw,none,holdout,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; tuned chronologically and refit on final pre-holdout labels
+XGBoost[Raw + TabPFN embeddings],Raw + TabPFN embeddings,none,holdout,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; tuned chronologically and refit on final pre-holdout labels
+XGBoost[Raw + TabICL embeddings],Raw + TabICL embeddings,none,holdout,fair raw-vs-embedding workflow excludes TFM context labels from downstream fitting; tuned chronologically and refit on final pre-holdout labels
+Dummy[Prior probability],Raw,none,holdout,prior probability from all pre-holdout labels

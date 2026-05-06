@@ -1,0 +1,9 @@
+Check,Status,Evidence
+Target columns excluded from features,pass,flagged_feature_columns=[]; feature_count=574
+High-volatility threshold estimated before calibration and holdout,pass,threshold_source_end_date=2017-12-29; threshold=0.200601; quantile=0.80
+Chronological split order,pass,"context_max=2011-12-30, tune_min=2012-01-03, tune_max=2017-12-29, calibration_min=2018-01-02, holdout_min=2020-01-02"
+TFM embedding context reused as downstream labels,not_used_in_fair_embedding_path,embedding context labels condition TabPFN/TabICL embeddings; fair embedding-enhanced XGBoost excludes context rows from downstream fitting
+Raw all-history incumbent separated from fair embedding comparison,pass,raw all-history incumbent is reported as a separate classical reference point
+Calibration window used for final uncalibrated refit,review,final uncalibrated rows use all pre-holdout labels; calibration-base and calibrated rows are reported separately for threshold/probability diagnostics
+Overlapping target windows,known_limitation,future realized-volatility labels use overlapping 20-day windows; uncertainty is reported with calendar-month block bootstrap rather than iid row bootstrap
+Investment decision interpretation,educational_only,"risk-policy section is a diagnostic of score utility, not an investment recommendation"

@@ -1,0 +1,9 @@
+metric,value
+candidate_feature_count,297.0
+retained_base_feature_count,290.0
+dropped_sparse_feature_count,7.0
+dropped_insufficient_precalibration_history_feature_count,7.0
+feature_min_precalibration_observations,30.0
+missing_indicator_feature_count,284.0
+final_feature_count,574.0
+feature_max_missing_rate,0.4

@@ -1,0 +1,5 @@
+cv_group,fold,train_rows,train_high_vol_rows,train_high_vol_rate,validation_rows,validation_high_vol_rows,validation_high_vol_rate
+fair_raw_vs_embedding,1,920,26,0.02826086956521739,196,33,0.1683673469387755
+raw_all_history_incumbent,1,1057,376,0.35572374645222327,392,128,0.32653061224489793
+raw_all_history_incumbent,2,1449,504,0.34782608695652173,393,41,0.10432569974554708
+raw_all_history_incumbent,3,2234,545,0.2439570277529096,393,58,0.1475826972010178

@@ -1,0 +1,65 @@
+                             Model Evaluation Window          Type  Value  Alerts  Precision   Recall
+ Rule[SPY realized volatility 20d]           holdout      top_rate   0.05      79   0.772152 0.166667
+ Rule[SPY realized volatility 20d]           holdout      top_rate   0.10     158   0.670886 0.289617
+ Rule[SPY realized volatility 20d]           holdout      top_rate   0.20     315   0.596825 0.513661
+ Rule[SPY realized volatility 20d]           holdout      top_rate   0.30     472   0.550847 0.710383
+ Rule[SPY realized volatility 20d]           holdout target_recall   0.50     299   0.612040 0.500000
+ Rule[SPY realized volatility 20d]           holdout target_recall   0.70     452   0.568584 0.702186
+ Rule[SPY realized volatility 20d]           holdout target_recall   0.80     659   0.444613 0.800546
+ Rule[SPY realized volatility 20d]           holdout target_recall   0.90    1124   0.293594 0.901639
+                   Rule[VIX close]           holdout      top_rate   0.05      79   0.734177 0.158470
+                   Rule[VIX close]           holdout      top_rate   0.10     158   0.715190 0.308743
+                   Rule[VIX close]           holdout      top_rate   0.20     315   0.644444 0.554645
+                   Rule[VIX close]           holdout      top_rate   0.30     472   0.536017 0.691257
+                   Rule[VIX close]           holdout target_recall   0.50     282   0.648936 0.500000
+                   Rule[VIX close]           holdout target_recall   0.70     476   0.539916 0.702186
+                   Rule[VIX close]           holdout target_recall   0.80     611   0.479542 0.800546
+                   Rule[VIX close]           holdout target_recall   0.90     865   0.381503 0.901639
+XGBoost[Raw all-history incumbent]           holdout      top_rate   0.05      79   0.810127 0.174863
+XGBoost[Raw all-history incumbent]           holdout      top_rate   0.10     158   0.746835 0.322404
+XGBoost[Raw all-history incumbent]           holdout      top_rate   0.20     315   0.641270 0.551913
+XGBoost[Raw all-history incumbent]           holdout      top_rate   0.30     472   0.523305 0.674863
+XGBoost[Raw all-history incumbent]           holdout target_recall   0.50     273   0.670330 0.500000
+XGBoost[Raw all-history incumbent]           holdout target_recall   0.70     533   0.482176 0.702186
+XGBoost[Raw all-history incumbent]           holdout target_recall   0.80     725   0.404138 0.800546
+XGBoost[Raw all-history incumbent]           holdout target_recall   0.90    1037   0.318226 0.901639
+                      XGBoost[Raw]           holdout      top_rate   0.05      79   0.797468 0.172131
+                      XGBoost[Raw]           holdout      top_rate   0.10     158   0.689873 0.297814
+                      XGBoost[Raw]           holdout      top_rate   0.20     315   0.523810 0.450820
+                      XGBoost[Raw]           holdout      top_rate   0.30     472   0.421610 0.543716
+                      XGBoost[Raw]           holdout target_recall   0.50     374   0.489305 0.500000
+                      XGBoost[Raw]           holdout target_recall   0.70     796   0.322864 0.702186
+                      XGBoost[Raw]           holdout target_recall   0.80    1042   0.281190 0.800546
+                      XGBoost[Raw]           holdout target_recall   0.90    1259   0.262113 0.901639
+  XGBoost[Raw + TabPFN embeddings]           holdout      top_rate   0.05      79   0.835443 0.180328
+  XGBoost[Raw + TabPFN embeddings]           holdout      top_rate   0.10     158   0.645570 0.278689
+  XGBoost[Raw + TabPFN embeddings]           holdout      top_rate   0.20     315   0.507937 0.437158
+  XGBoost[Raw + TabPFN embeddings]           holdout      top_rate   0.30     472   0.406780 0.524590
+  XGBoost[Raw + TabPFN embeddings]           holdout target_recall   0.50     408   0.448529 0.500000
+  XGBoost[Raw + TabPFN embeddings]           holdout target_recall   0.70     899   0.285873 0.702186
+  XGBoost[Raw + TabPFN embeddings]           holdout target_recall   0.80    1210   0.242149 0.800546
+  XGBoost[Raw + TabPFN embeddings]           holdout target_recall   0.90    1379   0.239304 0.901639
+  XGBoost[Raw + TabICL embeddings]           holdout      top_rate   0.05      79   0.556962 0.120219
+  XGBoost[Raw + TabICL embeddings]           holdout      top_rate   0.10     158   0.550633 0.237705
+  XGBoost[Raw + TabICL embeddings]           holdout      top_rate   0.20     315   0.507937 0.437158
+  XGBoost[Raw + TabICL embeddings]           holdout      top_rate   0.30     472   0.455508 0.587432
+  XGBoost[Raw + TabICL embeddings]           holdout target_recall   0.50     376   0.486702 0.500000
+  XGBoost[Raw + TabICL embeddings]           holdout target_recall   0.70     739   0.347767 0.702186
+  XGBoost[Raw + TabICL embeddings]           holdout target_recall   0.80     952   0.307773 0.800546
+  XGBoost[Raw + TabICL embeddings]           holdout target_recall   0.90    1319   0.250190 0.901639
+        TabPFN[Direct all-history]           holdout      top_rate   0.05      79   0.835443 0.180328
+        TabPFN[Direct all-history]           holdout      top_rate   0.10     158   0.765823 0.330601
+        TabPFN[Direct all-history]           holdout      top_rate   0.20     315   0.650794 0.560109
+        TabPFN[Direct all-history]           holdout      top_rate   0.30     472   0.557203 0.718579
+        TabPFN[Direct all-history]           holdout target_recall   0.50     271   0.675277 0.500000
+        TabPFN[Direct all-history]           holdout target_recall   0.70     446   0.576233 0.702186
+        TabPFN[Direct all-history]           holdout target_recall   0.80     639   0.458529 0.800546
+        TabPFN[Direct all-history]           holdout target_recall   0.90    1061   0.311027 0.901639
+        TabICL[Direct all-history]           holdout      top_rate   0.05      79   0.835443 0.180328
+        TabICL[Direct all-history]           holdout      top_rate   0.10     158   0.721519 0.311475
+        TabICL[Direct all-history]           holdout      top_rate   0.20     315   0.590476 0.508197
+        TabICL[Direct all-history]           holdout      top_rate   0.30     472   0.516949 0.666667
+        TabICL[Direct all-history]           holdout target_recall   0.50     305   0.600000 0.500000
+        TabICL[Direct all-history]           holdout target_recall   0.70     543   0.473297 0.702186
+        TabICL[Direct all-history]           holdout target_recall   0.80     724   0.404696 0.800546
+        TabICL[Direct all-history]           holdout target_recall   0.90    1065   0.309859 0.901639

@@ -1,0 +1,12 @@
+Component,Version
+Python,3.12.12
+CUDA devices,2
+pandas,2.3.3
+numpy,2.0.2
+scikit-learn,1.6.1
+xgboost,3.2.0
+torch,2.10.0+cu128
+cupy,14.0.1
+yfinance,0.2.66
+tabpfn,7.1.1
+tabicl,2.1.1
