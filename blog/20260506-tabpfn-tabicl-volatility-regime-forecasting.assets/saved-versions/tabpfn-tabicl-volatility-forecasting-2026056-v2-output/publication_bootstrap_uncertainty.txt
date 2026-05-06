@@ -1,0 +1,25 @@
+                             Model            Metric  Point Estimate  Bootstrap Median  CI Lower  CI Upper  Bootstrap Iterations Requested  Bootstrap Iterations Used     Block Unit  Confidence Level
+ Rule[SPY realized volatility 20d] average_precision        0.615761          0.610593  0.453411  0.764800                              40                         40 calendar_month              0.95
+ Rule[SPY realized volatility 20d]           roc_auc        0.812126          0.803553  0.745739  0.870573                              40                         40 calendar_month              0.95
+ Rule[SPY realized volatility 20d]     top_20_recall        0.521008          0.525427  0.442278  0.623662                              40                         40 calendar_month              0.95
+                   Rule[VIX close] average_precision        0.640503          0.630391  0.461081  0.787081                              40                         40 calendar_month              0.95
+                   Rule[VIX close]           roc_auc        0.831017          0.826456  0.750820  0.911419                              40                         40 calendar_month              0.95
+                   Rule[VIX close]     top_20_recall        0.554622          0.559259  0.457290  0.688416                              40                         40 calendar_month              0.95
+XGBoost[Raw all-history incumbent] average_precision        0.598835          0.597726  0.408871  0.763663                              40                         40 calendar_month              0.95
+XGBoost[Raw all-history incumbent]           roc_auc        0.790644          0.782283  0.676711  0.856769                              40                         40 calendar_month              0.95
+XGBoost[Raw all-history incumbent]     top_20_recall        0.563025          0.543192  0.408525  0.669300                              40                         40 calendar_month              0.95
+                      XGBoost[Raw] average_precision        0.532769          0.569489  0.416803  0.669917                              40                         40 calendar_month              0.95
+                      XGBoost[Raw]           roc_auc        0.735283          0.742274  0.672925  0.799909                              40                         40 calendar_month              0.95
+                      XGBoost[Raw]     top_20_recall        0.470588          0.471187  0.380762  0.598306                              40                         40 calendar_month              0.95
+  XGBoost[Raw + TabPFN embeddings] average_precision        0.560612          0.591444  0.334011  0.719745                              40                         40 calendar_month              0.95
+  XGBoost[Raw + TabPFN embeddings]           roc_auc        0.723351          0.740827  0.602205  0.808604                              40                         40 calendar_month              0.95
+  XGBoost[Raw + TabPFN embeddings]     top_20_recall        0.478992          0.458567  0.325051  0.567858                              40                         40 calendar_month              0.95
+  XGBoost[Raw + TabICL embeddings] average_precision        0.461795          0.491332  0.322303  0.640681                              40                         40 calendar_month              0.95
+  XGBoost[Raw + TabICL embeddings]           roc_auc        0.710029          0.729644  0.610651  0.799278                              40                         40 calendar_month              0.95
+  XGBoost[Raw + TabICL embeddings]     top_20_recall        0.436975          0.420413  0.302010  0.532807                              40                         40 calendar_month              0.95
+        TabPFN[Direct all-history] average_precision        0.674435          0.688508  0.453887  0.798525                              40                         40 calendar_month              0.95
+        TabPFN[Direct all-history]           roc_auc        0.834999          0.832531  0.741488  0.888057                              40                         40 calendar_month              0.95
+        TabPFN[Direct all-history]     top_20_recall        0.571429          0.551119  0.457306  0.729456                              40                         40 calendar_month              0.95
+        TabICL[Direct all-history] average_precision        0.599503          0.595142  0.430447  0.741527                              40                         40 calendar_month              0.95
+        TabICL[Direct all-history]           roc_auc        0.775943          0.776060  0.693853  0.846462                              40                         40 calendar_month              0.95
+        TabICL[Direct all-history]     top_20_recall        0.495798          0.487635  0.384668  0.584130                              40                         40 calendar_month              0.95

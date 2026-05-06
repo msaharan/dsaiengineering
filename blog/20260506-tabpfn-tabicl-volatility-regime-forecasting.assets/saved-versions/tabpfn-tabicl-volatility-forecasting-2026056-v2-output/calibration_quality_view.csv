@@ -1,0 +1,28 @@
+Model,Family,Calibration,Evaluation Window,Average Precision,Brier Score,Log Loss,ECE Quantile 10
+XGBoost[Raw + TabICL embeddings] Calibration Base,classical_calibration_base,none_calibration_base,calibration,0.39198485605821337,0.19821829932615845,0.8011121451491532,0.17731031531867172
+XGBoost[Raw + TabICL embeddings] Calibrated,classical_calibrated,sigmoid,calibration,0.39198485605821337,0.16704928579814093,0.5134812949591654,0.08109024264394445
+TabPFN[Direct all-history] Calibration Base,direct_tfm_calibration_base,none_calibration_base,calibration,0.38465567382725663,0.19736644565291223,0.7249881152830518,0.17646567545531852
+XGBoost[Raw all-history incumbent] Calibration Base,classical_incumbent_calibration_base,none_calibration_base,calibration,0.3732701381955715,0.20138649790943985,0.8076736703878357,0.18558138532697094
+XGBoost[Raw all-history incumbent] Calibrated,classical_incumbent_calibrated,sigmoid,calibration,0.3732701381955715,0.16757948877012588,0.5152902157197978,0.08672930538037925
+XGBoost[Raw + TabPFN embeddings] Calibration Base,classical_calibration_base,none_calibration_base,calibration,0.3624012542261707,0.2026497467100783,0.8733141439520663,0.175344140040023
+XGBoost[Raw + TabPFN embeddings] Calibrated,classical_calibrated,sigmoid,calibration,0.3624012542261707,0.16892021192316864,0.5179632462994217,0.07829373262489693
+XGBoost[Raw] Calibration Base,classical_calibration_base,none_calibration_base,calibration,0.3493939760790412,0.20388243185315835,0.8880858466965994,0.1874074711517564
+XGBoost[Raw] Calibrated,classical_calibrated,sigmoid,calibration,0.3493939760790412,0.16900800865175042,0.5185623537922432,0.1329146234772104
+TabICL[Direct all-history] Calibration Base,direct_tfm_calibration_base,none_calibration_base,calibration,0.2895506267003807,0.19006769306552912,0.6565533653530078,0.13323954569674762
+TabICL[Direct all-history] Calibration Base,direct_tfm_calibration_base,none_calibration_base,holdout,0.6858265009032922,0.12352948839399427,0.40140061149842265,0.04074658411741256
+TabPFN[Direct all-history],direct_tfm,none,holdout,0.6744350064630438,0.12521247942459532,0.40311677687971226,0.046140495716594156
+TabPFN[Direct all-history] Calibration Base,direct_tfm_calibration_base,none_calibration_base,holdout,0.659553517422478,0.13502090088237295,0.4451538548765073,0.0764044316476211
+XGBoost[Raw + TabICL embeddings] Calibration Base,classical_calibration_base,none_calibration_base,holdout,0.6437404376104081,0.15870028970009167,0.5985021717760113,0.15305056425370273
+XGBoost[Raw + TabICL embeddings] Calibrated,classical_calibrated,sigmoid,holdout,0.6437404376104081,0.14308254577032498,0.4579671131502952,0.1145097097504052
+XGBoost[Raw] Calibration Base,classical_calibration_base,none_calibration_base,holdout,0.6421300287344884,0.18525864807450454,0.7078935920542764,0.19034214663505555
+XGBoost[Raw] Calibrated,classical_calibrated,sigmoid,holdout,0.6421300287344884,0.15731909649598214,0.48961475868280635,0.14778825046904911
+XGBoost[Raw + TabPFN embeddings] Calibration Base,classical_calibration_base,none_calibration_base,holdout,0.6139057833200445,0.15648934274837759,0.6259293557206747,0.1391221764907241
+XGBoost[Raw + TabPFN embeddings] Calibrated,classical_calibrated,sigmoid,holdout,0.6139057833200445,0.14811620439084403,0.46988035906870884,0.11995969740120632
+TabICL[Direct all-history],direct_tfm,none,holdout,0.5995026016474783,0.142097739779079,0.44591564425870933,0.04983745367941447
+XGBoost[Raw all-history incumbent],classical_incumbent,none,holdout,0.5988353410623106,0.13994187661483584,0.45346121578939713,0.07739740662276748
+XGBoost[Raw all-history incumbent] Calibration Base,classical_incumbent_calibration_base,none_calibration_base,holdout,0.5834708180730921,0.15028165059605947,0.507931551384922,0.10434932207874956
+XGBoost[Raw all-history incumbent] Calibrated,classical_incumbent_calibrated,sigmoid,holdout,0.5834708180730921,0.15430028284715636,0.5051441283868384,0.11431333789056757
+XGBoost[Raw + TabPFN embeddings],classical,none,holdout,0.5606118074767639,0.1572495945757186,0.5424554307053521,0.09918936743959783
+XGBoost[Raw],classical,none,holdout,0.5327690137482813,0.17725930739764026,0.5802999506084745,0.14288426058553164
+XGBoost[Raw + TabICL embeddings],classical,none,holdout,0.4617946943441098,0.2005555641135082,0.7467650744741042,0.1823641806044616
+Dummy[Prior probability],baseline,none,holdout,0.238,0.18388686390532546,0.5565639860589965,0.15000000000000002

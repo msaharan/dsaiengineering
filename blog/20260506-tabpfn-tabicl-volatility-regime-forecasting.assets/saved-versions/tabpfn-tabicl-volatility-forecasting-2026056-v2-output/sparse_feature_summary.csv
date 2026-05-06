@@ -1,0 +1,8 @@
+feature,missing_rate_before_policy,precalibration_nonmissing_count,retained_by_feature_policy,dropped_for_sparse_history,dropped_for_insufficient_precalibration_history,missing_indicator_added,n_unique_after_target_filter
+investment_grade_oas_change_20d,0.8574501368791553,0,False,True,True,False,100
+high_yield_oas_change_20d,0.8574501368791553,0,False,True,True,False,225
+investment_grade_oas_change_5d,0.8545170121235823,0,False,True,True,False,53
+high_yield_oas_change_5d,0.8545170121235823,0,False,True,True,False,154
+investment_grade_oas,0.8535393038717247,0,False,True,True,False,75
+high_yield_oas,0.8535393038717247,0,False,True,True,False,190
+credit_spread_gap_hy_minus_ig,0.8535393038717247,0,False,True,True,False,229

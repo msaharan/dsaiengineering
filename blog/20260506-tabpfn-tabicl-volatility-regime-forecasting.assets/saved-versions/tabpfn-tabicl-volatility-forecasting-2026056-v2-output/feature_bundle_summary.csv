@@ -1,0 +1,4 @@
+Feature Set,Embedding Source,Feature Count,Tune Rows,Calibration Rows,Holdout Rows,Fair Final Train Rows,Shared Feature Prep Seconds
+Raw,none,574,900,350,500,1250,0.0
+Raw + TabPFN embeddings,TabPFN,766,900,350,500,1250,15.348615895999956
+Raw + TabICL embeddings,TabICL,1086,900,350,500,1250,13.430263835000005

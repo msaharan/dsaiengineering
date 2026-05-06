@@ -1,0 +1,3 @@
+Embedding Source,Package Version,Model Class,Checkpoint Version,Embedding API,Interface Stability,Device,Embedding Columns,Shared Prep Seconds
+TabPFN,7.1.1,TabPFNClassifier,default TabPFNClassifier checkpoint for the installed tabpfn package,TabPFNClassifier.get_embeddings,public,"cuda:0, cuda:1",192,15.348615895999956
+TabICL,2.1.1,TabICLClassifier,tabicl-classifier-v2-20260212.ckpt,TabICL sklearn internals,internal_validated,cuda:0,512,13.430263835000005

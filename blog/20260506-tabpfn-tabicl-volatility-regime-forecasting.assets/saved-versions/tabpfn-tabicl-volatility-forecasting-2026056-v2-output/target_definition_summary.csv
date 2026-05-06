@@ -1,0 +1,15 @@
+metric,value
+target_asset,SPY
+target_horizon_trading_days,20
+high_vol_quantile,0.8
+high_vol_threshold_annualized_rv,0.20060193275751564
+threshold_source_end_date,2017-12-29
+threshold_source_rows,3020
+rows_after_target_filter,5094
+candidate_feature_count,297
+retained_base_feature_count,290
+dropped_sparse_feature_count,7
+dropped_insufficient_precalibration_history_feature_count,7
+feature_min_precalibration_observations,30
+missing_indicator_feature_count,284
+final_feature_count,574
