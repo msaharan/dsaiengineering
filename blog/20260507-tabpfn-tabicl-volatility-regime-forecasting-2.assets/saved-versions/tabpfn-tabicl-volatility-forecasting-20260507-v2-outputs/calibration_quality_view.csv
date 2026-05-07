@@ -1,0 +1,13 @@
+Model,Family,Calibration,Evaluation Window,Average Precision,Brier Score,Log Loss,ECE Quantile 10
+XGBoost[Raw all-history incumbent] Calibration Base,classical_incumbent_calibration_base,none_calibration_base,calibration,0.4177810628028046,0.19917686957485317,0.7645816451369636,0.18258872306137305
+XGBoost[Raw all-history incumbent] Calibrated,classical_incumbent_calibrated,sigmoid,calibration,0.4177810628028046,0.16666670834434202,0.5130470556359723,0.1138401994928811
+TabPFN[Direct all-history] Calibration Base,direct_tfm_calibration_base,none_calibration_base,calibration,0.3582394442510011,0.1928431447261751,0.6789170991891871,0.16347530453232584
+TabICL[Direct all-history] Calibration Base,direct_tfm_calibration_base,none_calibration_base,calibration,0.3206753243436762,0.1861551681984546,0.6520446261902993,0.12895337560202066
+TabICL[Direct all-history] Calibration Base,direct_tfm_calibration_base,none_calibration_base,holdout,0.69026953895776,0.11790133592696167,0.38151945531886655,0.03883624194577611
+TabPFN[Direct all-history],direct_tfm,none,holdout,0.6639593437842057,0.12327781398265893,0.4008450311899964,0.043767753947155104
+TabPFN[Direct all-history] Calibration Base,direct_tfm_calibration_base,none_calibration_base,holdout,0.6502981381819181,0.13022336365184875,0.42325284178177824,0.06474327046381467
+XGBoost[Raw all-history incumbent] Calibration Base,classical_incumbent_calibration_base,none_calibration_base,holdout,0.6296022785904772,0.13876678893622876,0.45845460916269815,0.09211112321149927
+XGBoost[Raw all-history incumbent] Calibrated,classical_incumbent_calibrated,sigmoid,holdout,0.6296022785904772,0.1405299632115758,0.46083284836802074,0.10206924426688097
+TabICL[Direct all-history],direct_tfm,none,holdout,0.6268467568196848,0.13139774145653027,0.4180904856774282,0.037412314528135794
+XGBoost[Raw all-history incumbent],classical_incumbent,none,holdout,0.610796049286988,0.13307502109070043,0.42469776944388016,0.03959713685121755
+Dummy[Prior probability],baseline,none,holdout,0.23297262889879058,0.17958065740630574,0.5454818062065051,0.17057969335997528

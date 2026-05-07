@@ -1,0 +1,3 @@
+stage,device_index,device_name,allocated_mb,reserved_mb,max_allocated_mb,free_mb,total_mb
+after_imports_and_configuration,0,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
+after_imports_and_configuration,1,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875

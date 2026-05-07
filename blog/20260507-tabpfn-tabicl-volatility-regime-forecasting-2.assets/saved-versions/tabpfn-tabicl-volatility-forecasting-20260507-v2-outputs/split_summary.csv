@@ -1,0 +1,6 @@
+split,start_date,end_date,rows,high_vol_rows,high_vol_rate,purpose
+tfm_representation_context,2006-01-03,2009-12-31,1007,369,0.36643495531281034,TFM representation context; excluded from post-context optional benchmark fitting
+post_context_tuning_window,2010-01-04,2017-12-29,2013,235,0.11674118231495281,optional CPU benchmark model selection
+calibration_window,2018-01-02,2019-12-31,503,112,0.22266401590457258,post-hoc calibration and threshold-policy diagnostics
+holdout_2020_forward,2020-01-02,2026-04-02,1571,366,0.23297262889879058,final deployment-facing evaluation
+raw_all_history_final_train,2006-01-03,2019-12-31,3523,716,0.20323587851263128,strong classical incumbent using all pre-holdout labels

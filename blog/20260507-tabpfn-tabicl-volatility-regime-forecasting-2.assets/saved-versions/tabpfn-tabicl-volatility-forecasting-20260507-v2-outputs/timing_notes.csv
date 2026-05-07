@@ -1,0 +1,25 @@
+Model,Feature Set,Calibration,Evaluation Window,Timing Notes
+Rule[VIX z-score 252d],vix_zscore_252d,none,calibration,deterministic domain-rule score; not a probability
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history incumbent,none_calibration_base,calibration,raw all-history incumbent uses all pre-holdout raw labels available to the classical workflow; base model excludes calibration-window labels
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history incumbent,sigmoid,calibration,raw all-history incumbent uses all pre-holdout raw labels available to the classical workflow; sigmoid calibration fitted on calibration window
+Rule[VIX close],vix_close,none,calibration,deterministic domain-rule score; not a probability
+TabPFN[Direct all-history] Calibration Base,Raw all-history direct TFM context,none_calibration_base,calibration,direct TFM base context excludes calibration-window labels
+TabICL[Direct all-history] Calibration Base,Raw all-history direct TFM context,none_calibration_base,calibration,direct TFM base context excludes calibration-window labels
+Rule[SPY Parkinson realized volatility 20d],spy_parkinson_rv_20d,none,calibration,deterministic domain-rule score; not a probability
+Rule[SPY Garman-Klass realized volatility 20d],spy_garman_klass_rv_20d,none,calibration,deterministic domain-rule score; not a probability
+Rule[VIX/realized volatility gap 20d],vix_minus_spy_rv_20d,none,calibration,deterministic domain-rule score; not a probability
+Rule[SPY realized volatility 20d],spy_rv_20d,none,calibration,deterministic domain-rule score; not a probability
+TabICL[Direct all-history] Calibration Base,Raw all-history direct TFM context,none_calibration_base,holdout,direct TFM base context excludes calibration-window labels
+TabPFN[Direct all-history],Raw all-history direct TFM context,none,holdout,direct TFM classifier fitted on all pre-holdout labels; no task-specific weight training claim is made
+TabPFN[Direct all-history] Calibration Base,Raw all-history direct TFM context,none_calibration_base,holdout,direct TFM base context excludes calibration-window labels
+Rule[VIX close],vix_close,none,holdout,deterministic domain-rule score; not a probability
+XGBoost[Raw all-history incumbent] Calibration Base,Raw all-history incumbent,none_calibration_base,holdout,raw all-history incumbent uses all pre-holdout raw labels available to the classical workflow; base model excludes calibration-window labels
+XGBoost[Raw all-history incumbent] Calibrated,Raw all-history incumbent,sigmoid,holdout,raw all-history incumbent uses all pre-holdout raw labels available to the classical workflow; sigmoid calibration fitted on calibration window
+Rule[SPY Parkinson realized volatility 20d],spy_parkinson_rv_20d,none,holdout,deterministic domain-rule score; not a probability
+TabICL[Direct all-history],Raw all-history direct TFM context,none,holdout,direct TFM classifier fitted on all pre-holdout labels; no task-specific weight training claim is made
+Rule[SPY Garman-Klass realized volatility 20d],spy_garman_klass_rv_20d,none,holdout,deterministic domain-rule score; not a probability
+XGBoost[Raw all-history incumbent],Raw all-history incumbent,none,holdout,raw all-history incumbent uses all pre-holdout raw labels available to the classical workflow; tuned chronologically and refit on final pre-holdout labels
+Rule[SPY realized volatility 20d],spy_rv_20d,none,holdout,deterministic domain-rule score; not a probability
+Rule[VIX z-score 252d],vix_zscore_252d,none,holdout,deterministic domain-rule score; not a probability
+Rule[VIX/realized volatility gap 20d],vix_minus_spy_rv_20d,none,holdout,deterministic domain-rule score; not a probability
+Dummy[Prior probability],Raw,none,holdout,prior probability from all pre-holdout labels

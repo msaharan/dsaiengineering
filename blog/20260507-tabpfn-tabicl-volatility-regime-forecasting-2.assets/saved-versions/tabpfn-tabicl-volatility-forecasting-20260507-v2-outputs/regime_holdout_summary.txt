@@ -1,0 +1,46 @@
+                   Regime Start Date   End Date                                          Model  Rows  High Vol Rows  High Vol Rate  Average Precision  ROC AUC  Top 20% Recall
+         covid_shock_2020 2020-01-01 2020-12-31              Rule[SPY realized volatility 20d]   253            131       0.517787           0.718313 0.637217        0.320611
+         covid_shock_2020 2020-01-01 2020-12-31    Rule[SPY Parkinson realized volatility 20d]   253            131       0.517787           0.721285 0.618008        0.343511
+         covid_shock_2020 2020-01-01 2020-12-31 Rule[SPY Garman-Klass realized volatility 20d]   253            131       0.517787           0.737522 0.625641        0.358779
+         covid_shock_2020 2020-01-01 2020-12-31                                Rule[VIX close]   253            131       0.517787           0.733262 0.669347        0.305344
+         covid_shock_2020 2020-01-01 2020-12-31                         Rule[VIX z-score 252d]   253            131       0.517787           0.812459 0.785947        0.358779
+         covid_shock_2020 2020-01-01 2020-12-31          Rule[VIX/realized volatility gap 20d]   253            131       0.517787           0.495856 0.403204        0.190840
+         covid_shock_2020 2020-01-01 2020-12-31             XGBoost[Raw all-history incumbent]   253            131       0.517787           0.685751 0.646978        0.320611
+         covid_shock_2020 2020-01-01 2020-12-31                     TabPFN[Direct all-history]   253            131       0.517787           0.743315 0.672851        0.351145
+         covid_shock_2020 2020-01-01 2020-12-31                     TabICL[Direct all-history]   253            131       0.517787           0.774084 0.727913        0.351145
+   post_covid_reopen_2021 2021-01-01 2021-12-31              Rule[SPY realized volatility 20d]   252              3       0.011905           0.008039 0.013387        0.000000
+   post_covid_reopen_2021 2021-01-01 2021-12-31    Rule[SPY Parkinson realized volatility 20d]   252              3       0.011905           0.009594 0.180723        0.000000
+   post_covid_reopen_2021 2021-01-01 2021-12-31 Rule[SPY Garman-Klass realized volatility 20d]   252              3       0.011905           0.009688 0.195448        0.000000
+   post_covid_reopen_2021 2021-01-01 2021-12-31                                Rule[VIX close]   252              3       0.011905           0.016643 0.538153        0.000000
+   post_covid_reopen_2021 2021-01-01 2021-12-31                         Rule[VIX z-score 252d]   252              3       0.011905           0.047917 0.847390        1.000000
+   post_covid_reopen_2021 2021-01-01 2021-12-31          Rule[VIX/realized volatility gap 20d]   252              3       0.011905           0.074013 0.902276        1.000000
+   post_covid_reopen_2021 2021-01-01 2021-12-31             XGBoost[Raw all-history incumbent]   252              3       0.011905           0.016303 0.522088        0.000000
+   post_covid_reopen_2021 2021-01-01 2021-12-31                     TabPFN[Direct all-history]   252              3       0.011905           0.012352 0.382865        0.000000
+   post_covid_reopen_2021 2021-01-01 2021-12-31                     TabICL[Direct all-history]   252              3       0.011905           0.024870 0.698795        0.333333
+inflation_rate_shock_2022 2022-01-01 2022-12-31              Rule[SPY realized volatility 20d]   251            178       0.709163           0.746420 0.503540        0.213483
+inflation_rate_shock_2022 2022-01-01 2022-12-31    Rule[SPY Parkinson realized volatility 20d]   251            178       0.709163           0.835348 0.603125        0.286517
+inflation_rate_shock_2022 2022-01-01 2022-12-31 Rule[SPY Garman-Klass realized volatility 20d]   251            178       0.709163           0.839722 0.594197        0.286517
+inflation_rate_shock_2022 2022-01-01 2022-12-31                                Rule[VIX close]   251            178       0.709163           0.826036 0.672041        0.258427
+inflation_rate_shock_2022 2022-01-01 2022-12-31                         Rule[VIX z-score 252d]   251            178       0.709163           0.829525 0.715561        0.252809
+inflation_rate_shock_2022 2022-01-01 2022-12-31          Rule[VIX/realized volatility gap 20d]   251            178       0.709163           0.817155 0.635216        0.252809
+inflation_rate_shock_2022 2022-01-01 2022-12-31             XGBoost[Raw all-history incumbent]   251            178       0.709163           0.787198 0.593659        0.235955
+inflation_rate_shock_2022 2022-01-01 2022-12-31                     TabPFN[Direct all-history]   251            178       0.709163           0.775215 0.590734        0.224719
+inflation_rate_shock_2022 2022-01-01 2022-12-31                     TabICL[Direct all-history]   251            178       0.709163           0.772705 0.605626        0.219101
+               quiet_2023 2023-01-01 2023-12-31              Rule[SPY realized volatility 20d]   250              0       0.000000                NaN      NaN             NaN
+               quiet_2023 2023-01-01 2023-12-31    Rule[SPY Parkinson realized volatility 20d]   250              0       0.000000                NaN      NaN             NaN
+               quiet_2023 2023-01-01 2023-12-31 Rule[SPY Garman-Klass realized volatility 20d]   250              0       0.000000                NaN      NaN             NaN
+               quiet_2023 2023-01-01 2023-12-31                                Rule[VIX close]   250              0       0.000000                NaN      NaN             NaN
+               quiet_2023 2023-01-01 2023-12-31                         Rule[VIX z-score 252d]   250              0       0.000000                NaN      NaN             NaN
+               quiet_2023 2023-01-01 2023-12-31          Rule[VIX/realized volatility gap 20d]   250              0       0.000000                NaN      NaN             NaN
+               quiet_2023 2023-01-01 2023-12-31             XGBoost[Raw all-history incumbent]   250              0       0.000000                NaN      NaN             NaN
+               quiet_2023 2023-01-01 2023-12-31                     TabPFN[Direct all-history]   250              0       0.000000                NaN      NaN             NaN
+               quiet_2023 2023-01-01 2023-12-31                     TabICL[Direct all-history]   250              0       0.000000                NaN      NaN             NaN
+   late_holdout_2024_2026 2024-01-01 2026-04-02              Rule[SPY realized volatility 20d]   565             54       0.095575           0.232997 0.693557        0.537037
+   late_holdout_2024_2026 2024-01-01 2026-04-02    Rule[SPY Parkinson realized volatility 20d]   565             54       0.095575           0.302006 0.749946        0.611111
+   late_holdout_2024_2026 2024-01-01 2026-04-02 Rule[SPY Garman-Klass realized volatility 20d]   565             54       0.095575           0.286993 0.736175        0.574074
+   late_holdout_2024_2026 2024-01-01 2026-04-02                                Rule[VIX close]   565             54       0.095575           0.327166 0.737842        0.500000
+   late_holdout_2024_2026 2024-01-01 2026-04-02                         Rule[VIX z-score 252d]   565             54       0.095575           0.358845 0.821229        0.629630
+   late_holdout_2024_2026 2024-01-01 2026-04-02          Rule[VIX/realized volatility gap 20d]   565             54       0.095575           0.132257 0.500906        0.240741
+   late_holdout_2024_2026 2024-01-01 2026-04-02             XGBoost[Raw all-history incumbent]   565             54       0.095575           0.335644 0.660615        0.537037
+   late_holdout_2024_2026 2024-01-01 2026-04-02                     TabPFN[Direct all-history]   565             54       0.095575           0.370189 0.692651        0.555556
+   late_holdout_2024_2026 2024-01-01 2026-04-02                     TabICL[Direct all-history]   565             54       0.095575           0.293868 0.721642        0.444444

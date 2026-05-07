@@ -1,0 +1,25 @@
+Model,Base Model,Feature Set,Calibration,Evaluation Window,Average Precision,ROC AUC,Brier Score,Shared Feature Prep Seconds,Fit Seconds,Calibration Seconds,Predict Seconds,Workflow Seconds
+Rule[VIX z-score 252d],Rule,vix_zscore_252d,none,calibration,0.46202578071757716,0.7464833759590793,,0.0,0.0,0.0,0.0,0.0
+XGBoost[Raw all-history incumbent] Calibration Base,XGBoost,Raw all-history incumbent,none_calibration_base,calibration,0.4177810628028046,0.7094674826452321,0.19917686957485317,0.0,1592.5733994329998,0.0,0.011764537499971084,1592.5851639704997
+XGBoost[Raw all-history incumbent] Calibrated,XGBoost,Raw all-history incumbent,sigmoid,calibration,0.4177810628028046,0.7094674826452321,0.16666670834434202,0.0,1592.5733994329998,0.03528823600004216,0.004067813000006026,1592.612755482
+Rule[VIX close],Rule,vix_close,none,calibration,0.3921756666260079,0.6403452685421994,,0.0,0.0,0.0,0.0,0.0
+TabPFN[Direct all-history] Calibration Base,TabPFN,Raw all-history direct TFM context,none_calibration_base,calibration,0.3582394442510011,0.6488970588235293,0.1928431447261751,0.0,8.392151566999928,0.0,37.49081651799986,45.88296808499979
+TabICL[Direct all-history] Calibration Base,TabICL,Raw all-history direct TFM context,none_calibration_base,calibration,0.3206753243436762,0.585974607234198,0.1861551681984546,0.0,3.6858245769999485,0.0,20.18117828749996,23.86700286449991
+Rule[SPY Parkinson realized volatility 20d],Rule,spy_parkinson_rv_20d,none,calibration,0.2958223095144873,0.5990363536719036,,0.0,0.0,0.0,0.0,0.0
+Rule[SPY Garman-Klass realized volatility 20d],Rule,spy_garman_klass_rv_20d,none,calibration,0.29461235447456363,0.5869336865180855,,0.0,0.0,0.0,0.0,0.0
+Rule[VIX/realized volatility gap 20d],Rule,vix_minus_spy_rv_20d,none,calibration,0.28944324122435594,0.517446108878334,,0.0,0.0,0.0,0.0,0.0
+Rule[SPY realized volatility 20d],Rule,spy_rv_20d,none,calibration,0.26482223621086415,0.5642583120204604,,0.0,0.0,0.0,0.0,0.0
+TabICL[Direct all-history] Calibration Base,TabICL,Raw all-history direct TFM context,none_calibration_base,holdout,0.69026953895776,0.8546674829376687,0.11790133592696167,0.0,3.6858245769999485,0.0,20.18117828749996,23.86700286449991
+TabPFN[Direct all-history],TabPFN,Raw all-history direct TFM context,none,holdout,0.6639593437842057,0.8303074620774098,0.12327781398265893,0.0,17.584915007000063,0.0,51.78002315200001,69.36493815900008
+TabPFN[Direct all-history] Calibration Base,TabPFN,Raw all-history direct TFM context,none_calibration_base,holdout,0.6502981381819181,0.8216243792939256,0.13022336365184875,0.0,8.392151566999928,0.0,37.49081651799986,45.88296808499979
+Rule[VIX close],Rule,vix_close,none,holdout,0.6326031416335401,0.8324388363603383,,0.0,0.0,0.0,0.0,0.0
+XGBoost[Raw all-history incumbent] Calibration Base,XGBoost,Raw all-history incumbent,none_calibration_base,holdout,0.6296022785904772,0.8219248123710405,0.13876678893622876,0.0,1592.5733994329998,0.0,0.011764537499971084,1592.5851639704997
+XGBoost[Raw all-history incumbent] Calibrated,XGBoost,Raw all-history incumbent,sigmoid,holdout,0.6296022785904772,0.8219248123710405,0.1405299632115758,0.0,1592.5733994329998,0.03528823600004216,0.004067813000006026,1592.612755482
+Rule[SPY Parkinson realized volatility 20d],Rule,spy_parkinson_rv_20d,none,holdout,0.6278017233190802,0.8137360270276399,,0.0,0.0,0.0,0.0,0.0
+TabICL[Direct all-history],TabICL,Raw all-history direct TFM context,none,holdout,0.6268467568196848,0.810325828174954,0.13139774145653027,0.0,7.4999706879998485,0.0,24.530653052999696,32.030623740999545
+Rule[SPY Garman-Klass realized volatility 20d],Rule,spy_garman_klass_rv_20d,none,holdout,0.6230972653715359,0.8022515475137746,,0.0,0.0,0.0,0.0,0.0
+XGBoost[Raw all-history incumbent],XGBoost,Raw all-history incumbent,none,holdout,0.610796049286988,0.8129152211867673,0.13307502109070043,0.0,1592.854969493,0.0,0.013308105000078285,1592.868277598
+Rule[SPY realized volatility 20d],Rule,spy_rv_20d,none,holdout,0.6014824651490764,0.80925333877514,,0.0,0.0,0.0,0.0,0.0
+Rule[VIX z-score 252d],Rule,vix_zscore_252d,none,holdout,0.5991737949244991,0.8428383556674148,,0.0,0.0,0.0,0.0,0.0
+Rule[VIX/realized volatility gap 20d],Rule,vix_minus_spy_rv_20d,none,holdout,0.23479993331998147,0.42451080425367893,,0.0,0.0,0.0,0.0,0.0
+Dummy[Prior probability],Dummy,Raw,none,holdout,0.23297262889879058,0.5,0.17958065740630574,0.0,0.0,0.0,0.0,0.0
