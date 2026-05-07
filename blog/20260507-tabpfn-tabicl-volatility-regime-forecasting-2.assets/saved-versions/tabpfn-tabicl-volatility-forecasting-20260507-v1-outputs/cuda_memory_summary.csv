@@ -1,0 +1,11 @@
+stage,device_index,device_name,allocated_mb,reserved_mb,max_allocated_mb,free_mb,total_mb
+after_imports_and_configuration,0,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
+after_imports_and_configuration,1,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
+before_tabpfn_embedding_extraction,0,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
+before_tabpfn_embedding_extraction,1,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
+after_tabpfn_embedding_extraction,0,Tesla T4,9.125,3354.0,2485.892578125,11425.8125,14912.6875
+after_tabpfn_embedding_extraction,1,Tesla T4,9.125,3108.0,2360.5107421875,11671.8125,14912.6875
+before_tabicl_embedding_extraction,0,Tesla T4,9.125,3354.0,9.125,11425.8125,14912.6875
+before_tabicl_embedding_extraction,1,Tesla T4,9.125,3108.0,9.125,11671.8125,14912.6875
+after_tabicl_embedding_extraction,0,Tesla T4,9.125,9570.0,9401.33154296875,5207.8125,14912.6875
+after_tabicl_embedding_extraction,1,Tesla T4,9.125,22.0,9.125,14757.8125,14912.6875
