@@ -1,3 +1,3 @@
 # DSAIEngineering
 
-Bridging the gap between academic research and industrial deployment of tabular foundation models.
+Applied data science and AI. Current focus: machine learning, tabular foundation models, and quantitative finance.
