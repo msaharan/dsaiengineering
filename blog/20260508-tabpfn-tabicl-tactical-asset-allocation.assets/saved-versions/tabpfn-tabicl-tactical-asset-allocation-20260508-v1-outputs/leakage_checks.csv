@@ -1,0 +1,9 @@
+Check,Status,Evidence
+Target columns excluded from model features,pass,flagged_feature_columns=[]; final_feature_count=388
+Chronological split order,pass,"selection_max=2017-12-31, calibration_min=2018-01-31, calibration_max=2019-12-31, holdout_min=2020-01-31"
+Feature policy fitted before calibration and holdout,pass,feature medians and retained columns fitted on selection window through 2017-12-31
+Next-month target uses future prices only as label,pass,forward_1m_return and target_top_k_next_1m are excluded from feature columns and used only for training/evaluation labels
+Portfolio rule selected on holdout,review,all score-driven portfolios use fixed top-k selection; no holdout optimization of top-k or transaction cost is performed
+Transaction costs included,pass,transaction_cost_bps=5.0; cost applied to one-way monthly turnover
+Public market data point-in-time limitations,known_limitation,yfinance/FRED/Cboe public files are reproducible but not equivalent to a licensed point-in-time production data store
+Investment interpretation,educational_only,"portfolio section is a diagnostic of score utility, not an investment recommendation"

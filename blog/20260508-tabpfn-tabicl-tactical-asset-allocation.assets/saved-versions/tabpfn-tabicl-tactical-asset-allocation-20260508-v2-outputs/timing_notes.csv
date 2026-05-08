@@ -1,0 +1,21 @@
+Model,Calibration,Evaluation Window,Timing Notes
+TabICL[Direct allocation scorer] Calibration Base,none_calibration_base,calibration,direct TFM context excludes calibration-window labels
+TabPFN[Direct allocation scorer] Calibration Base,none_calibration_base,calibration,direct TFM context excludes calibration-window labels
+XGBoost[GPU allocation scorer] Calibration Base,none_calibration_base,calibration,base model excludes calibration-window labels
+XGBoost[GPU allocation scorer] Calibrated,sigmoid,calibration,sigmoid calibration fitted on calibration window
+Rule[12M momentum top-k],none,calibration,deterministic rule score; not a calibrated probability
+Rule[6M momentum top-k],none,calibration,deterministic rule score; not a calibrated probability
+Rule[Low volatility top-k],none,calibration,deterministic rule score; not a calibrated probability
+Rule[Risk-adjusted momentum top-k],none,calibration,deterministic rule score; not a calibrated probability
+TabPFN[Direct allocation scorer],none,holdout,direct TFM classifier fitted on all pre-holdout rows; no task-specific weight training claim is made
+TabICL[Direct allocation scorer],none,holdout,direct TFM classifier fitted on all pre-holdout rows; no task-specific weight training claim is made
+TabICL[Direct allocation scorer] Calibration Base,none_calibration_base,holdout,direct TFM context excludes calibration-window labels
+Rule[12M momentum top-k],none,holdout,deterministic rule score; not a calibrated probability
+XGBoost[GPU allocation scorer] Calibration Base,none_calibration_base,holdout,base model excludes calibration-window labels
+XGBoost[GPU allocation scorer] Calibrated,sigmoid,holdout,sigmoid calibration fitted on calibration window
+TabPFN[Direct allocation scorer] Calibration Base,none_calibration_base,holdout,direct TFM context excludes calibration-window labels
+XGBoost[GPU allocation scorer],none,holdout,randomized search on monthly rolling-origin folds; final model fit on all pre-holdout rows
+Rule[6M momentum top-k],none,holdout,deterministic rule score; not a calibrated probability
+Rule[Risk-adjusted momentum top-k],none,holdout,deterministic rule score; not a calibrated probability
+Dummy[Preholdout prior probability],none,holdout,constant prior from pre-holdout label frequency
+Rule[Low volatility top-k],none,holdout,deterministic rule score; not a calibrated probability

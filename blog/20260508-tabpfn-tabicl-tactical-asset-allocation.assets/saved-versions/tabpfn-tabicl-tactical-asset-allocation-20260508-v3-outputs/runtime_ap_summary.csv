@@ -1,0 +1,21 @@
+Model,Base Model,Calibration,Evaluation Window,Average Precision,ROC AUC,Brier Score,Workflow Seconds
+TabICL[Direct allocation scorer] Calibration Base,TabICL,none_calibration_base,calibration,0.4759467451524544,0.6073977623456791,0.21631774000908197,8.170302809499844
+TabPFN[Direct allocation scorer] Calibration Base,TabPFN,none_calibration_base,calibration,0.45690463277343013,0.5872395833333333,0.21913362399807154,13.317564427000207
+XGBoost[GPU allocation scorer] Calibration Base,XGBoost,none_calibration_base,calibration,0.42191885697073384,0.5721450617283951,0.21913327900579635,2339.408554847
+XGBoost[GPU allocation scorer] Calibrated,XGBoost,sigmoid,calibration,0.42191885697073384,0.5721450617283951,0.21899970375669592,2339.4230088974996
+Rule[12M momentum top-k],Rule,none,calibration,0.31960553030600136,0.4736689814814814,,0.0
+Rule[6M momentum top-k],Rule,none,calibration,0.3094981233686017,0.40625,,0.0
+Rule[Low volatility top-k],Rule,none,calibration,0.3066296059624292,0.3715277777777778,,0.0
+Rule[Risk-adjusted momentum top-k],Rule,none,calibration,0.2808594346873533,0.40354938271604934,,0.0
+TabICL[Direct allocation scorer],TabICL,none,holdout,0.4090719429524628,0.5647506172839506,0.21927254586211786,13.248780244000045
+TabPFN[Direct allocation scorer],TabPFN,none,holdout,0.4089124760596909,0.5798567901234568,0.21915859654044417,24.78608277999956
+TabICL[Direct allocation scorer] Calibration Base,TabICL,none_calibration_base,holdout,0.4039379964616765,0.5630370370370371,0.22051666774445347,8.170302809499844
+Rule[12M momentum top-k],Rule,none,holdout,0.39473640672693694,0.5603753086419754,,0.0
+XGBoost[GPU allocation scorer] Calibration Base,XGBoost,none_calibration_base,holdout,0.3876716349917149,0.5880691358024692,0.21816975020965393,2339.408554847
+XGBoost[GPU allocation scorer] Calibrated,XGBoost,sigmoid,holdout,0.3876716349917149,0.5880691358024692,0.2179713201016744,2339.4230088974996
+TabPFN[Direct allocation scorer] Calibration Base,TabPFN,none_calibration_base,holdout,0.3855843383064848,0.5581481481481481,0.2214341458995805,13.317564427000207
+XGBoost[GPU allocation scorer],XGBoost,none,holdout,0.38317950334203194,0.5812345679012345,0.2187522585816947,2339.519095859
+Rule[6M momentum top-k],Rule,none,holdout,0.38182987218472497,0.5457283950617283,,0.0
+Rule[Risk-adjusted momentum top-k],Rule,none,holdout,0.3809605806516917,0.5373925925925925,,0.0
+Dummy[Preholdout prior probability],Dummy,none,holdout,0.3333333333333333,0.5,0.22223337791146758,0.0
+Rule[Low volatility top-k],Rule,none,holdout,0.2958323830454167,0.43867654320987653,,0.0
