@@ -1,0 +1,28 @@
+Model,Base Model,Calibration,Evaluation Window,Average Precision,ROC AUC,Brier Score,Workflow Seconds
+XGBoost[GPU allocation scorer] Calibration Base,XGBoost,none_calibration_base,calibration,0.28353727531523043,0.6207986111111111,0.18693015556254286,461.2640241885
+XGBoost[GPU allocation scorer] Calibrated,XGBoost,sigmoid,calibration,0.28353727531523043,0.6207986111111111,0.15813609074123486,461.2644011540001
+TabPFN[Direct allocation scorer] Calibration Base,TabPFN,none_calibration_base,calibration,0.27761575323636056,0.6124305555555555,0.15676367504299266,58.961996793000026
+Rule[12M momentum top-k],Rule,none,calibration,0.20456353554300222,0.4763541666666667,,0.0
+Rule[6M momentum top-k],Rule,none,calibration,0.18976827610790892,0.4284027777777778,,0.0
+Rule[Low volatility top-k],Rule,none,calibration,0.18321871721112923,0.4214930555555555,,0.0
+Rule[Risk-adjusted momentum top-k],Rule,none,calibration,0.17803180576974692,0.4381770833333334,,0.0
+FeatureSensitivity[full][TabPFN direct],TabPFN,full,holdout,0.30207607364034067,0.6346435555555556,0.15505892525324919,74.83248216300001
+TabPFN[Direct allocation scorer] Calibration Base,TabPFN,none_calibration_base,holdout,0.30206057650137474,0.6383635555555556,0.15549458104688788,58.961996793000026
+FeatureSensitivity[identity_ablated][TabPFN direct],TabPFN,identity_ablated,holdout,0.29788754185586763,0.6351715555555556,0.15530420008879567,78.60331647800012
+FeatureSensitivity[strict_time_series][TabPFN direct],TabPFN,strict_time_series,holdout,0.29788754185586763,0.6351715555555556,0.15530420008879567,78.24201711599972
+TabPFN[Direct allocation scorer],TabPFN,none,holdout,0.29788754185586763,0.6351715555555556,0.15530420008879567,77.91112851499997
+FeatureSensitivity[ticker_ablated][TabPFN direct],TabPFN,ticker_ablated,holdout,0.2938228724171489,0.6303804444444445,0.1555102797585372,78.20506689100011
+FeatureSensitivity[metadata_only][TabPFN direct],TabPFN,metadata_only,holdout,0.29048248534606536,0.6255333333333334,0.15440048306471876,6.037936304000141
+FeatureSensitivity[metadata_only][XGBoost light],XGBoost,metadata_only,holdout,0.28150603667590357,0.6204000000000001,0.23974457677625474,0.4063824200002273
+FeatureSensitivity[ticker_ablated][XGBoost light],XGBoost,ticker_ablated,holdout,0.2608014567525866,0.5843324444444444,0.20808203514259904,1.3784739490000675
+FeatureSensitivity[identity_ablated][XGBoost light],XGBoost,identity_ablated,holdout,0.2566712288434516,0.5787306666666666,0.2077365493103748,1.3473553170000514
+FeatureSensitivity[strict_time_series][XGBoost light],XGBoost,strict_time_series,holdout,0.2566712288434516,0.5787306666666666,0.2077365493103748,1.324072354000009
+XGBoost[GPU allocation scorer],XGBoost,none,holdout,0.25199089221514565,0.5768017777777777,0.1882235356061437,463.4699888299999
+FeatureSensitivity[full][XGBoost light],XGBoost,full,holdout,0.24956974974006194,0.5773155555555555,0.2063021642528362,4.213805240999932
+Rule[Risk-adjusted momentum top-k],Rule,none,holdout,0.24710879067451433,0.5233937777777777,,0.0
+Rule[6M momentum top-k],Rule,none,holdout,0.24546715106279854,0.525712,,0.0
+Rule[12M momentum top-k],Rule,none,holdout,0.2438064939418784,0.5311928888888888,,0.0
+XGBoost[GPU allocation scorer] Calibrated,XGBoost,sigmoid,holdout,0.24031036797905525,0.5546648888888889,0.15924109472314504,461.2644011540001
+XGBoost[GPU allocation scorer] Calibration Base,XGBoost,none_calibration_base,holdout,0.24031036797905522,0.5546648888888889,0.19017605993461803,461.2640241885
+Dummy[Preholdout prior probability],Dummy,none,holdout,0.2,0.5,0.1600005849496013,0.0
+Rule[Low volatility top-k],Rule,none,holdout,0.16553332775121618,0.4050151111111111,,0.0

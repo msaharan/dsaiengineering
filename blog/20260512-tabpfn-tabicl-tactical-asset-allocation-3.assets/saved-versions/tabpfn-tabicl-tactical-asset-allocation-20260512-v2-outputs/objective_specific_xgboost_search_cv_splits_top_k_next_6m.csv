@@ -1,0 +1,7 @@
+Objective,Fold,Train Rows,Validation Rows,Train Positive Rows,Validation Positive Rows,Validation Start,Training Labels Resolved Before Validation,Best CV Average Precision,Early Stopping Rounds
+top_k_next_6m,1,1084,375,220,75,2010-03-31,True,0.30793913602911144,75
+top_k_next_6m,2,1459,400,295,80,2011-06-30,True,0.30793913602911144,75
+top_k_next_6m,3,1859,400,375,80,2012-10-31,True,0.30793913602911144,75
+top_k_next_6m,4,2259,375,455,75,2014-02-28,True,0.30793913602911144,75
+top_k_next_6m,5,2634,400,530,80,2015-05-31,True,0.30793913602911144,75
+top_k_next_6m,6,3034,400,610,80,2016-09-30,True,0.30793913602911144,75

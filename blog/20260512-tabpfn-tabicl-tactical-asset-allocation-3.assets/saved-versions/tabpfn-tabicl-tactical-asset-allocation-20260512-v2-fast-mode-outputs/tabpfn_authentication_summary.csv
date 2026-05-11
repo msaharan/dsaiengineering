@@ -1,0 +1,2 @@
+Check,Status,Evidence
+TabPFN authentication preflight,pass,TABPFN_TOKEN loaded; token_length=167; V2_6 tiny model-load/predict succeeded

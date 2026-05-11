@@ -1,0 +1,9 @@
+metric,value
+rows,2430
+months,243
+assets,10
+positive_rows,729
+positive_rate,0.3
+target_top_k,3
+benchmark_asset,SPY
+multi_horizon_months,"3, 6"

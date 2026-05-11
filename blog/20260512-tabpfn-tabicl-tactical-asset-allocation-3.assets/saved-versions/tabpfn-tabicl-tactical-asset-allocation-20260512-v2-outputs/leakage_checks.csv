@@ -1,0 +1,24 @@
+Check,Status,Evidence
+Target columns excluded from model features,pass,flagged_feature_columns=[]; final_feature_count=1060
+Chronological split order,pass,"selection_max=2017-12-31, calibration_min=2018-01-31, calibration_max=2019-12-31, holdout_min=2020-01-31"
+Feature policy fitted before calibration and holdout,pass,feature medians and retained columns fitted on selection window through 2017-12-31
+Next-month target uses future prices only as label,pass,forward_1m_return and target_top_k_next_1m are excluded from feature columns and used only for training/evaluation labels
+Month-end signal and next-month execution convention,documented_assumption,features use month-end close observations; selected execution_return_mode=next_open_to_next_open; close-to-close and next-open returns are both saved for audit
+Static identity feature policy,pass,feature_set_variant=identity_ablated; excluded_variant_feature_columns=34
+FRED series feature availability,review,"included=5; excluded=2; excluded_series=['BAMLH0A0HYM2', 'BAMLC0A0CM']"
+Portfolio top-k policy,review,all score-driven portfolios use fixed top-k selection; no holdout optimization of top-k or transaction cost is performed
+Transaction costs included,pass,transaction_cost_bps=5.0; cost applied to one-way monthly turnover
+Turnover-cap sensitivity,pass,"turnover_constraint_caps=[1.0, 0.5]"
+Feature-variant sensitivity,pass,"variants=['full', 'ticker_ablated', 'identity_ablated', 'metadata_only', 'strict_time_series']; fitted_variant_bundles=['full', 'ticker_ablated', 'identity_ablated', 'metadata_only', 'strict_time_series']; gpu_xgboost_enabled=True; cpu_logistic_enabled=False"
+Selected model-family feature sensitivity,pass,"variants=['full', 'ticker_ablated', 'identity_ablated', 'metadata_only', 'strict_time_series']; artifact=model_family_feature_sensitivity.csv"
+Multi-horizon target audit,pass,"multi_horizon_months=[3, 6]; artifact=multi_horizon_target_summary.csv"
+Benchmark-relative target audit,pass,benchmark_asset=SPY; artifact=benchmark_relative_target_summary.csv
+Objective-specific retraining,pass,"objectives=['benchmark_outperform_1m', 'top_k_next_3m', 'top_k_next_6m']; artifacts=objective_specific_retraining_summary.csv, objective_specific_monthly_rank_aggregate.csv, objective_specific_portfolio_summary.csv, objective_specific_horizon_return_monthly.csv"
+Portfolio benchmark-relative diagnostics,pass,artifact=portfolio_benchmark_relative_summary.csv
+Headline portfolio excludes feature-sensitivity reruns,pass,headline artifact=portfolio_summary.csv; sensitivity artifact=feature_sensitivity_portfolio_summary.csv
+Portfolio drawdown and concentration diagnostics,pass,"artifacts=portfolio_drawdown_summary.csv, portfolio_weight_constraint_summary.csv"
+Ex-ante risk proxy diagnostics,pass,"artifacts=portfolio_ex_ante_risk_summary.csv, portfolio_ex_ante_risk_monthly.csv"
+"Liquidity, spread, impact, and tax-drag proxy diagnostics",pass,"artifacts=liquidity_feature_summary.csv, portfolio_liquidity_impact_proxy.csv, portfolio_tax_drag_sensitivity.csv"
+TabICL empirical comparison,known_unresolved_by_design,RUN_DIRECT_TABICL=False; TabICL code remains guarded but disabled for this run per RAM constraints and user instruction
+Public market data point-in-time limitations,known_limitation,yfinance/FRED/Cboe public files are reproducible but not equivalent to a licensed point-in-time production data store
+Investment interpretation,educational_only,"portfolio section is a diagnostic of score utility, not an investment recommendation"

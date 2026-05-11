@@ -1,0 +1,6 @@
+                           Model Base Model Calibration Evaluation Window  Rows  Positive Rate  Score Type  Average Precision  ROC AUC  Brier Score  Log Loss  ECE Quantile 10  CV/Validation Average Precision  Workflow Seconds
+        Rule[12M momentum top-k]       Rule        none           holdout  1875            0.2   raw_score           0.243806 0.531193          NaN       NaN              NaN                              NaN          0.000000
+         Rule[6M momentum top-k]       Rule        none           holdout  1875            0.2   raw_score           0.245467 0.525712          NaN       NaN              NaN                              NaN          0.000000
+      Rule[Low volatility top-k]       Rule        none           holdout  1875            0.2   raw_score           0.165533 0.405015          NaN       NaN              NaN                              NaN          0.000000
+  XGBoost[GPU allocation scorer]    XGBoost        none           holdout  1875            0.2 probability           0.251991 0.576802     0.188224  0.923971         0.166811                         0.290481        463.469989
+TabPFN[Direct allocation scorer]     TabPFN        none           holdout  1875            0.2 probability           0.297888 0.635172     0.155304  0.487531         0.032282                              NaN         77.911129

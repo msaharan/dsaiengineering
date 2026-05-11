@@ -1,0 +1,8 @@
+metric,value
+feature_set_variant,identity_ablated
+raw_numeric_feature_candidates,252
+ticker_identity_feature_columns,10
+group_metadata_feature_columns,9
+strict_time_series_feature_columns,233
+excluded_variant_feature_columns,19
+post_variant_feature_candidates,233

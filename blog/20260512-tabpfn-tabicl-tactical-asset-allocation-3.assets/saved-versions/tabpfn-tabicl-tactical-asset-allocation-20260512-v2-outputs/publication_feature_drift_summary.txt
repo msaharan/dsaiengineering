@@ -1,0 +1,31 @@
+                         Feature  Selection Mean  Holdout Mean  Selection Std  Holdout Std       PSI
+market_lqd_avg_dollar_volume_63d    2.136309e+08  2.311343e+09   1.867981e+08 7.436502e+08 11.979963
+market_ief_avg_dollar_volume_63d    1.100182e+08  7.571288e+08   7.689368e+07 2.415788e+08 11.979939
+market_xlk_avg_dollar_volume_63d    2.625096e+08  1.309909e+09   1.469518e+08 5.221130e+08 11.979929
+market_xlv_avg_dollar_volume_63d    3.453680e+08  1.254033e+09   2.634923e+08 3.933887e+08 11.021637
+market_hyg_avg_dollar_volume_63d    3.716289e+08  2.690420e+09   3.479142e+08 7.474034e+08 10.993287
+     market_xlk_beta_to_spy_126d    1.010534e+00  1.327433e+00   1.156550e-01 1.610350e-01 10.778887
+market_xli_avg_dollar_volume_63d    4.425029e+08  1.150118e+09   2.114896e+08 2.986364e+08 10.679905
+market_tlt_avg_dollar_volume_63d    7.211706e+08  2.666937e+09   3.978118e+08 8.832681e+08 10.521467
+market_shy_avg_dollar_volume_63d    1.033357e+08  3.456046e+08   4.450667e+07 1.161008e+08 10.451577
+market_xlu_avg_dollar_volume_63d    3.606543e+08  9.223913e+08   2.052419e+08 2.308314e+08  9.720827
+market_xly_avg_dollar_volume_63d    2.854104e+08  8.658225e+08   1.467630e+08 3.903342e+08  9.686583
+market_xlp_avg_dollar_volume_63d    2.772982e+08  9.018718e+08   1.926997e+08 2.942491e+08  9.177250
+market_qqq_avg_dollar_volume_63d    4.108429e+09  1.798096e+10   1.552556e+09 7.250632e+09  8.719174
+     market_eem_beta_to_spy_126d    1.367512e+00  8.111340e-01   3.229740e-01 1.723980e-01  8.037737
+     market_efa_beta_to_spy_126d    1.088537e+00  7.921980e-01   1.673090e-01 1.004500e-01  8.025075
+market_slv_avg_dollar_volume_63d    2.770500e+08  8.608100e+08   4.247286e+08 1.382735e+09  7.955617
+market_vnq_avg_dollar_volume_63d    1.757281e+08  4.169951e+08   1.170308e+08 1.195077e+08  7.702405
+market_xlb_avg_dollar_volume_63d    3.024873e+08  4.998422e+08   1.166954e+08 1.181847e+08  6.789475
+     market_xlb_beta_to_spy_126d    1.163298e+00  9.072490e-01   1.268040e-01 1.315950e-01  6.765391
+     market_xlf_beta_to_spy_126d    1.303860e+00  9.363340e-01   2.665570e-01 1.762520e-01  6.307643
+       market_yield_curve_10y_2y    1.508764e+00  2.386670e-01   8.229160e-01 6.253480e-01  5.850110
+market_spy_avg_dollar_volume_63d    2.211648e+10  3.495947e+10   6.939640e+09 9.097815e+09  5.786690
+     market_lqd_beta_to_spy_126d   -2.036900e-02  1.553500e-01   9.213800e-02 1.034560e-01  5.484289
+     market_xli_beta_to_spy_126d    1.067297e+00  9.194170e-01   1.064070e-01 9.910100e-02  5.471783
+market_xlf_avg_dollar_volume_63d    1.325756e+09  1.836813e+09   8.447210e+08 4.286107e+08  5.450538
+              market_xlk_rv_126d    1.795300e-01  2.557330e-01   8.820600e-02 9.202600e-02  5.277535
+     market_xly_downside_rv_126d    1.127160e-01  1.463910e-01   6.360900e-02 6.193100e-02  5.066619
+          market_shy_return_252d    1.946000e-02  1.867400e-02   2.236200e-02 3.129300e-02  4.547052
+     market_dia_beta_to_spy_126d    8.998910e-01  8.371780e-01   4.170600e-02 1.071170e-01  4.524961
+     market_xlv_beta_to_spy_126d    8.025490e-01  6.086450e-01   1.655070e-01 1.367010e-01  4.439355

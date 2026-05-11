@@ -1,0 +1,9 @@
+metric,value
+feature_set_variant,identity_ablated
+candidate_numeric_features_after_variant,233
+excluded_variant_features,19
+retained_base_features,233
+missing_indicator_features,226
+final_model_features,459
+feature_max_missing_rate,0.35
+feature_min_selection_observations,36

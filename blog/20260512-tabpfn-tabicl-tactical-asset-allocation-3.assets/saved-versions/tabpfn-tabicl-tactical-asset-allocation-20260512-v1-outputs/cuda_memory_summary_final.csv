@@ -1,0 +1,101 @@
+stage,device_index,device_name,allocated_mb,reserved_mb,max_allocated_mb,free_mb,total_mb
+after_imports_and_configuration,0,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
+after_imports_and_configuration,1,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
+after_FeatureSensitivity[full][XGBoost light]_prediction,0,Tesla T4,0.0,0.0,0.0,14785.8125,14912.6875
+after_FeatureSensitivity[full][XGBoost light]_prediction,1,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
+after_FeatureSensitivity[full][TabPFN direct]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14761.8125,14912.6875
+after_FeatureSensitivity[full][TabPFN direct]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_FeatureSensitivity[ticker_ablated][XGBoost light]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14761.8125,14912.6875
+after_FeatureSensitivity[ticker_ablated][XGBoost light]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_FeatureSensitivity[ticker_ablated][TabPFN direct]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14761.8125,14912.6875
+after_FeatureSensitivity[ticker_ablated][TabPFN direct]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_FeatureSensitivity[identity_ablated][XGBoost light]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14761.8125,14912.6875
+after_FeatureSensitivity[identity_ablated][XGBoost light]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_FeatureSensitivity[identity_ablated][TabPFN direct]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14761.8125,14912.6875
+after_FeatureSensitivity[identity_ablated][TabPFN direct]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_FeatureSensitivity[metadata_only][XGBoost light]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14761.8125,14912.6875
+after_FeatureSensitivity[metadata_only][XGBoost light]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_FeatureSensitivity[metadata_only][TabPFN direct]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14761.8125,14912.6875
+after_FeatureSensitivity[metadata_only][TabPFN direct]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_FeatureSensitivity[strict_time_series][XGBoost light]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14761.8125,14912.6875
+after_FeatureSensitivity[strict_time_series][XGBoost light]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_FeatureSensitivity[strict_time_series][TabPFN direct]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14761.8125,14912.6875
+after_FeatureSensitivity[strict_time_series][TabPFN direct]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_xgboost_final_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_xgboost_final_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_xgboost_workflow,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_xgboost_workflow,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_TabPFN[Direct allocation scorer]_final_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_TabPFN[Direct allocation scorer]_final_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_TabPFN[Direct allocation scorer]_calibration_base_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_TabPFN[Direct allocation scorer]_calibration_base_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_TabPFN[Direct allocation scorer]_workflow,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_TabPFN[Direct allocation scorer]_workflow,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_prediction_frame_assembly,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_prediction_frame_assembly,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_outperform_benchmark_next_1m_fold_1,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_outperform_benchmark_next_1m_fold_1,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_outperform_benchmark_next_1m_fold_2,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_outperform_benchmark_next_1m_fold_2,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_outperform_benchmark_next_1m_fold_3,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_outperform_benchmark_next_1m_fold_3,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_outperform_benchmark_next_1m_fold_4,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_outperform_benchmark_next_1m_fold_4,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_outperform_benchmark_next_1m_fold_5,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_outperform_benchmark_next_1m_fold_5,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_outperform_benchmark_next_1m_fold_6,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_outperform_benchmark_next_1m_fold_6,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_ObjectiveSpecific[benchmark_outperform_1m][XGBoost light]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_ObjectiveSpecific[benchmark_outperform_1m][XGBoost light]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_ObjectiveSpecific[benchmark_outperform_1m][XGBoost light] Calibration Base_calibration,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_ObjectiveSpecific[benchmark_outperform_1m][XGBoost light] Calibration Base_calibration,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_ObjectiveSpecific[benchmark_outperform_1m][TabPFN direct]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_ObjectiveSpecific[benchmark_outperform_1m][TabPFN direct]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_ObjectiveSpecific[benchmark_outperform_1m][TabPFN direct] Calibration Base_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_ObjectiveSpecific[benchmark_outperform_1m][TabPFN direct] Calibration Base_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_top_k_next_3m_fold_1,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_top_k_next_3m_fold_1,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_top_k_next_3m_fold_2,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_top_k_next_3m_fold_2,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_top_k_next_3m_fold_3,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_top_k_next_3m_fold_3,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_top_k_next_3m_fold_4,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_top_k_next_3m_fold_4,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_top_k_next_3m_fold_5,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_top_k_next_3m_fold_5,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_top_k_next_3m_fold_6,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_top_k_next_3m_fold_6,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_3m][XGBoost light]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_3m][XGBoost light]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_3m][XGBoost light] Calibration Base_calibration,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_3m][XGBoost light] Calibration Base_calibration,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_3m][TabPFN direct]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_3m][TabPFN direct]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_3m][TabPFN direct] Calibration Base_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_3m][TabPFN direct] Calibration Base_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_top_k_next_6m_fold_1,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_top_k_next_6m_fold_1,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_top_k_next_6m_fold_2,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_top_k_next_6m_fold_2,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_top_k_next_6m_fold_3,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_top_k_next_6m_fold_3,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_top_k_next_6m_fold_4,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_top_k_next_6m_fold_4,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_top_k_next_6m_fold_5,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_top_k_next_6m_fold_5,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_objective_cv_target_top_k_next_6m_fold_6,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_objective_cv_target_top_k_next_6m_fold_6,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_6m][XGBoost light]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_6m][XGBoost light]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_6m][XGBoost light] Calibration Base_calibration,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_6m][XGBoost light] Calibration Base_calibration,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_6m][TabPFN direct]_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_6m][TabPFN direct]_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_6m][TabPFN direct] Calibration Base_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_ObjectiveSpecific[top_k_next_6m][TabPFN direct] Calibration Base_prediction,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_portfolio_bootstrap,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_portfolio_bootstrap,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_row_bootstrap,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_row_bootstrap,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875
+after_feature_drift,0,Tesla T4,9.125,14.0,4421.0380859375,14745.8125,14912.6875
+after_feature_drift,1,Tesla T4,9.125,14.0,4421.91796875,14765.8125,14912.6875

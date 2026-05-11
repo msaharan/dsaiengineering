@@ -1,0 +1,61 @@
+Model,Objective,Target Column,Rows,Positive Rate,Average Precision,ROC AUC
+Dummy[Preholdout prior probability],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4224,0.5
+Dummy[Preholdout prior probability],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.2,0.5
+Dummy[Preholdout prior probability],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.2,0.5
+Rule[12M momentum top-k],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.43645363976013485,0.5086693341540987
+Rule[12M momentum top-k],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.24262252554287433,0.5390636141865266
+Rule[12M momentum top-k],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.23875685649329537,0.5114285714285715
+Rule[6M momentum top-k],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4385469698942087,0.5068913978193756
+Rule[6M momentum top-k],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.24796678763108312,0.5534321636329518
+Rule[6M momentum top-k],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.24444149534215837,0.5381408163265307
+Rule[Low volatility top-k],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.39405780960293435,0.4588894485016368
+Rule[Low volatility top-k],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.14764823202177751,0.3629123662976168
+Rule[Low volatility top-k],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.14526764962569066,0.3501102040816326
+Rule[Risk-adjusted momentum top-k],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4431730768866565,0.5015132861393249
+Rule[Risk-adjusted momentum top-k],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.24662517816257015,0.5460911990992682
+Rule[Risk-adjusted momentum top-k],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.24956997113402557,0.5466897959183673
+FeatureSensitivity[full][XGBoost light],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.45452410383073494,0.5539093613885858
+FeatureSensitivity[full][XGBoost light],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.2708262237109222,0.617400075060987
+FeatureSensitivity[full][XGBoost light],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.27342078544174186,0.6108183673469388
+FeatureSensitivity[full][TabPFN direct],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4654137546210552,0.5667530568846358
+FeatureSensitivity[full][TabPFN direct],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.2972677179181257,0.6601079001688872
+FeatureSensitivity[full][TabPFN direct],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.32806147498316296,0.6788724489795919
+FeatureSensitivity[ticker_ablated][XGBoost light],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.461256883981819,0.5636291353050356
+FeatureSensitivity[ticker_ablated][XGBoost light],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.2846351406658273,0.6224132107337212
+FeatureSensitivity[ticker_ablated][XGBoost light],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.2759339632936974,0.6113591836734694
+FeatureSensitivity[ticker_ablated][TabPFN direct],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4641971117814928,0.5628485921075949
+FeatureSensitivity[ticker_ablated][TabPFN direct],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.30519148945786273,0.6622893601050853
+FeatureSensitivity[ticker_ablated][TabPFN direct],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.31263608163981127,0.6628673469387756
+FeatureSensitivity[identity_ablated][XGBoost light],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4643641355429071,0.5611097120792412
+FeatureSensitivity[identity_ablated][XGBoost light],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.2836911670476645,0.623452805404391
+FeatureSensitivity[identity_ablated][XGBoost light],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.28286090923332313,0.616226530612245
+FeatureSensitivity[identity_ablated][TabPFN direct],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4659999673202806,0.5661427292313719
+FeatureSensitivity[identity_ablated][TabPFN direct],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.30938150712517926,0.6661324826421468
+FeatureSensitivity[identity_ablated][TabPFN direct],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.3277139596460571,0.6798326530612245
+FeatureSensitivity[metadata_only][XGBoost light],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4631561598202626,0.5663665743305633
+FeatureSensitivity[metadata_only][XGBoost light],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.28692757921337453,0.6423287671232878
+FeatureSensitivity[metadata_only][XGBoost light],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.3081357704175039,0.6505714285714285
+FeatureSensitivity[metadata_only][TabPFN direct],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4680384735747325,0.5694269565460701
+FeatureSensitivity[metadata_only][TabPFN direct],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.3030038270644124,0.6535616438356164
+FeatureSensitivity[metadata_only][TabPFN direct],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.3190169658955023,0.6553571428571429
+FeatureSensitivity[strict_time_series][XGBoost light],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4643641355429071,0.5611097120792412
+FeatureSensitivity[strict_time_series][XGBoost light],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.2836911670476645,0.623452805404391
+FeatureSensitivity[strict_time_series][XGBoost light],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.28286090923332313,0.616226530612245
+FeatureSensitivity[strict_time_series][TabPFN direct],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4659999673202806,0.5661427292313719
+FeatureSensitivity[strict_time_series][TabPFN direct],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.30938150712517926,0.6661324826421468
+FeatureSensitivity[strict_time_series][TabPFN direct],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.3277139596460571,0.6798326530612245
+XGBoost[GPU allocation scorer],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.459021152183249,0.558919061342884
+XGBoost[GPU allocation scorer],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.28552086647117647,0.6325426909363858
+XGBoost[GPU allocation scorer],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.2980741866755915,0.6452693877551021
+XGBoost[GPU allocation scorer] Calibration Base,benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4575645779321461,0.5468920507009148
+XGBoost[GPU allocation scorer] Calibration Base,top_k_next_3m,target_top_k_next_3m,1825,0.2,0.28933111315435145,0.6352279977481704
+XGBoost[GPU allocation scorer] Calibration Base,top_k_next_6m,target_top_k_next_6m,1750,0.2,0.3062588553698035,0.6399673469387755
+XGBoost[GPU allocation scorer] Calibrated,benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4575645779321461,0.5468920507009148
+XGBoost[GPU allocation scorer] Calibrated,top_k_next_3m,target_top_k_next_3m,1825,0.2,0.28933111315435145,0.6352279977481704
+XGBoost[GPU allocation scorer] Calibrated,top_k_next_6m,target_top_k_next_6m,1750,0.2,0.3062588553698035,0.6399673469387755
+TabPFN[Direct allocation scorer],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4659999673202806,0.5661427292313719
+TabPFN[Direct allocation scorer],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.30938150712517926,0.6661324826421468
+TabPFN[Direct allocation scorer],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.3277139596460571,0.6798326530612245
+TabPFN[Direct allocation scorer] Calibration Base,benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.45978306445019346,0.5610339311862858
+TabPFN[Direct allocation scorer] Calibration Base,top_k_next_3m,target_top_k_next_3m,1825,0.2,0.3181740714591594,0.6699568399324451
+TabPFN[Direct allocation scorer] Calibration Base,top_k_next_6m,target_top_k_next_6m,1750,0.2,0.31788417448565376,0.6704163265306122

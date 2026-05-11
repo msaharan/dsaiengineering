@@ -1,0 +1,6 @@
+feature_variant,candidate_features,excluded_features,retained_base_features,missing_indicator_features,final_model_features,selected_for_main_run,sensitivity_enabled
+full,567,0,567,527,1094,False,True
+ticker_ablated,542,25,542,527,1069,False,True
+identity_ablated,533,34,533,527,1060,True,True
+metadata_only,34,533,34,0,34,False,True
+strict_time_series,533,34,533,527,1060,False,True

@@ -1,0 +1,20 @@
+Model,Family,Calibration,Evaluation Window,Average Precision,Brier Score,Log Loss,ECE Quantile 10
+XGBoost[GPU allocation scorer] Calibration Base,gpu_boosted_tree_calibration_base,none_calibration_base,calibration,0.33238689190827797,0.2514340274973384,0.8144634182056762,0.19451789039594589
+XGBoost[GPU allocation scorer] Calibrated,gpu_boosted_tree_calibrated,sigmoid,calibration,0.33238689190827797,0.20956589942920448,0.609776887459076,0.06349966699878373
+TabPFN[Direct allocation scorer] Calibration Base,direct_tfm_calibration_base,none_calibration_base,calibration,0.32424211428382627,0.2110011164566266,0.6151592156204987,0.046510402361551934
+FeatureSensitivity[full][TabPFN direct],feature_policy_sensitivity,full,holdout,0.37613124446712287,0.2064646844007381,0.6028924190859428,0.059803288817405695
+FeatureSensitivity[ticker_ablated][TabPFN direct],feature_policy_sensitivity,ticker_ablated,holdout,0.374863905073495,0.20650039984422724,0.6030865426570907,0.06835619322458904
+FeatureSensitivity[identity_ablated][TabPFN direct],feature_policy_sensitivity,identity_ablated,holdout,0.3633965543886501,0.20632862234746532,0.6028450661031065,0.044390461881955466
+FeatureSensitivity[strict_time_series][TabPFN direct],feature_policy_sensitivity,strict_time_series,holdout,0.3633965543886501,0.20632862234746532,0.6028450661031065,0.044390461881955466
+TabPFN[Direct allocation scorer],direct_tfm,none,holdout,0.3633965543886501,0.20632862234746532,0.6028450661031065,0.044390461881955466
+FeatureSensitivity[metadata_only][TabPFN direct],feature_policy_sensitivity,metadata_only,holdout,0.35703139329805994,0.20651946790045694,0.6027488473565575,0.044272008796532945
+FeatureSensitivity[metadata_only][XGBoost light],feature_policy_sensitivity,metadata_only,holdout,0.3551159082892416,0.2436675097919696,0.6796832976051487,0.1923092931509018
+TabPFN[Direct allocation scorer] Calibration Base,direct_tfm_calibration_base,none_calibration_base,holdout,0.33850771954944703,0.20749520150489278,0.6060731207488953,0.046622200568517055
+FeatureSensitivity[full][XGBoost light],feature_policy_sensitivity,full,holdout,0.32848343461469787,0.22700844951204954,0.6473975448636539,0.12088013042012852
+FeatureSensitivity[identity_ablated][XGBoost light],feature_policy_sensitivity,identity_ablated,holdout,0.32626267964877537,0.22627886523152685,0.6464318046816623,0.11852404283483824
+FeatureSensitivity[strict_time_series][XGBoost light],feature_policy_sensitivity,strict_time_series,holdout,0.32626267964877537,0.22627886523152685,0.6464318046816623,0.11852404283483824
+FeatureSensitivity[ticker_ablated][XGBoost light],feature_policy_sensitivity,ticker_ablated,holdout,0.3245114678686942,0.22793267592209482,0.6490490922664024,0.1291962508360545
+XGBoost[GPU allocation scorer] Calibration Base,gpu_boosted_tree_calibration_base,none_calibration_base,holdout,0.31545285884619856,0.2549402747737748,0.8340435944331436,0.18449635659631652
+XGBoost[GPU allocation scorer] Calibrated,gpu_boosted_tree_calibrated,sigmoid,holdout,0.31545285884619856,0.2099480148612427,0.6107547256875414,0.040158667365709944
+XGBoost[GPU allocation scorer],gpu_boosted_tree,none,holdout,0.31381969126379144,0.2576639888698771,0.8571253941646991,0.19102761944003094
+Dummy[Preholdout prior probability],baseline,none,holdout,0.3,0.21000000000000016,0.6108643020548937,

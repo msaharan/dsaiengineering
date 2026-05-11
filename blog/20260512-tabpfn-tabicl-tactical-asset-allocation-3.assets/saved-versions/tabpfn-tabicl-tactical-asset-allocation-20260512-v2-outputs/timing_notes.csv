@@ -1,0 +1,28 @@
+Model,Calibration,Evaluation Window,Timing Notes
+XGBoost[GPU allocation scorer] Calibration Base,none_calibration_base,calibration,base model excludes calibration-window labels
+XGBoost[GPU allocation scorer] Calibrated,sigmoid,calibration,sigmoid calibration fitted on calibration window
+TabPFN[Direct allocation scorer] Calibration Base,none_calibration_base,calibration,direct TFM context excludes calibration-window labels
+Rule[12M momentum top-k],none,calibration,deterministic rule score; not a calibrated probability
+Rule[6M momentum top-k],none,calibration,deterministic rule score; not a calibrated probability
+Rule[Low volatility top-k],none,calibration,deterministic rule score; not a calibrated probability
+Rule[Risk-adjusted momentum top-k],none,calibration,deterministic rule score; not a calibrated probability
+FeatureSensitivity[full][TabPFN direct],full,holdout,direct TabPFN feature-policy sensitivity rerun
+TabPFN[Direct allocation scorer] Calibration Base,none_calibration_base,holdout,direct TFM context excludes calibration-window labels
+FeatureSensitivity[identity_ablated][TabPFN direct],identity_ablated,holdout,direct TabPFN feature-policy sensitivity rerun
+FeatureSensitivity[strict_time_series][TabPFN direct],strict_time_series,holdout,direct TabPFN feature-policy sensitivity rerun
+TabPFN[Direct allocation scorer],none,holdout,direct TFM classifier fitted on all pre-holdout rows; no task-specific weight training claim is made
+FeatureSensitivity[ticker_ablated][TabPFN direct],ticker_ablated,holdout,direct TabPFN feature-policy sensitivity rerun
+FeatureSensitivity[metadata_only][TabPFN direct],metadata_only,holdout,direct TabPFN feature-policy sensitivity rerun
+FeatureSensitivity[metadata_only][XGBoost light],metadata_only,holdout,fixed GPU XGBoost feature-policy sensitivity rerun; no target-specific hyperparameter search
+FeatureSensitivity[ticker_ablated][XGBoost light],ticker_ablated,holdout,fixed GPU XGBoost feature-policy sensitivity rerun; no target-specific hyperparameter search
+FeatureSensitivity[identity_ablated][XGBoost light],identity_ablated,holdout,fixed GPU XGBoost feature-policy sensitivity rerun; no target-specific hyperparameter search
+FeatureSensitivity[strict_time_series][XGBoost light],strict_time_series,holdout,fixed GPU XGBoost feature-policy sensitivity rerun; no target-specific hyperparameter search
+XGBoost[GPU allocation scorer],none,holdout,randomized search on monthly rolling-origin folds; final model fit on all pre-holdout rows
+FeatureSensitivity[full][XGBoost light],full,holdout,fixed GPU XGBoost feature-policy sensitivity rerun; no target-specific hyperparameter search
+Rule[Risk-adjusted momentum top-k],none,holdout,deterministic rule score; not a calibrated probability
+Rule[6M momentum top-k],none,holdout,deterministic rule score; not a calibrated probability
+Rule[12M momentum top-k],none,holdout,deterministic rule score; not a calibrated probability
+XGBoost[GPU allocation scorer] Calibrated,sigmoid,holdout,sigmoid calibration fitted on calibration window
+XGBoost[GPU allocation scorer] Calibration Base,none_calibration_base,holdout,base model excludes calibration-window labels
+Dummy[Preholdout prior probability],none,holdout,constant prior from pre-holdout label frequency
+Rule[Low volatility top-k],none,holdout,deterministic rule score; not a calibrated probability
