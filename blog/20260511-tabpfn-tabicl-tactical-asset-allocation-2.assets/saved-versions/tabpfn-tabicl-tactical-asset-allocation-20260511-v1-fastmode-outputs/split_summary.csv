@@ -1,0 +1,6 @@
+split,rows,months,positive_rows,positive_rate,start,end
+context,720,72,216,0.3,2006-01-31,2011-12-31
+model_selection,1440,144,432,0.3,2006-01-31,2017-12-31
+calibration,240,24,72,0.3,2018-01-31,2019-12-31
+preholdout,1680,168,504,0.3,2006-01-31,2019-12-31
+holdout,750,75,225,0.3,2020-01-31,2026-03-31

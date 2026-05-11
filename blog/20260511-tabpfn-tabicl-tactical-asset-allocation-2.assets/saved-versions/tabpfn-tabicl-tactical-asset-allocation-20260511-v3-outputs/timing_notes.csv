@@ -1,0 +1,23 @@
+Model,Calibration,Evaluation Window,Timing Notes
+TabPFN[Direct allocation scorer] Calibration Base,none_calibration_base,calibration,direct TFM context excludes calibration-window labels
+XGBoost[GPU allocation scorer] Calibration Base,none_calibration_base,calibration,base model excludes calibration-window labels
+XGBoost[GPU allocation scorer] Calibrated,sigmoid,calibration,sigmoid calibration fitted on calibration window
+Rule[12M momentum top-k],none,calibration,deterministic rule score; not a calibrated probability
+Rule[6M momentum top-k],none,calibration,deterministic rule score; not a calibrated probability
+Rule[Low volatility top-k],none,calibration,deterministic rule score; not a calibrated probability
+Rule[Risk-adjusted momentum top-k],none,calibration,deterministic rule score; not a calibrated probability
+TabPFN[Direct allocation scorer],none,holdout,direct TFM classifier fitted on all pre-holdout rows; no task-specific weight training claim is made
+TabPFN[Direct allocation scorer] Calibration Base,none_calibration_base,holdout,direct TFM context excludes calibration-window labels
+FeatureSensitivity[Logistic metadata_only],metadata_only,holdout,lightweight CPU feature-family sensitivity check; same pre-holdout/holdout split as final models
+XGBoost[GPU allocation scorer],none,holdout,randomized search on monthly rolling-origin folds; final model fit on all pre-holdout rows
+XGBoost[GPU allocation scorer] Calibration Base,none_calibration_base,holdout,base model excludes calibration-window labels
+XGBoost[GPU allocation scorer] Calibrated,sigmoid,holdout,sigmoid calibration fitted on calibration window
+Rule[Risk-adjusted momentum top-k],none,holdout,deterministic rule score; not a calibrated probability
+Rule[6M momentum top-k],none,holdout,deterministic rule score; not a calibrated probability
+Rule[12M momentum top-k],none,holdout,deterministic rule score; not a calibrated probability
+FeatureSensitivity[Logistic full],full,holdout,lightweight CPU feature-family sensitivity check; same pre-holdout/holdout split as final models
+FeatureSensitivity[Logistic identity_ablated],identity_ablated,holdout,lightweight CPU feature-family sensitivity check; same pre-holdout/holdout split as final models
+FeatureSensitivity[Logistic strict_time_series],strict_time_series,holdout,lightweight CPU feature-family sensitivity check; same pre-holdout/holdout split as final models
+FeatureSensitivity[Logistic ticker_ablated],ticker_ablated,holdout,lightweight CPU feature-family sensitivity check; same pre-holdout/holdout split as final models
+Dummy[Preholdout prior probability],none,holdout,constant prior from pre-holdout label frequency
+Rule[Low volatility top-k],none,holdout,deterministic rule score; not a calibrated probability

@@ -1,0 +1,13 @@
+Model,Family,Calibration,Evaluation Window,Average Precision,Brier Score,Log Loss,ECE Quantile 10
+TabPFN[Direct allocation scorer] Calibration Base,direct_tfm_calibration_base,none_calibration_base,calibration,0.36780708048986593,0.2087653954965332,0.6095697713487088,0.09876461621994774
+TabICL[Direct allocation scorer] Calibration Base,direct_tfm_calibration_base,none_calibration_base,calibration,0.3229540717455873,0.21035775347432206,0.6146537343552587,0.08480167947709562
+XGBoost[GPU allocation scorer] Calibration Base,gpu_boosted_tree_calibration_base,none_calibration_base,calibration,0.3227213435272492,0.24556212273482364,0.688758293626074,0.14625373013938467
+XGBoost[GPU allocation scorer] Calibrated,gpu_boosted_tree_calibrated,sigmoid,calibration,0.3227213435272492,0.20954884673033472,0.6097086050046211,0.06376718438061231
+TabICL[Direct allocation scorer],direct_tfm,none,holdout,0.3851110578078555,0.2067181511425345,0.6040681444866866,0.046035230318705246
+TabPFN[Direct allocation scorer],direct_tfm,none,holdout,0.37796418653723307,0.2058435747134605,0.601669976890295,0.04677599324782689
+TabICL[Direct allocation scorer] Calibration Base,direct_tfm_calibration_base,none_calibration_base,holdout,0.37402738631894705,0.20743796889785623,0.6075719097039344,0.05026124998927118
+TabPFN[Direct allocation scorer] Calibration Base,direct_tfm_calibration_base,none_calibration_base,holdout,0.3563711459549635,0.20634020653850269,0.6031159682783734,0.05286629514892898
+XGBoost[GPU allocation scorer],gpu_boosted_tree,none,holdout,0.3331670591073635,0.2301898533250146,0.6544948724367554,0.12584738786021868
+XGBoost[GPU allocation scorer] Calibration Base,gpu_boosted_tree_calibration_base,none_calibration_base,holdout,0.32416130242972674,0.23387055678195576,0.662513393033442,0.12814119562506676
+XGBoost[GPU allocation scorer] Calibrated,gpu_boosted_tree_calibrated,sigmoid,holdout,0.32416130242972674,0.20909883434429014,0.6086659762778689,0.04919112626476499
+Dummy[Preholdout prior probability],baseline,none,holdout,0.3,0.20999999999999996,0.6108643020548936,

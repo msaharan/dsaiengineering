@@ -1,0 +1,46 @@
+Model,Objective,Target Column,Rows,Positive Rate,Average Precision,ROC AUC
+Dummy[Preholdout prior probability],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4224,0.5
+Dummy[Preholdout prior probability],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.2,0.5
+Dummy[Preholdout prior probability],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.2,0.5
+Rule[12M momentum top-k],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.43645449312158613,0.5086705000139904
+Rule[12M momentum top-k],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.24262359239192413,0.5390654907112029
+Rule[12M momentum top-k],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.23875685649329537,0.5114285714285715
+Rule[6M momentum top-k],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4385469698942087,0.5068913978193756
+Rule[6M momentum top-k],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.24796678763108312,0.5534321636329518
+Rule[6M momentum top-k],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.24444149534215837,0.5381408163265307
+Rule[Low volatility top-k],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.3940588034055811,0.45889061436152845
+Rule[Low volatility top-k],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.14764823202177751,0.3629123662976168
+Rule[Low volatility top-k],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.14526764962569066,0.3501102040816326
+Rule[Risk-adjusted momentum top-k],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4431737142678794,0.5015144519992165
+Rule[Risk-adjusted momentum top-k],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.24662517816257015,0.5460911990992682
+Rule[Risk-adjusted momentum top-k],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.24956997113402557,0.5466897959183673
+FeatureSensitivity[Logistic full],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.47284974269165103,0.5546409384705784
+FeatureSensitivity[Logistic full],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.21641679813363757,0.5309091762056671
+FeatureSensitivity[Logistic full],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.21944593791850836,0.5292897959183673
+FeatureSensitivity[Logistic ticker_ablated],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.47318353590766954,0.5549667963102866
+FeatureSensitivity[Logistic ticker_ablated],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.21638924479093738,0.5308932257459186
+FeatureSensitivity[Logistic ticker_ablated],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.21932887024842737,0.5293336734693878
+FeatureSensitivity[Logistic identity_ablated],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.47311891951268603,0.5548805226783067
+FeatureSensitivity[Logistic identity_ablated],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.21638937121574597,0.530971101519985
+FeatureSensitivity[Logistic identity_ablated],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.2194471402583627,0.5293010204081632
+FeatureSensitivity[Logistic metadata_only],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.46275344779328154,0.5660168163630768
+FeatureSensitivity[Logistic metadata_only],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.28942202449653304,0.6449315068493151
+FeatureSensitivity[Logistic metadata_only],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.3086652914991195,0.6510714285714286
+FeatureSensitivity[Logistic strict_time_series],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.47311891951268603,0.5548805226783067
+FeatureSensitivity[Logistic strict_time_series],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.21638937121574597,0.530971101519985
+FeatureSensitivity[Logistic strict_time_series],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.2194471402583627,0.5293010204081632
+XGBoost[GPU allocation scorer],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4642616752418416,0.571063823833907
+XGBoost[GPU allocation scorer],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.2886559697545305,0.6454475511352975
+XGBoost[GPU allocation scorer],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.2821659470950921,0.6432775510204081
+XGBoost[GPU allocation scorer] Calibration Base,benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.46293514715103173,0.5662138466847608
+XGBoost[GPU allocation scorer] Calibration Base,top_k_next_3m,target_top_k_next_3m,1825,0.2,0.2866070564890394,0.6381778945393133
+XGBoost[GPU allocation scorer] Calibration Base,top_k_next_6m,target_top_k_next_6m,1750,0.2,0.2796607232878808,0.6371591836734694
+XGBoost[GPU allocation scorer] Calibrated,benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.46293514715103173,0.5662138466847608
+XGBoost[GPU allocation scorer] Calibrated,top_k_next_3m,target_top_k_next_3m,1825,0.2,0.2866070564890394,0.6381778945393133
+XGBoost[GPU allocation scorer] Calibrated,top_k_next_6m,target_top_k_next_6m,1750,0.2,0.2796607232878808,0.6371591836734694
+TabPFN[Direct allocation scorer],benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.4748287302844309,0.5720891976085882
+TabPFN[Direct allocation scorer],top_k_next_3m,target_top_k_next_3m,1825,0.2,0.31237094022613177,0.6674235316194407
+TabPFN[Direct allocation scorer],top_k_next_6m,target_top_k_next_6m,1750,0.2,0.31977227968082894,0.6740275510204082
+TabPFN[Direct allocation scorer] Calibration Base,benchmark_outperform_1m,target_outperform_benchmark_next_1m,1875,0.4224,0.46156091986280945,0.5613119887704375
+TabPFN[Direct allocation scorer] Calibration Base,top_k_next_3m,target_top_k_next_3m,1825,0.2,0.30634783750830774,0.6589059861137173
+TabPFN[Direct allocation scorer] Calibration Base,top_k_next_6m,target_top_k_next_6m,1750,0.2,0.32234525128180846,0.6683244897959184

@@ -1,0 +1,4 @@
+Model,Reason,Holdout Months
+Dummy[Preholdout prior probability],excluded from score-driven portfolio because at least one holdout month has no cross-sectional score variation,75
+Rule[12M momentum top-k],excluded from score-driven portfolio because it duplicates deterministic benchmark 12M momentum top-k portfolio,75
+Rule[Low volatility top-k],excluded from score-driven portfolio because it duplicates deterministic benchmark Low volatility top-k portfolio,75

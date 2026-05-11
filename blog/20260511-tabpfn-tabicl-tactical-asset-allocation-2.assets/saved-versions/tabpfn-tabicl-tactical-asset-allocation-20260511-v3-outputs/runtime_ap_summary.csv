@@ -1,0 +1,23 @@
+Model,Base Model,Calibration,Evaluation Window,Average Precision,ROC AUC,Brier Score,Workflow Seconds
+TabPFN[Direct allocation scorer] Calibration Base,TabPFN,none_calibration_base,calibration,0.2862845398117525,0.6192795138888889,0.15681228643561648,32.29146282199963
+XGBoost[GPU allocation scorer] Calibration Base,XGBoost,none_calibration_base,calibration,0.26545129498452946,0.6039583333333334,0.15758715378146845,4351.5511934115
+XGBoost[GPU allocation scorer] Calibrated,XGBoost,sigmoid,calibration,0.26545129498452946,0.6039583333333334,0.15716769218853147,4351.551833468501
+Rule[12M momentum top-k],Rule,none,calibration,0.20456353554300222,0.4763541666666667,,0.0
+Rule[6M momentum top-k],Rule,none,calibration,0.18976827610790892,0.4284027777777778,,0.0
+Rule[Low volatility top-k],Rule,none,calibration,0.18321871721112923,0.4214930555555555,,0.0
+Rule[Risk-adjusted momentum top-k],Rule,none,calibration,0.17803180576974692,0.4381770833333334,,0.0
+TabPFN[Direct allocation scorer],TabPFN,none,holdout,0.3133516180573489,0.641504,0.15500206595741123,54.82416330700016
+TabPFN[Direct allocation scorer] Calibration Base,TabPFN,none_calibration_base,holdout,0.29549608443737185,0.631072,0.1555631986396746,32.29146282199963
+FeatureSensitivity[Logistic metadata_only],Logistic Regression,metadata_only,holdout,0.2822504755508688,0.6213333333333334,0.23930939131959056,0.06875483500004975
+XGBoost[GPU allocation scorer],XGBoost,none,holdout,0.27718129908925565,0.6138968888888888,0.15650389998713676,4351.643004818
+XGBoost[GPU allocation scorer] Calibration Base,XGBoost,none_calibration_base,holdout,0.27642442703033837,0.6077688888888888,0.156800273594015,4351.5511934115
+XGBoost[GPU allocation scorer] Calibrated,XGBoost,sigmoid,holdout,0.27642442703033837,0.6077688888888888,0.15641663013171006,4351.551833468501
+Rule[Risk-adjusted momentum top-k],Rule,none,holdout,0.24710879067451433,0.5233937777777777,,0.0
+Rule[6M momentum top-k],Rule,none,holdout,0.24546715106279854,0.525712,,0.0
+Rule[12M momentum top-k],Rule,none,holdout,0.2438064939418784,0.5311928888888888,,0.0
+FeatureSensitivity[Logistic full],Logistic Regression,full,holdout,0.21306789366368512,0.52544,0.47118513538410123,9.158586187999958
+FeatureSensitivity[Logistic identity_ablated],Logistic Regression,identity_ablated,holdout,0.21305341266990138,0.5253946666666667,0.47153556086916737,7.232205506000014
+FeatureSensitivity[Logistic strict_time_series],Logistic Regression,strict_time_series,holdout,0.21305341266990138,0.5253946666666667,0.47153556086916737,7.047377925000035
+FeatureSensitivity[Logistic ticker_ablated],Logistic Regression,ticker_ablated,holdout,0.21303890092944006,0.5254071111111112,0.47022611016678917,9.004424565000022
+Dummy[Preholdout prior probability],Dummy,none,holdout,0.2,0.5,0.1600005849496013,0.0
+Rule[Low volatility top-k],Rule,none,holdout,0.16553332775121618,0.4050151111111111,,0.0

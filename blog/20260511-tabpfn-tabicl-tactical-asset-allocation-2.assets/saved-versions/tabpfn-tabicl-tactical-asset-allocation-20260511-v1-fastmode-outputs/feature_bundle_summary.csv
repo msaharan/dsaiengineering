@@ -1,0 +1,5 @@
+bundle,rows,features,positive_rows,positive_rate
+selection,1440,416,432,0.3
+calibration,240,416,72,0.3
+preholdout,1680,416,504,0.3
+holdout,750,416,225,0.3

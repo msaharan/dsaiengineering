@@ -1,0 +1,15 @@
+Model,Family,Calibration,Evaluation Window,Average Precision,Brier Score,Log Loss,ECE Quantile 10
+TabPFN[Direct allocation scorer] Calibration Base,direct_tfm_calibration_base,none_calibration_base,calibration,0.2862845398117525,0.15681228643561648,0.4939626252649178,0.04691090835568805
+XGBoost[GPU allocation scorer] Calibration Base,gpu_boosted_tree_calibration_base,none_calibration_base,calibration,0.26545129498452946,0.15758715378146845,0.4924520450224939,0.03985834199003875
+XGBoost[GPU allocation scorer] Calibrated,gpu_boosted_tree_calibrated,sigmoid,calibration,0.26545129498452946,0.15716769218853147,0.49074469144428784,0.03783596054961284
+TabPFN[Direct allocation scorer],direct_tfm,none,holdout,0.3133516180573489,0.15500206595741123,0.48695585859156165,0.04137443805038928
+TabPFN[Direct allocation scorer] Calibration Base,direct_tfm_calibration_base,none_calibration_base,holdout,0.29549608443737185,0.1555631986396746,0.49075414455155025,0.03179768071199456
+FeatureSensitivity[Logistic metadata_only],feature_variant_sensitivity,metadata_only,holdout,0.2822504755508688,0.23930939131959056,0.6685545406666533,0.28038437753915785
+XGBoost[GPU allocation scorer],gpu_boosted_tree,none,holdout,0.27718129908925565,0.15650389998713676,0.4908390576199782,0.01888168808817863
+XGBoost[GPU allocation scorer] Calibration Base,gpu_boosted_tree_calibration_base,none_calibration_base,holdout,0.27642442703033837,0.156800273594015,0.49215154074643375,0.03383976831138134
+XGBoost[GPU allocation scorer] Calibrated,gpu_boosted_tree_calibrated,sigmoid,holdout,0.27642442703033837,0.15641663013171006,0.4894974286562998,0.03083159184455872
+FeatureSensitivity[Logistic full],feature_variant_sensitivity,full,holdout,0.21306789366368512,0.47118513538410123,2.1138000548127756,0.47531656662155874
+FeatureSensitivity[Logistic identity_ablated],feature_variant_sensitivity,identity_ablated,holdout,0.21305341266990138,0.47153556086916737,2.1177872592663687,0.4767184124459241
+FeatureSensitivity[Logistic strict_time_series],feature_variant_sensitivity,strict_time_series,holdout,0.21305341266990138,0.47153556086916737,2.1177872592663687,0.4767184124459241
+FeatureSensitivity[Logistic ticker_ablated],feature_variant_sensitivity,ticker_ablated,holdout,0.21303890092944006,0.47022611016678917,2.1108519947434488,0.47416681847225023
+Dummy[Preholdout prior probability],baseline,none,holdout,0.2,0.1600005849496013,0.5004042480213541,

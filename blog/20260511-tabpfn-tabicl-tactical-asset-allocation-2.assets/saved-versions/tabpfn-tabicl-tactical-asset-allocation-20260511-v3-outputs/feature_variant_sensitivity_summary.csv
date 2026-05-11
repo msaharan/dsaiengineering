@@ -1,0 +1,6 @@
+Feature Variant,Model,Retained Base Features,Final Features,Holdout Average Precision,Holdout ROC AUC,Fit Seconds,Predict Seconds
+metadata_only,FeatureSensitivity[Logistic metadata_only],34,34,0.2822504755508688,0.6213333333333334,0.06309153900002684,0.0056632960000229104
+full,FeatureSensitivity[Logistic full],515,990,0.21306789366368512,0.5254399999999999,9.065119772999992,0.09346641499996622
+identity_ablated,FeatureSensitivity[Logistic identity_ablated],481,956,0.21305341266990138,0.5253937777777777,7.135925337000003,0.09628016900001057
+strict_time_series,FeatureSensitivity[Logistic strict_time_series],481,956,0.21305341266990138,0.5253937777777777,6.957995616999995,0.08938230800004021
+ticker_ablated,FeatureSensitivity[Logistic ticker_ablated],490,965,0.21303890092944006,0.5254044444444443,8.895358329000032,0.10906623599998966

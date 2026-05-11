@@ -1,0 +1,3 @@
+return_mode,non_null_rows,first_signal_month,last_signal_month,is_selected_target_mode
+close_to_close,2430,2006-01,2026-03,False
+next_open_to_next_open,2430,2006-01,2026-03,True

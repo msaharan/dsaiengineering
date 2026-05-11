@@ -1,0 +1,21 @@
+stage,device_index,device_name,allocated_mb,reserved_mb,max_allocated_mb,free_mb,total_mb
+after_imports_and_configuration,0,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
+after_imports_and_configuration,1,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
+after_xgboost_final_prediction,0,Tesla T4,0.0,0.0,0.0,14777.8125,14912.6875
+after_xgboost_final_prediction,1,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
+after_xgboost_workflow,0,Tesla T4,0.0,0.0,0.0,14777.8125,14912.6875
+after_xgboost_workflow,1,Tesla T4,0.0,0.0,0.0,14807.8125,14912.6875
+after_TabPFN[Direct allocation scorer]_final_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14753.8125,14912.6875
+after_TabPFN[Direct allocation scorer]_final_prediction,1,Tesla T4,9.125,14.0,4421.8818359375,14765.8125,14912.6875
+after_TabPFN[Direct allocation scorer]_calibration_base_prediction,0,Tesla T4,9.125,14.0,4421.0380859375,14753.8125,14912.6875
+after_TabPFN[Direct allocation scorer]_calibration_base_prediction,1,Tesla T4,9.125,14.0,4421.8818359375,14765.8125,14912.6875
+after_TabPFN[Direct allocation scorer]_workflow,0,Tesla T4,9.125,14.0,4421.0380859375,14753.8125,14912.6875
+after_TabPFN[Direct allocation scorer]_workflow,1,Tesla T4,9.125,14.0,4421.8818359375,14765.8125,14912.6875
+after_prediction_frame_assembly,0,Tesla T4,9.125,14.0,4421.0380859375,14753.8125,14912.6875
+after_prediction_frame_assembly,1,Tesla T4,9.125,14.0,4421.8818359375,14765.8125,14912.6875
+after_portfolio_bootstrap,0,Tesla T4,9.125,14.0,4421.0380859375,14753.8125,14912.6875
+after_portfolio_bootstrap,1,Tesla T4,9.125,14.0,4421.8818359375,14765.8125,14912.6875
+after_row_bootstrap,0,Tesla T4,9.125,14.0,4421.0380859375,14753.8125,14912.6875
+after_row_bootstrap,1,Tesla T4,9.125,14.0,4421.8818359375,14765.8125,14912.6875
+after_feature_drift,0,Tesla T4,9.125,14.0,4421.0380859375,14753.8125,14912.6875
+after_feature_drift,1,Tesla T4,9.125,14.0,4421.8818359375,14765.8125,14912.6875

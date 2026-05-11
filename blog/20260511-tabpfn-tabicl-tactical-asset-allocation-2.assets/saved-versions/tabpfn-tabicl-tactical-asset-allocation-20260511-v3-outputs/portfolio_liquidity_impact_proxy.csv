@@ -1,0 +1,31 @@
+Strategy,Average Weighted ADV USD,Minimum Weighted ADV USD,Average Weighted Spread Proxy Bps,Max Weighted Spread Proxy Bps,Average Turnover-Weighted Participation Bps,Max Turnover-Weighted Participation Bps,Impact Proxy Notional USD
+Equal weight universe,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+SPY only,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+60/40 SPY/TLT,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+Inverse volatility universe,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+12M momentum top-k portfolio,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+Low volatility top-k portfolio,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+FeatureSensitivity[Logistic full],0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+FeatureSensitivity[Logistic full] | inverse-vol capped top-k,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+FeatureSensitivity[Logistic identity_ablated],0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+FeatureSensitivity[Logistic identity_ablated] | inverse-vol capped top-k,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+FeatureSensitivity[Logistic metadata_only],0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+FeatureSensitivity[Logistic metadata_only] | inverse-vol capped top-k,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+FeatureSensitivity[Logistic strict_time_series],0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+FeatureSensitivity[Logistic strict_time_series] | inverse-vol capped top-k,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+FeatureSensitivity[Logistic ticker_ablated],0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+FeatureSensitivity[Logistic ticker_ablated] | inverse-vol capped top-k,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+Rule[6M momentum top-k],0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+Rule[6M momentum top-k] | inverse-vol capped top-k,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+Rule[Risk-adjusted momentum top-k],0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+Rule[Risk-adjusted momentum top-k] | inverse-vol capped top-k,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+TabPFN[Direct allocation scorer],0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+TabPFN[Direct allocation scorer] | inverse-vol capped top-k,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+TabPFN[Direct allocation scorer] Calibration Base,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+TabPFN[Direct allocation scorer] Calibration Base | inverse-vol capped top-k,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+XGBoost[GPU allocation scorer],0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+XGBoost[GPU allocation scorer] | inverse-vol capped top-k,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+XGBoost[GPU allocation scorer] Calibrated,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+XGBoost[GPU allocation scorer] Calibrated | inverse-vol capped top-k,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+XGBoost[GPU allocation scorer] Calibration Base,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
+XGBoost[GPU allocation scorer] Calibration Base | inverse-vol capped top-k,0.0,0.0,0.0,0.0,0.0,0.0,1000000.0
