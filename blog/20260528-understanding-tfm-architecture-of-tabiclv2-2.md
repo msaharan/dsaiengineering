@@ -1,6 +1,6 @@
 [Mohit Saharan](https://linkedin.com/in/msaharan), P27, 20260528
 ___
-# Understanding Tabular Foundation models: the architecture of TabICLv2 - 2
+# Understanding Tabular Foundation Models: the architecture of TabICLv2 - 2
 
 Subtitle: Target-aware embedding
 ___

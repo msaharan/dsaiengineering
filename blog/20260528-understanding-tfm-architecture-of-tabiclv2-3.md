@@ -54,7 +54,7 @@ The first stage, column-wise embedding, processes each grouped feature position 
 $$
 (E_2[1,j],E_2[2,j],\ldots,E_2[n,j]).
 $$
-\(\text{TF}_\text{col}\) lets the model compare how the same grouped feature behaves across rows. In the implementation, rows are updated as queries while labeled training rows provide the context keys and values. This keeps the column-wise contextualization anchored to observed examples.
+\(\text{TF}_\text{col}\) lets the model compare how the same grouped feature behaves across rows. In the implementation, the first induced-attention stage lets inducing points attend only to training rows, and the second stage broadcasts the resulting induced representation back to all rows. This keeps the column-wise contextualization anchored to observed examples while preventing test-row feature information from leaking into the column summaries.
 
 Let \(\tilde{E}\in\mathbb{R}^{n\times m\times d}\) denote the output of the column-wise stage. The second stage, row-wise interaction, aggregates feature information within each row. For a fixed row \(i\), the model has grouped feature embeddings
 $$

@@ -1,6 +1,6 @@
 [Mohit Saharan](https://linkedin.com/in/msaharan), P26, 20260528
 ___
-# Understanding Tabular Foundation models: the architecture of TabICLv2 - 1
+# Understanding Tabular Foundation Models: the architecture of TabICLv2 - 1
 
 Subtitle: Repeated feature grouping
 ___

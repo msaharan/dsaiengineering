@@ -1,12 +1,12 @@
 [Mohit Saharan](https://linkedin.com/in/msaharan), P29, 20260528
 ___
-# Understanding tabular foundation models: the architecture of TabICLv2 - 4
+# Understanding Tabular Foundation Models: the architecture of TabICLv2 - 4
 
 Subtitle: Query-aware scalable softmax
 ___
 The previous post covered how TabICLv2 compresses feature-level information into row representations and then performs in-context learning. This post covers Query-Aware Scalable Softmax (QASSMax), the attention-scaling mechanism TabICLv2 uses to preserve selective attention as the number of context samples grows.
 
-As a reminder, the architecture of TabICLv2 is illustrated in the following figure. Write the input table as \(X\in\mathbb{R}^{n_\text{rows}\times m}\), where \(n_\text{rows}\) is the number of rows and \(m\) is the number of features. Repeated feature grouping encodes columns into multiple groups via circular shifts to break feature symmetries. Target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each feature through a set transformer, \(\text{TF}_\text{row}\) aggregates feature embeddings into row representations \(h\), and \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}\). QASSMax is applied in two places: in the first stage of the induced self-attention inside \(\text{TF}_\text{col}\), where inducing points aggregate input information, and in \(\text{TF}_\text{icl}\), where test rows attend to training rows.
+As a reminder, the architecture of TabICLv2 is illustrated in the following figure. Write the input table as \(X\in\mathbb{R}^{n_\text{rows}\times m}\), where \(n_\text{rows}\) is the number of rows and \(m\) is the number of features. Repeated feature grouping encodes columns into grouped feature positions via circular shifts to break feature symmetries. Target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each grouped feature position through a set transformer, \(\text{TF}_\text{row}\) aggregates grouped feature embeddings into row representations \(h\), and \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}\). QASSMax is applied in two places: in the first stage of the induced self-attention inside \(\text{TF}_\text{col}\), where inducing points aggregate input information, and in \(\text{TF}_\text{icl}\), where test rows attend to training rows.
 
 ![Screenshot 2026-05-28 at 17.29.16](./20260528-understanding-tfm-architecture-of-tabiclv2-4.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 

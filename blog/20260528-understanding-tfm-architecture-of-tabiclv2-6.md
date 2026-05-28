@@ -1,12 +1,12 @@
 [Mohit Saharan](https://linkedin.com/in/msaharan), P31, 20260528
 ___
-# Understanding Tabular Foundation models: the architecture of TabICLv2 - 6
+# Understanding Tabular Foundation Models: the architecture of TabICLv2 - 6
 
 Subtitle: Quantile predictions for regression
 ___
-The previous post covered many-class classification, where TabICLv2 handles large label spaces through mixed-radix and hierarchical structure. This post covers quantile predictions for regression, the strategy TabICLv2 uses to represent predictive uncertainty without discretizing the continuous target into classification bins.
+The previous post covered many-class classification, where TabICLv2 handles large label spaces through mixed-radix ensembling and hierarchical classification. This post covers quantile predictions for regression, the strategy TabICLv2 uses to represent predictive uncertainty without discretizing the continuous target into classification bins.
 
-As a reminder, the architecture of TabICLv2 is illustrated in the following figure. Here, given a table \(X\in\mathbb{R}^{n\times m}\), where \(\mathbb{R}\) denotes real numbers, \(n\) is the number of rows, and \(m\) is the number of features, repeated feature grouping encodes columns into multigroups via circular shifts to break feature symmetries, and target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each feature through a set transformer, \(\text{TF}_\text{row}\) aggregates features into row representations \(h\), and \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}\). QASSMax (query-aware scalable softmax) is applied in part of \(\text{TF}_\text{col}\), where inducing points aggregate input information, and in \(\text{TF}_\text{icl}\) to mitigate attention fading and improve long-context generalization.
+As a reminder, the architecture of TabICLv2 is illustrated in the following figure. Here, given a table \(X\in\mathbb{R}^{n\times m}\), where \(\mathbb{R}\) denotes real numbers, \(n\) is the number of rows, and \(m\) is the number of features, repeated feature grouping encodes columns into grouped feature positions via circular shifts to break feature symmetries, and target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each grouped feature position through a set transformer, \(\text{TF}_\text{row}\) aggregates grouped feature embeddings into row representations \(h\), and \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}\). QASSMax (query-aware scalable softmax) is applied in part of \(\text{TF}_\text{col}\), where inducing points aggregate input information, and in \(\text{TF}_\text{icl}\) to mitigate attention fading and improve long-context generalization.
 
 ![Screenshot 2026-05-28 at 17.29.16](./20260528-understanding-tfm-architecture-of-tabiclv2-6.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 
