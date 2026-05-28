@@ -1,0 +1,135 @@
+# Understanding Tabular Foundation models: the architecture of TabICLv2-6
+
+Source: TabICLv2 paper. https://arxiv.org/pdf/2602.11139.
+
+In the previous post, we covered many-class classification, where TabICLv2 handles large label spaces through mixed-radix and hierarchical structure. In this post, we cover quantile predictions for regression, the regression strategy TabICLv2 uses to model predictive uncertainty without discretizing the target into classification bins.
+
+## Illustration and summary
+
+The architecture of TabICLv2 is illustrated in the following figure. Here, given an input \(X\in\mathbb{R}^{n\times m}\), repeated feature grouping encodes columns into multigroups via circular shifts to break feature symmetries, and target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each feature through a set transformer, \(\text{TF}_\text{row}\) aggregates features into row representations \(h\), and  \(\text{TF}_\text{icl}\) performs in-context learning tomorrow predict test targets \(\hat{y}\). QASSMax (query-aware scalable softmaxx), is applied in part of  \(\text{TF}_\text{col}\) where inducing points aggregate input information and  \(\text{TF}_\text{icl}\) to mitigate attention fading and improve long-context generalization. 
+
+The following subsections elaborate on the summary.
+
+![Screenshot 2026-05-28 at 17.29.16](./20260528-understanding-tfm-architecture-of-tabiclv2-6.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
+
+## Quantile predictions for regression
+
+TFMs adopt different strategiess for regression: TabPFNv2 and TabPFN-2.5 model the full predictive distribution by discretizing the target space into bins and applying cross-entropy loss. TabICLv2 trains separate models for classification and regression.
+
+It instead predicts 999 quantiles at probability levels $\alpha\in{0.001, 0.002, \dots, 0.999}$, trained with pinball loss summed across all quantiles. At inference, for point estimation, it takes the average of predicted quantiles, which is fast and effective. For probabilistic predictions, it constructs a full distribution from the quantiles by enforcing monotonicity via sorting (the default) or isotonic regression (Barlow & Brunk, 1972; Busing, 2022), extrapolating tails with parametric exponential models, and deriving closed-form PDF, CDF, and moments.
+
+## Summary
+
+For regression, TabICLv2 predicts a dense grid of conditional quantiles rather than a single scalar or a discretized target distribution. These quantiles support both point prediction through averaging and probabilistic prediction through a reconstructed monotone predictive distribution.
+
+#  Appendix
+
+### Pinball loss
+
+For a real-valued target \(Y\), the \(\alpha\)-quantile is the value \(q_\alpha\) such that
+$$
+P(Y\leq q_\alpha)\geq \alpha
+\quad\text{and}\quad
+P(Y\geq q_\alpha)\geq 1-\alpha,
+$$
+where \(\alpha\in(0,1)\). If the distribution is continuous and strictly increasing at \(q_\alpha\), this reduces to
+$$
+F_Y(q_\alpha)=\alpha,
+$$
+where \(F_Y\) is the cumulative distribution function (CDF). For example, \(q_{0.5}\) is the median, \(q_{0.9}\) is the 90th percentile, and \(q_{0.1}\) is the 10th percentile.
+
+In supervised regression, the target distribution usually depends on the input \(x\). The conditional \(\alpha\)-quantile is
+$$
+q_\alpha(x)=F^{-1}_{Y\mid X=x}(\alpha).
+$$
+Predicting many such values, for \(\alpha=0.001,0.002,\ldots,0.999\), gives a discretized approximation to the full conditional predictive distribution \(Y\mid X=x\), not just a single point estimate.
+
+The pinball loss, also called quantile loss, trains a model to predict a chosen quantile. If the model predicts \(\hat{q}_\alpha(x)\) and the observed target is \(y\), define the residual
+$$
+u=y-\hat{q}_\alpha(x).
+$$
+The pinball loss is
+$$
+\rho_\alpha(u)
+=
+\begin{cases}
+\alpha u, & u\geq 0,\\
+(\alpha-1)u, & u<0.
+\end{cases}
+$$
+Equivalently,
+$$
+\rho_\alpha(y-\hat{q})
+=
+(\alpha-\mathbf{1}\{y<\hat{q}\})(y-\hat{q}).
+$$
+The loss is shaped like a tilted absolute-value function. Underprediction means \(y>\hat{q}\), so \(u>0\), and the penalty slope is \(\alpha\). Overprediction means \(y<\hat{q}\), so \(u<0\), and the penalty slope magnitude is \(1-\alpha\).
+
+This asymmetry is what makes the loss target a specific quantile. For \(\alpha=0.5\),
+$$
+\rho_{0.5}(u)=0.5|u|,
+$$
+so minimizing it recovers the median. For \(\alpha=0.9\), overprediction is penalized with slope \(0.1\), while underprediction is penalized with slope \(0.9\). The model therefore learns to place \(\hat{q}_{0.9}\) high enough that about 90% of outcomes fall below it.
+
+The quantile property can be shown directly. For a fixed input \(x\), suppress \(x\) in the notation and consider choosing a scalar \(q\) to minimize the expected pinball risk
+$$
+R_\alpha(q)=\mathbb{E}[\rho_\alpha(Y-q)].
+$$
+Assuming differentiability for exposition, the derivative is
+$$
+\frac{dR_\alpha(q)}{dq}
+=
+P(Y<q)-\alpha.
+$$
+Setting this to zero gives
+$$
+P(Y<q)=\alpha,
+$$
+which is precisely the \(\alpha\)-quantile condition for a continuous distribution. More generally, when the distribution has atoms or flat regions, the minimizers are values satisfying
+$$
+P(Y<q)\leq \alpha \leq P(Y\leq q).
+$$
+This is the standard quantile interval condition.
+
+When predicting multiple quantiles, the training loss sums the pinball losses over a grid of probability levels:
+$$
+\mathcal{L}(x,y)
+=
+\sum_{\alpha\in\mathcal{A}}
+\rho_\alpha\left(y-\hat{q}_\alpha(x)\right),
+\qquad
+\mathcal{A}=\{0.001,0.002,\ldots,0.999\}.
+$$
+This trains the model to approximate many points of the inverse CDF
+$$
+Q_x(\alpha)=F^{-1}_{Y\mid X=x}(\alpha).
+$$
+The inverse CDF should be monotone:
+$$
+\alpha_1<\alpha_2
+\quad\Rightarrow\quad
+Q_x(\alpha_1)\leq Q_x(\alpha_2).
+$$
+Neural networks do not automatically guarantee this ordering when each quantile is predicted as an output dimension, so predicted quantiles can cross. Sorting predicted quantiles or applying isotonic regression restores monotonicity before constructing a valid predictive distribution.
+
+Prediction intervals are a direct use of quantiles. A central \((1-\gamma)\) interval is
+$$
+\left[\hat{q}_{\gamma/2}(x),\ \hat{q}_{1-\gamma/2}(x)\right].
+$$
+For example, a 90% interval uses \(\gamma=0.1\):
+$$
+\left[\hat{q}_{0.05}(x),\ \hat{q}_{0.95}(x)\right].
+$$
+If the quantiles are calibrated, such intervals should contain the true target approximately 90% of the time over repeated samples.
+
+TabICLv2's point prediction by averaging quantiles can be interpreted through the identity
+$$
+\mathbb{E}[Y\mid X=x]=\int_0^1 Q_x(\alpha)\,d\alpha,
+$$
+when the conditional expectation exists. With a dense grid of quantiles, the integral can be approximated by an average:
+$$
+\hat{\mu}(x)
+\approx
+\frac{1}{|\mathcal{A}|}\sum_{\alpha\in\mathcal{A}}\hat{q}_\alpha(x).
+$$
+This explains why averaging many predicted quantiles can serve as a fast point estimate while preserving the richer distributional information needed for intervals, CDFs, PDFs, and moments.
