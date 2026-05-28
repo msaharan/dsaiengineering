@@ -6,17 +6,17 @@ Subtitle: Many-class classification
 ___
 The previous post covered query-aware scalable softmax, which improves attention behavior when the context grows. This post covers many-class classification, where TabICLv2 extends a model pretrained with at most 10 classes to settings with many more labels.
 
-As a reminder, the architecture of TabICLv2 is illustrated in the following figure. Here, given an input \(X\in\mathbb{R}^{n\times m}\), repeated feature grouping encodes columns into multigroups via circular shifts to break feature symmetries, and target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each feature through a set transformer, \(\text{TF}_\text{row}\) aggregates features into row representations \(h\), and  \(\text{TF}_\text{icl}\) performs in-context learning tomorrow predict test targets \(\hat{y}\). QASSMax (query-aware scalable softmaxx), is applied in part of  \(\text{TF}_\text{col}\) where inducing points aggregate input information and  \(\text{TF}_\text{icl}\) to mitigate attention fading and improve long-context generalization. 
+As a reminder, the architecture of TabICLv2 is illustrated in the following figure. Here, given an input \(X\in\mathbb{R}^{n\times m}\), repeated feature grouping encodes columns into multigroups via circular shifts to break feature symmetries, and target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each feature through a set transformer, \(\text{TF}_\text{row}\) aggregates features into row representations \(h\), and  \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}\). QASSMax (query-aware scalable softmax) is applied in part of  \(\text{TF}_\text{col}\), where inducing points aggregate input information, and in \(\text{TF}_\text{icl}\) to mitigate attention fading and improve long-context generalization. 
 
-![Screenshot 2026-05-28 at 17.29.16](./20260528-understanding-tfm-architecture-of-tabiclv2-2.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
+![Screenshot 2026-05-28 at 17.29.16](./20260528-understanding-tfm-architecture-of-tabiclv2-5.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 
 ## Many-class classification
 
-Like many tabular foundation models, TabICLv2 is pretrained with classification tasks that have at most 10 classes. A direct \(C\)-class classifier would predict
+Like many tabular foundation models, TabICLv2 is pretrained with classification tasks that have at most 10 classes. Let \(C\) be the number of downstream classes, \(x\) be the row or row representation being classified, and \(y\in\{0,\ldots,C-1\}\) be the true class label. A direct \(C\)-class classifier would predict
 $$
 p(y=c\mid x)=\frac{\exp(s_c(x))}{\sum_{r=0}^{C-1}\exp(s_r(x))},
 $$
-where \(s_c(x)\) is the score or logit for class \(c\). This is natural when \(C\leq10\), but it becomes mismatched when the downstream dataset has many more classes than the model saw during pretraining.
+where \(c\) and \(r\) are class indices and \(s_c(x)\) is the score or logit for class \(c\). This is natural when \(C\leq10\), but it becomes mismatched when the downstream dataset has many more classes than the model saw during pretraining.
 
 The general solution is hierarchical partitioning: turn one large classification problem into several smaller ones. Let the full class set be
 $$
@@ -28,22 +28,22 @@ $$
 \qquad
 \mathcal{G}_a\cap\mathcal{G}_b=\varnothing \quad(a\ne b),
 $$
-where \(K\leq10\). The first classifier predicts which group contains the true class. If a group is still too large, it can be partitioned again. Repeating this process forms a tree whose leaves are the original classes and whose internal nodes each have at most 10 children.
+where \(K\leq10\), each \(\mathcal{G}_k\) is a group of classes, and the groups are non-overlapping. The first classifier predicts which group contains the true class. If a group is still too large, it can be partitioned again. Repeating this process forms a tree whose leaves are the original classes and whose internal nodes each have at most 10 children.
 
 For a class \(c\), let
 $$
 \pi(c)=(b_0(c),b_1(c),\ldots,b_{D(c)-1}(c))
 $$
-be the path from the root to the leaf for class \(c\). Each \(b_t(c)\) is a branch index at depth \(t\), with the local constraint
+be the path from the root to the leaf for class \(c\), where \(D(c)\) is the number of branch decisions needed to reach class \(c\). Each \(b_t(c)\) is a branch index at depth \(t\), with the local constraint
 $$
 b_t(c)\in\{0,\ldots,K_t-1\},
 \qquad K_t\leq10.
 $$
-So the model never has to solve a \(C\)-way decision directly. It solves a sequence of at-most-10-way decisions whose combination identifies one original class. For practitioners, this is analogous to replacing a flat product classifier with a taxonomy: first predict department, then category, then subcategory, then item.
+Here \(K_t\) denotes the number of available branches at the node reached at depth \(t\) along the path for \(c\). So the model never has to solve a \(C\)-way decision directly. It solves a sequence of at-most-10-way decisions whose combination identifies one original class. For practitioners, this is analogous to replacing a flat product classifier with a taxonomy: first predict department, then category, then subcategory, then item.
 
 TabICLv2 has an additional complication. Target-aware embedding injects labels before hierarchical classification in the ICL stage. If the original label \(y\) can take \(C>10\) values, then directly embedding \(y\) would again exceed the pretrained class range. TabICLv2 addresses this with mixed-radix ensembling.
 
-Mixed radix representation is a way to encode a large class id as several small digits. Choose bases
+Mixed-radix representation is a way to encode a large class id as several small digits. Choose \(D\) bases, also called radices,
 $$
 [k_0,k_1,\ldots,k_{D-1}]
 $$
@@ -84,17 +84,17 @@ y^{(1)}=\left\lfloor\frac{y}{10}\right\rfloor \bmod 6.
 $$
 Class \(y=42\) becomes \((y^{(0)},y^{(1)})=(2,4)\), because \(42=2+10\cdot4\). Class \(y=56\) becomes \((6,5)\). The combinations \((7,5)\), \((8,5)\), and \((9,5)\) represent \(57\), \(58\), and \(59\), so they are unused when the true class set has only \(57\) classes.
 
-In TabICLv2, each digit defines a coarser grouping of the original classes. Instead of embedding the large class id \(y\) directly, the model embeds one digit \(y^{(i)}\) at a time. It runs \(\text{TF}_\text{col}\) once per digit and averages the outputs:
+In TabICLv2, the mixed-radix digits provide several small-label views of the original class. Instead of embedding the large class id \(y\) directly, the model embeds one digit \(y^{(i)}\) at a time. Let \(E_1\) denote the feature-group representation before target-aware embedding, and let \(\text{Embed}_\text{TAE}(y^{(i)})\) denote the target-aware embedding of digit \(i\) for labeled context rows. It runs \(\text{TF}_\text{col}\) once per digit and averages the outputs:
 $$
 O_\text{avg}
 =\frac{1}{D}\sum_{i=0}^{D-1}
 \text{TF}_\text{col}\left(E_1+\text{Embed}_\text{TAE}(y^{(i)})\right).
 $$
-This is mixed-radix ensembling. It exposes information about a large class label through several small-label views, each compatible with the pretrained target-aware embedding interface.
+Here \(O_\text{avg}\) is the averaged column-transformer representation across the \(D\) digit views. This is mixed-radix ensembling. It exposes information about a large class label through several small-label views, each compatible with the pretrained target-aware embedding interface.
 
-The ICL stage then uses hierarchical classification to compose these smaller decisions into a prediction over the original classes. If class \(c\) corresponds to path
+The ICL stage then uses hierarchical classification to compose smaller decisions into a prediction over the original classes. If class \(c\) corresponds to path
 $$
-\pi(c)=(b_0(c),b_1(c),\ldots,b_{D(c)-1}(c)).
+\pi(c)=(b_0(c),b_1(c),\ldots,b_{D(c)-1}(c)),
 $$
 then at depth \(t\), the model predicts the next branch conditioned on the previous branches:
 $$
@@ -122,7 +122,7 @@ If mixed-radix digits are used as the hierarchy, the path can be taken as
 $$
 \pi(y)=(y^{(D-1)},y^{(D-2)},\ldots,y^{(0)})
 $$
-or another fixed digit order. The order determines whether the classifier first predicts coarse high-radix-place information or fine low-radix-place information. High-order digits usually define coarser groups because they select larger contiguous ranges of original class ids. Low-order digits distinguish classes within those groups.
+or another fixed digit order. The order determines whether the classifier first predicts high-place information or low-place information. If high-order digits are predicted first, they usually define coarser contiguous ranges of original class ids; conditioned on those high-order digits, lower-order digits then distinguish classes within the selected range. This is why the digit order is part of the hierarchy design rather than a purely cosmetic choice.
 
 At inference time, the predicted class can be obtained by scoring valid leaves. For every valid class \(c<C\), compute its path probability
 $$
@@ -148,7 +148,7 @@ $$
 $$
 classes even though no local decision has more than \(\max_i k_i\leq10\) choices.
 
-Combined with heirarchical classification in \(\text{TF}_\text{icl}\), this enables TabICLv2 to handle an arbitrary number of classes.
+Combined with hierarchical classification in \(\text{TF}_\text{icl}\), this enables TabICLv2 to handle many more than 10 classes while keeping each local decision within the pretrained class range.
 
 ## Summary
 

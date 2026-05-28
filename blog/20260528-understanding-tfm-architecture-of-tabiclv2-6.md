@@ -6,21 +6,21 @@ Subtitle: Quantile predictions for regression
 ___
 The previous post covered many-class classification, where TabICLv2 handles large label spaces through mixed-radix and hierarchical structure. This post covers quantile predictions for regression, the regression strategy TabICLv2 uses to model predictive uncertainty without discretizing the target into classification bins.
 
-As a reminder, the architecture of TabICLv2 is illustrated in the following figure. Here, given an input \(X\in\mathbb{R}^{n\times m}\), repeated feature grouping encodes columns into multigroups via circular shifts to break feature symmetries, and target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each feature through a set transformer, \(\text{TF}_\text{row}\) aggregates features into row representations \(h\), and  \(\text{TF}_\text{icl}\) performs in-context learning tomorrow predict test targets \(\hat{y}\). QASSMax (query-aware scalable softmaxx), is applied in part of  \(\text{TF}_\text{col}\) where inducing points aggregate input information and  \(\text{TF}_\text{icl}\) to mitigate attention fading and improve long-context generalization. 
+As a reminder, the architecture of TabICLv2 is illustrated in the following figure. Here, given an input \(X\in\mathbb{R}^{n\times m}\), repeated feature grouping encodes columns into multigroups via circular shifts to break feature symmetries, and target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each feature through a set transformer, \(\text{TF}_\text{row}\) aggregates features into row representations \(h\), and  \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}\). QASSMax (query-aware scalable softmax) is applied in part of  \(\text{TF}_\text{col}\), where inducing points aggregate input information, and in \(\text{TF}_\text{icl}\) to mitigate attention fading and improve long-context generalization. 
 
-![Screenshot 2026-05-28 at 17.29.16](./20260528-understanding-tfm-architecture-of-tabiclv2-2.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
+![Screenshot 2026-05-28 at 17.29.16](./20260528-understanding-tfm-architecture-of-tabiclv2-6.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 
 ## Quantile predictions for regression
 
-TFMs adopt different strategiess for regression: TabPFNv2 and TabPFN-2.5 model the full predictive distribution by discretizing the target space into bins and applying cross-entropy loss. TabICLv2 trains separate models for classification and regression.
+Tabular foundation models adopt different strategies for regression. TabPFNv2 and TabPFN-2.5 model the full predictive distribution by discretizing the target space into bins and applying cross-entropy loss. TabICLv2 trains separate models for classification and regression.
 
-Instead, it predicts quantiles. For a real-valued target \(Y\), the \(\alpha\)-quantile is the value \(q_\alpha\) such that
+For regression, TabICLv2 predicts quantiles. Let \(Y\) be a real-valued target random variable. For a probability level \(\alpha\in(0,1)\), an \(\alpha\)-quantile is any value \(q_\alpha\) such that
 $$
 P(Y\leq q_\alpha)\geq \alpha
 \quad\text{and}\quad
 P(Y\geq q_\alpha)\geq 1-\alpha,
 $$
-where \(\alpha\in(0,1)\). If the distribution is continuous and strictly increasing at \(q_\alpha\), this reduces to
+where \(P(\cdot)\) denotes probability. If the distribution is continuous and strictly increasing at \(q_\alpha\), this reduces to
 $$
 F_Y(q_\alpha)=\alpha,
 $$
@@ -28,17 +28,17 @@ where \(F_Y\) is the cumulative distribution function (CDF). For example, \(q_{0
 
 In supervised regression, the target distribution depends on the input \(x\). The conditional \(\alpha\)-quantile is
 $$
-q_\alpha(x)=F^{-1}_{Y\mid X=x}(\alpha).
+q_\alpha(x)=Q_x(\alpha),
+\qquad
+Q_x(\alpha)=\inf\{q\in\mathbb{R}:F_{Y\mid X=x}(q)\geq\alpha\}.
 $$
+Here \(F_{Y\mid X=x}\) is the conditional CDF of \(Y\) given \(X=x\), and \(Q_x\) is its generalized inverse. When the conditional CDF is continuous and strictly increasing, this is the usual inverse \(F^{-1}_{Y\mid X=x}(\alpha)\).
+
 TabICLv2 predicts 999 such quantiles at probability levels
 $$
 \mathcal{A}=\{0.001,0.002,\ldots,0.999\}.
 $$
-This gives a dense approximation to the inverse CDF
-$$
-Q_x(\alpha)=F^{-1}_{Y\mid X=x}(\alpha),
-$$
-so the model learns more than a single point estimate. It learns many points of the conditional predictive distribution \(Y\mid X=x\).
+This gives a dense approximation to \(Q_x(\alpha)\), so the model learns more than a single point estimate. It learns many points of the conditional predictive distribution \(Y\mid X=x\).
 
 Each quantile is trained with pinball loss, also called quantile loss. If the model predicts \(\hat{q}_\alpha(x)\) and the observed target is \(y\), define the residual
 $$
@@ -59,7 +59,7 @@ $$
 =
 (\alpha-\mathbf{1}\{y<\hat{q}\})(y-\hat{q}).
 $$
-The loss is shaped like a tilted absolute-value function. Underprediction means \(y>\hat{q}\), so \(u>0\), and the penalty slope is \(\alpha\). Overprediction means \(y<\hat{q}\), so \(u<0\), and the penalty slope magnitude is \(1-\alpha\).
+Here \(\mathbf{1}\{y<\hat{q}\}\) is an indicator that equals \(1\) when \(y<\hat{q}\) and \(0\) otherwise. The loss is shaped like a tilted absolute-value function. Underprediction means \(y>\hat{q}\), so \(u>0\), and the penalty slope with respect to the residual \(u\) is \(\alpha\). Overprediction means \(y<\hat{q}\), so \(u<0\), and the penalty slope magnitude is \(1-\alpha\).
 
 This asymmetry is what makes the loss target a specific quantile. For \(\alpha=0.5\),
 $$
@@ -71,7 +71,7 @@ The quantile property can be shown directly. For a fixed input \(x\), suppress \
 $$
 R_\alpha(q)=\mathbb{E}[\rho_\alpha(Y-q)].
 $$
-Assuming differentiability for exposition, the derivative is
+Assuming for exposition that \(Y\) has a continuous distribution, so \(P(Y=q)=0\), the derivative is
 $$
 \frac{dR_\alpha(q)}{dq}
 =
@@ -103,9 +103,9 @@ $$
 \quad\Rightarrow\quad
 Q_x(\alpha_1)\leq Q_x(\alpha_2).
 $$
-Neural networks do not automatically guarantee this ordering when each quantile is predicted as a separate output dimension, so predicted quantiles can cross. For probabilistic predictions, TabICLv2 constructs a full distribution from the quantiles by enforcing monotonicity via sorting by default, or isotonic regression (Barlow & Brunk, 1972; Busing, 2022). It then extrapolates tails with parametric exponential models and derives closed-form PDF, CDF, and moments.
+Neural networks do not automatically guarantee this ordering when each quantile is predicted as a separate output dimension, so predicted quantiles can cross. For probabilistic predictions, TabICLv2 constructs a full distribution from the quantiles by enforcing monotonicity via sorting by default, or isotonic regression (Barlow & Brunk, 1972; Busing, 2022). It then extrapolates beyond the smallest and largest predicted probability levels with parametric exponential tails and derives closed-form PDF, CDF, and moments.
 
-Prediction intervals are a direct use of quantiles. A central \((1-\gamma)\) interval is
+Prediction intervals are a direct use of quantiles. For a chosen error rate \(\gamma\in(0,1)\), a central \((1-\gamma)\) interval is
 $$
 \left[\hat{q}_{\gamma/2}(x),\ \hat{q}_{1-\gamma/2}(x)\right].
 $$
@@ -113,18 +113,19 @@ For example, a 90% interval uses \(\gamma=0.1\):
 $$
 \left[\hat{q}_{0.05}(x),\ \hat{q}_{0.95}(x)\right].
 $$
-If the quantiles are calibrated, such intervals should contain the true target approximately 90% of the time over repeated samples.
+If the predicted quantiles are calibrated, such intervals should contain the true target approximately 90% of the time over repeated samples from the same data-generating process.
 
 For point estimation, TabICLv2 takes the average of the predicted quantiles. This can be interpreted through the identity
 $$
 \mathbb{E}[Y\mid X=x]=\int_0^1 Q_x(\alpha)\,d\alpha,
 $$
-when the conditional expectation exists. With a dense grid of quantiles, the integral can be approximated by an average:
+when the conditional expectation exists. With a dense, evenly spaced grid of quantiles, the integral can be approximated by an average:
 $$
 \hat{\mu}(x)
 \approx
 \frac{1}{|\mathcal{A}|}\sum_{\alpha\in\mathcal{A}}\hat{q}_\alpha(x).
 $$
+Here \(\hat{\mu}(x)\) is the point prediction and \(|\mathcal{A}|=999\) is the number of predicted quantile levels.
 This explains why averaging many predicted quantiles can serve as a fast point estimate while preserving the richer distributional information needed for intervals, CDFs, PDFs, and moments.
 
 ## Summary

@@ -7,7 +7,7 @@ ___
 
 This post starts a six-part miniseries on the architecture of TabICLv2. The goal of the series is to cover the architecture one subsection at a time, so each post can focus on the details needed to understand that component without making a single article too long. The reference for all posts in this miniseries is the TabICLv2 paper: https://arxiv.org/pdf/2602.11139.
 
-The architecture of TabICLv2 is illustrated in the following figure. Here, given an input \(X\in\mathbb{R}^{n\times m}\), repeated feature grouping encodes columns into multigroups via circular shifts to break feature symmetries, and target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each feature through a set transformer, \(\text{TF}_\text{row}\) aggregates features into row representations \(h\), and  \(\text{TF}_\text{icl}\) performs in-context learning tomorrow predict test targets \(\hat{y}\). QASSMax (query-aware scalable softmaxx), is applied in part of  \(\text{TF}_\text{col}\) where inducing points aggregate input information and  \(\text{TF}_\text{icl}\) to mitigate attention fading and improve long-context generalization. 
+The architecture of TabICLv2 is illustrated in the following figure. Here, given an input \(X\in\mathbb{R}^{n\times m}\), repeated feature grouping encodes columns into multigroups via circular shifts to break feature symmetries, and target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each feature through a set transformer, \(\text{TF}_\text{row}\) aggregates features into row representations \(h\), and  \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}\). QASSMax (query-aware scalable softmax) is applied in part of  \(\text{TF}_\text{col}\) where inducing points aggregate input information and in \(\text{TF}_\text{icl}\) to mitigate attention fading and improve long-context generalization. 
 
 ![Screenshot 2026-05-28 at 17.29.16](./20260528-understanding-tfm-architecture-of-tabiclv2-1.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 
@@ -19,15 +19,17 @@ The first architectural issue TabICLv2 addresses is how to represent features in
 $$
 (X_1,\ldots,X_m,Y),
 $$
-where \(X_j\) is the \(j\)-th feature and \(Y\) is the target. In tabular data, two features can have similar marginal distributions,
+where \(X_j\) is the \(j\)-th feature, \(m\) is the number of features, and \(Y\) is the target. For a concrete dataset, write \(x_{ij}\) for the value of feature \(j\) in row \(i\), and write \(x_{\cdot j}=(x_{1j},\ldots,x_{nj})\) for the full \(j\)-th column across \(n\) rows.
+
+In tabular data, two features can have similar marginal distributions,
 $$
 P_{X_a}\approx P_{X_b},
 $$
-while having different predictive roles:
+where \(P_{X_j}\) denotes the marginal distribution of feature \(X_j\). Even when the marginals are similar, the features can have different relationships to the target. Informally, their conditional relationships can differ:
 $$
 P(Y\mid X_a)\neq P(Y\mid X_b),
 $$
-or more generally,
+or, if \(X_{-j}\) denotes all features except \(X_j\), more generally,
 $$
 P(Y\mid X_a,X_{-a})\neq P(Y\mid X_b,X_{-b}).
 $$
@@ -37,7 +39,7 @@ This matters because TabICL embeds each feature independently. A simplified way 
 $$
 \phi:\mathbb{R}^n\rightarrow\mathbb{R}^d,
 $$
-where the column vector \(x_{\cdot j}=(x_{1j},\ldots,x_{nj})\) is mapped to a feature representation
+where \(d\) is the embedding dimension. The column vector \(x_{\cdot j}\) is mapped to a feature representation
 $$
 e_j=\phi(x_{\cdot j}).
 $$
@@ -47,13 +49,13 @@ $$
 \quad \text{or} \quad
 \cos(e_a,e_b)\approx 1.
 $$
-This is representation collapse: distinct features become nearly indistinguishable in representation space even though their semantics or target relationships differ.
+Here \(\|\cdot\|_2\) is Euclidean distance and \(\cos(e_a,e_b)\) is cosine similarity. This is representation collapse: distinct features become nearly indistinguishable in representation space even though their semantics or target relationships differ.
 
 The problem is not that similar feature distributions are inherently bad. The problem is that a feature's role is not determined only by its marginal distribution \(P_{X_j}\). A feature is also characterized by how it relates to other features and to the target. A more complete statistical object is the joint behavior
 $$
 P(X_j,X_{-j},Y),
 $$
-or at least target-relevant summaries such as \(P(Y\mid X_j)\). Independent feature embedding can underuse this context.
+or target-relevant summaries derived from it, such as \(P(Y\mid X_j)\). Independent feature embedding can underuse this context.
 
 There is also a symmetry perspective. If two columns \(a\) and \(b\) are processed by the same function \(\phi\) and have similar value distributions, the model has little information with which to break the symmetry
 $$
@@ -61,32 +63,31 @@ x_{\cdot a}\leftrightarrow x_{\cdot b}.
 $$
 Downstream attention layers then receive nearly interchangeable tokens. Once this happens early, later layers may need to recover feature identity from weak signals, which is difficult.
 
-TabPFNv2 and TabPFN-2.5 mitigate this collapse by grouping multiple columns into single tokens. Grouping gives each feature some neighboring-feature context, but it also reduces the number of effective feature tokens, which may lose fine-grained feature information. TabICLv2 proposes repeated feature grouping to keep the contextualization benefit while preserving the number of effective feature positions.
+TabPFNv2 and TabPFN-2.5 mitigate this collapse by grouping multiple columns into single tokens. Grouping gives each feature some neighboring-feature context, but it also reduces the number of effective feature tokens, which may lose fine-grained feature information. TabICLv2 proposes repeated feature grouping to keep the contextualization benefit while preserving \(m\) effective feature positions.
 
 Specifically, for a table with \(m\) columns, TabICLv2 creates \(m\) groups. The \(j\)-th group contains columns at positions
 $$
 (j,\ j+1,\ j+3)\bmod m.
 $$
-For row \(i\), the grouped input is
+Here \(j\) is interpreted modulo \(m\), so after the last column the indexing wraps back to the first column. For row \(i\), the grouped input is
 $$
 g_j(i)=\left(x_{i,j},x_{i,(j+1)\bmod m},x_{i,(j+3)\bmod m}\right).
 $$
 Each group is encoded by a shared linear map \(\text{Lin}: \mathbb{R}^3\rightarrow\mathbb{R}^d\):
 $$
-E_1[i, j] = \text{Lin}(x_{i,j}, x_{i, (j+1) \,\text{mod}\,m},x_{i, (j+3)\,\text{mod}\,m}).
-$$
-Equivalently,
-$$
 E_1[i,j]=\text{Lin}(g_j(i)).
 $$
+The resulting tensor \(E_1\in\mathbb{R}^{n\times m\times d}\) contains one \(d\)-dimensional embedding for each row \(i\) and each grouped feature position \(j\).
 
-Now feature \(j\) is no longer represented only through its own marginal values. It is represented through local multifeature contexts. If two features have similar \(P_{X_j}\) but different relationships with their shifted companion features, their grouped representations can separate:
+Now the representation anchored at feature \(j\) is no longer based only on \(x_{ij}\). It is based on a local multifeature context. If two features have similar marginal behavior but different relationships with their shifted companion features, the distributions of their grouped inputs can separate:
 $$
 P_{g_a}\not\approx P_{g_b}
 \quad \Rightarrow \quad
 E_1[\cdot,a]\not\approx E_1[\cdot,b].
 $$
-The shift pattern \(0, 1, 3\) also ensures that for \(\geq7\) columns, no pair of columns appears together in more than one group. This gives each feature multiple contextual views without repeatedly coupling the same feature pairs. The result is a representation that helps break harmful feature symmetries while preserving \(m\) effective feature positions.
+Here \(P_{g_j}\) denotes the empirical distribution of grouped row inputs \(g_j(i)\) across rows. The implication is conceptual rather than a deterministic guarantee: by adding context, the model gets more information with which to distinguish otherwise similar columns.
+
+The shift pattern \(0, 1, 3\) also ensures that for \(m\geq7\) columns, no unordered pair of columns appears together in more than one group. This gives each feature multiple contextual views without repeatedly coupling the same feature pairs. The result is a representation that helps break harmful feature symmetries while preserving \(m\) effective feature positions.
 
 ## Summary
 
