@@ -9,6 +9,8 @@ This post starts a six-part miniseries on the architecture of TabICLv2. The goal
 
 The architecture of TabICLv2 is illustrated in the following figure. Given an input table \(X\in\mathbb{R}^{n\times m}\), where \(n\) is the number of rows and \(m\) is the number of features, repeated feature grouping first encodes columns into overlapping groups using circular shifts. Target-aware embedding then injects observed target information early in the network. \(\text{TF}_\text{col}\) embeds each grouped feature position through a set transformer, \(\text{TF}_\text{row}\) aggregates feature positions into row representations \(h\), and \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}\). QASSMax, or query-aware scalable softmax, is applied in the part of \(\text{TF}_\text{col}\) where inducing points aggregate input information and in \(\text{TF}_\text{icl}\), where it helps mitigate attention fading in long contexts.
 
+For this post, the important part is the first step: how raw columns are turned into grouped feature representations.
+
 ![Screenshot 2026-05-28 at 17.29.16](./20260528-understanding-tfm-architecture-of-tabiclv2-1.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 
 This first post covers repeated feature grouping, the mechanism TabICLv2 uses to give feature representations contextual views of other features while keeping \(m\) effective feature positions.
@@ -37,7 +39,7 @@ P(Y\mid X_a)\neq P(Y\mid X_b).
 $$
 Here the notation is shorthand for two different conditional maps: the map from values of \(X_a\) to the distribution of \(Y\), and the map from values of \(X_b\) to the distribution of \(Y\). In a multivariate table, a feature's role is also shaped by its relationships with the other features. If \(X_{-j}\) denotes all features except \(X_j\), then the relevant context for feature \(j\) is not just \(P_{X_j}\), but how \(X_j\), \(X_{-j}\), and \(Y\) vary together.
 
-This matters because TabICL-style feature embedding can initially process each feature with the same encoder. A simplified way to write such an independent column encoder is
+This creates a representation problem: before the model can reason over feature interactions, its initial feature embeddings must preserve enough information to tell features apart. This matters because TabICL-style feature embedding can initially process each feature with the same encoder. A simplified way to write such an independent column encoder is
 $$
 \phi:\mathbb{R}^n\rightarrow\mathbb{R}^d,
 $$
@@ -55,7 +57,7 @@ Here \(\|\cdot\|_2\) is Euclidean distance and \(\cos(e_a,e_b)\) is cosine simil
 
 The problem is not that similar feature distributions are inherently bad. The problem is that a feature's role is not determined only by its marginal distribution \(P_{X_j}\). A feature is also characterized by its joint behavior with other features and with the target. Independent feature embedding can underuse this context.
 
-There is also a symmetry perspective. If two columns \(a\) and \(b\) are processed by the same function \(\phi\) and have similar value distributions, the model has little information with which to break the symmetry
+The same issue can be viewed as a symmetry problem. If two columns \(a\) and \(b\) are processed by the same function \(\phi\) and have similar value distributions, the model has little information with which to break the symmetry
 $$
 x_{\cdot a}\leftrightarrow x_{\cdot b}.
 $$
@@ -97,7 +99,7 @@ E_1[\cdot,a]\not\approx E_1[\cdot,b].
 $$
 This is not a deterministic guarantee, because the learned linear map can still compress information. The point is that the model receives more context with which to distinguish otherwise similar columns.
 
-The shift pattern \((0,1,3)\) also has a useful combinatorial property: for \(m\geq7\) columns, no unordered pair of columns appears together in more than one group. This gives each feature several contextual views without repeatedly coupling the same feature pairs. For example, feature \(j\) is grouped with different companions across its repeated appearances instead of always being tied to the same neighboring column.
+Beyond preserving the number of positions, the particular offsets also control which feature pairs are seen together. The shift pattern \((0,1,3)\) has a useful combinatorial property: for \(m\geq7\) columns, no unordered pair of columns appears together in more than one group. This gives each feature several contextual views without repeatedly coupling the same feature pairs. For example, feature \(j\) is grouped with different companions across its repeated appearances instead of always being tied to the same neighboring column.
 
 The result is a representation that helps break harmful feature symmetries while preserving \(m\) effective feature positions. Repeated feature grouping is therefore a small input-side change with a specific purpose: add feature context before the later column, row, and dataset-level transformer stages process the table.
 

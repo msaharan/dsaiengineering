@@ -5,11 +5,15 @@ Subtitle: Compression then ICL
 ___
 The previous post covered target-aware embedding, where labels are injected into the feature tokens of training rows. This post covers the compression-then-ICL pipeline: first TabICLv2 compresses row-feature tokens into row representations, then it performs in-context learning over those rows.
 
-As a reminder, the architecture of TabICLv2 is illustrated in the following figure. Given an input table \(X\in\mathbb{R}^{n\times m}\), where \(n\) is the number of rows and \(m\) is the number of columns, repeated feature grouping encodes columns into grouped feature positions using circular shifts to reduce feature-order symmetries. Target-aware embedding injects observed target information for training rows. Then \(\text{TF}_\text{col}\) embeds each grouped feature position across rows, \(\text{TF}_\text{row}\) aggregates grouped feature embeddings into row representations \(h_i\), and \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}_i\). QASSMax (query-aware scalable softmax) is used inside parts of \(\text{TF}_\text{col}\) and \(\text{TF}_\text{icl}\) to reduce attention fading when the context contains many rows.
+As a reminder, the architecture of TabICLv2 is illustrated in the following figure. Given an input table \(X\in\mathbb{R}^{n\times m}\), where \(n\) is the number of rows and \(m\) is the number of columns, repeated feature grouping encodes columns into grouped feature positions using circular shifts to reduce feature-order symmetries. Target-aware embedding then injects observed target information for training rows.
+
+After those preprocessing steps, the transformer stack follows a compression-then-ICL path. \(\text{TF}_\text{col}\) embeds each grouped feature position across rows, \(\text{TF}_\text{row}\) aggregates grouped feature embeddings into row representations \(h_i\), and \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}_i\). QASSMax (query-aware scalable softmax) is used inside parts of \(\text{TF}_\text{col}\) and \(\text{TF}_\text{icl}\) to reduce attention fading when the context contains many rows.
 
 ![Screenshot 2026-05-28 at 17.29.16](./20260528-understanding-tfm-architecture-of-tabiclv2-3.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 
 ## Compression then ICL
+
+To understand what is being compressed, first name the tensor entering this part of the model.
 
 Before compression begins, TabICLv2 has already constructed a target-aware token tensor
 $$
@@ -17,7 +21,7 @@ E_2\in\mathbb{R}^{n\times m\times d}.
 $$
 Here \(d\) is the token embedding dimension. Each token \(E_2[i,j]\in\mathbb{R}^d\) represents row \(i\) and grouped feature position \(j\). After repeated feature grouping, \(m\) denotes the number of grouped feature positions being processed by the transformer stack.
 
-This tensor comes from the feature-only tensor
+To see what has changed, compare \(E_2\) with the feature-only tensor
 $$
 E_1\in\mathbb{R}^{n\times m\times d}
 $$
@@ -42,7 +46,7 @@ E_2[i,2]-E_1[i,2]
 E_2[i,m]-E_1[i,m]
 =\text{Embed}_\text{TAE}(y_i).
 $$
-So \(E_2\) has the same shape as \(E_1\), but training rows now carry outcome information inside every feature token. This is the first place where targets enter the architecture; a second target embedding is added later at the row-token level before dataset-wise ICL.
+So \(E_2\) has the same shape as \(E_1\), but training rows now carry outcome information inside every feature token. This matters for the next stage because compression does not operate on raw feature tokens; it operates on feature tokens that already contain training-label information. This is the first place where targets enter the architecture; a second target embedding is added later at the row-token level before dataset-wise ICL.
 
 The compression-then-ICL pipeline explains what happens next. TabICLv2 must convert the \(n\times m\) grid of row-feature tokens into row-level representations that can be used for prediction. It does this in three stages:
 
@@ -54,13 +58,13 @@ The first stage, column-wise embedding, processes each grouped feature position 
 $$
 (E_2[1,j],E_2[2,j],\ldots,E_2[n,j]).
 $$
-\(\text{TF}_\text{col}\) lets the model compare how the same grouped feature behaves across rows. In the implementation, the first induced-attention stage lets inducing points attend only to training rows, and the second stage broadcasts the resulting induced representation back to all rows. This keeps the column-wise contextualization anchored to observed examples while preventing test-row feature information from leaking into the column summaries.
+\(\text{TF}_\text{col}\) lets the model compare how the same grouped feature behaves across rows. A subtle point is that this cross-row comparison must use training information without letting test rows contaminate the learned column summaries. Operationally, this comparison is implemented with induced attention rather than full attention over all rows. The first induced-attention stage lets inducing points attend only to training rows, and the second stage broadcasts the resulting induced representation back to all rows, so every row receives column-wise context anchored to the labeled examples.
 
 Let \(\tilde{E}\in\mathbb{R}^{n\times m\times d}\) denote the output of the column-wise stage. The second stage, row-wise interaction, aggregates feature information within each row. For a fixed row \(i\), the model has grouped feature embeddings
 $$
 (\tilde{E}[i,1],\tilde{E}[i,2],\ldots,\tilde{E}[i,m]),
 $$
-and \(\text{TF}_\text{row}\) processes them together with learned \([\text{CLS}]\) tokens. The outputs at the \([\text{CLS}]\) positions are used as the row summary. If those outputs are concatenated or otherwise merged into one vector, the result is a row representation
+and \(\text{TF}_\text{row}\) processes them together with learned \([\text{CLS}]\) tokens. The outputs at the \([\text{CLS}]\) positions are used as the row summary. Collectively, these \([\text{CLS}]\) outputs form the row representation
 $$
 h_i\in\mathbb{R}^{d_\text{row}},
 $$
@@ -70,7 +74,7 @@ The third stage is dataset-wise in-context learning. The row representations
 $$
 h_1,\ldots,h_n
 $$
-become the row tokens over which \(\text{TF}_\text{icl}\) operates. For training rows, the model adds another target embedding to the row representation; for test rows, no true target is supplied. Define
+become the row tokens over which \(\text{TF}_\text{icl}\) operates. For training rows, the model adds another target embedding to the row representation; for test rows, no true target is supplied. The first target embedding helped construct feature-aware row summaries; this second one marks which row tokens are labeled examples during ICL. Define
 $$
 z_i =
 \begin{cases}

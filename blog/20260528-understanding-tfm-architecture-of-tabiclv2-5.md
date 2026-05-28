@@ -18,7 +18,7 @@ p(y=c\mid x)=\frac{\exp(s_c(x))}{\sum_{r=0}^{C-1}\exp(s_r(x))},
 $$
 where \(c\) and \(r\) are class indices and \(s_c(x)\) is the score or logit for class \(c\). This is natural when \(C\leq10\), but it becomes mismatched when the downstream dataset has many more classes than the model saw during pretraining.
 
-TabICLv2 uses two related ideas to avoid that mismatch. The first is used before the ICL stage: mixed-radix ensembling makes target-aware embedding compatible with more than 10 possible labels. The second is used in the ICL stage: hierarchical classification turns one large prediction problem into several smaller native prediction problems. I will start with the hierarchy, because it explains the output side of the many-class problem.
+TabICLv2 uses two related ideas to avoid that mismatch. The first is used before the ICL stage: mixed-radix ensembling makes target-aware embedding compatible with more than 10 possible labels. The second is used in the ICL stage: hierarchical classification turns one large prediction problem into several smaller native prediction problems. I will start with the hierarchy because it is easier to see the many-class bottleneck at the output layer first; mixed-radix ensembling then solves the analogous label-embedding bottleneck on the input side.
 
 The general idea of hierarchical partitioning is to turn one large classification problem into several smaller ones. Let the full class set be
 $$
@@ -31,6 +31,8 @@ $$
 \mathcal{G}_a\cap\mathcal{G}_b=\varnothing \quad(a\ne b),
 $$
 where \(K\leq10\), each \(\mathcal{G}_k\) is a group of classes, and the groups are non-overlapping. The first classifier predicts which group contains the true class. If a group is still too large, it can be partitioned again. Repeating this process forms a tree whose leaves are the original classes and whose internal nodes each have at most 10 children.
+
+Once the class set has been organized into this tree, each original class can be described by the sequence of branch choices needed to reach it.
 
 For a class \(c\), let
 $$
@@ -57,6 +59,8 @@ $$
 This is the chain rule of probability applied to the path that identifies the class.
 
 In TabICLv2 this hierarchy is used at inference time by recursively calling the model's native small-class ICL predictor. At a given node, the training examples belonging to that node are relabeled by their group index, and the model predicts group probabilities for the test row. At a leaf node, the remaining classes are few enough that the model predicts them directly. The final probability of a class is the product of the group probabilities along the route to that leaf. The hierarchy is therefore not a new \(C\)-class output head; it is a way to reuse the pretrained at-most-10-class predictor several times.
+
+The remaining design question is how TabICLv2 chooses those groups in the first place.
 
 TabICLv2 builds balanced groups from the sorted observed class labels. If a node contains \(N\) classes and \(N>10\), the number of child groups is
 $$
@@ -88,7 +92,7 @@ $$
 \log p\left(b_t(c)\mid x,b_0(c),\ldots,b_{t-1}(c)\right).
 $$
 
-That solves the output-side problem. TabICLv2 also has an input-side label problem because target-aware embedding injects training labels before the ICL stage. If the original label \(y\) can take \(C>10\) values, directly embedding \(y\) would exceed the pretrained classification label range. TabICLv2 addresses this with mixed-radix ensembling.
+The hierarchy fixes prediction after row representations have already been formed. But TabICLv2 also needs to represent the labels of context examples before that stage, inside target-aware embedding. If the original label \(y\) can take \(C>10\) values, directly embedding \(y\) would exceed the pretrained classification label range. TabICLv2 addresses this with mixed-radix ensembling.
 
 Mixed-radix representation encodes a large class id as several small digits. Choose \(D\) bases, also called radices,
 $$
@@ -130,7 +134,7 @@ y^{(1)}=y\bmod 8.
 $$
 Class \(y=42\) becomes \((y^{(0)},y^{(1)})=(5,2)\), because \(42=5\cdot8+2\). Class \(y=56\) becomes \((7,0)\). The combinations \((7,1)\) through \((7,7)\) represent \(57\) through \(63\), so they are unused when the true class set has only 57 classes.
 
-In TabICLv2, the mixed-radix digits provide several small-label views of the original class. Instead of embedding the large class id \(y\) directly, the model embeds one digit \(y^{(i)}\) at a time. Let \(E_1\) denote the feature-group representation before target-aware embedding, and let \(\text{Embed}_\text{TAE}(y^{(i)})\) denote the target-aware embedding vector for digit \(i\) on labeled context rows. The column transformer runs once per digit and averages the outputs:
+In TabICLv2, the mixed-radix digits provide several small-label views of the original class. Instead of embedding the large class id \(y\) directly, the model embeds one digit \(y^{(i)}\) at a time. Operationally, TabICLv2 creates several versions of the labeled context, one per digit, runs the column transformer on each version, and averages the resulting representations. Let \(E_1\) denote the feature-group representation before target-aware embedding, and let \(\text{Embed}_\text{TAE}(y^{(i)})\) denote the target-aware embedding vector for digit \(i\) on labeled context rows. The column transformer runs once per digit and averages the outputs:
 $$
 O_\text{avg}
 =\frac{1}{D}\sum_{i=0}^{D-1}

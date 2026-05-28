@@ -6,13 +6,15 @@ Subtitle: Quantile predictions for regression
 ___
 The previous post covered many-class classification, where TabICLv2 handles large label spaces through mixed-radix ensembling and hierarchical classification. This post covers quantile predictions for regression, the strategy TabICLv2 uses to represent predictive uncertainty without discretizing the continuous target into classification bins.
 
-As a reminder, the architecture of TabICLv2 is illustrated in the following figure. Here, given a table \(X\in\mathbb{R}^{n\times m}\), where \(\mathbb{R}\) denotes real numbers, \(n\) is the number of rows, and \(m\) is the number of features, repeated feature grouping encodes columns into grouped feature positions via circular shifts to break feature symmetries, and target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each grouped feature position through a set transformer, \(\text{TF}_\text{row}\) aggregates grouped feature embeddings into row representations \(h\), and \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}\). QASSMax (query-aware scalable softmax) is applied in part of \(\text{TF}_\text{col}\), where inducing points aggregate input information, and in \(\text{TF}_\text{icl}\) to mitigate attention fading and improve long-context generalization.
+As a reminder, the architecture of TabICLv2 is illustrated in the following figure. Here, given a table \(X\in\mathbb{R}^{n\times m}\), where \(\mathbb{R}\) denotes real numbers, \(n\) is the number of rows, and \(m\) is the number of features, repeated feature grouping encodes columns into grouped feature positions via circular shifts to break feature symmetries, and target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each grouped feature position through a set transformer, \(\text{TF}_\text{row}\) aggregates grouped feature embeddings into row representations \(h\), and \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}\). QASSMax (query-aware scalable softmax) is applied in part of \(\text{TF}_\text{col}\), where inducing points aggregate input information, and in \(\text{TF}_\text{icl}\) to mitigate attention fading and improve long-context generalization. For this post, the important point is that the same contextual backbone produces row representations, while the regression head changes what is predicted from those representations.
 
 ![Screenshot 2026-05-28 at 17.29.16](./20260528-understanding-tfm-architecture-of-tabiclv2-6.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 
 ## Quantile predictions for regression
 
 Tabular foundation models adopt different strategies for regression. TabPFNv2 and TabPFN-2.5 model the predictive distribution by discretizing the target space into bins and applying cross-entropy loss. TabICLv2 instead uses a separate regression model that directly predicts quantiles.
+
+To see what this regression head is learning, first recall what a quantile represents.
 
 Let \(Y\) be a real-valued target random variable. For a probability level \(\alpha\in(0,1)\), an \(\alpha\)-quantile is any value \(q_\alpha\) such that
 $$
@@ -34,7 +36,7 @@ Q_x(\alpha)=\inf\{q\in\mathbb{R}:F_{Y\mid Z=x}(q)\geq\alpha\}.
 $$
 Here \(F_{Y\mid Z=x}(q)=P(Y\leq q\mid Z=x)\) is the conditional CDF of \(Y\) given the feature vector \(Z=x\), and \(Q_x\) is its generalized inverse. The symbol \(q\) inside the infimum is a candidate target value, not a probability level; \(\inf\) denotes the infimum, which gives the smallest threshold in the generalized-inverse sense. When the conditional CDF is continuous and strictly increasing, \(Q_x(\alpha)\) is the usual inverse \(F^{-1}_{Y\mid Z=x}(\alpha)\).
 
-TabICLv2 predicts 999 such quantiles at probability levels
+Instead of asking the model for one conditional summary, TabICLv2 asks it for many summaries spread across the distribution. Specifically, it predicts 999 such quantiles at probability levels
 $$
 \mathcal{A}=\{0.001,0.002,\ldots,0.999\}.
 $$
@@ -67,7 +69,7 @@ $$
 $$
 so minimizing the expected loss recovers a median. For \(\alpha=0.9\), overprediction is penalized with slope magnitude \(0.1\), while underprediction is penalized with slope \(0.9\). The model is therefore encouraged to place \(\hat{q}_{0.9}\) high enough that, under a calibrated conditional distribution, about 90% of outcomes fall below it.
 
-The quantile property can be shown directly. For a fixed input \(x\), suppress \(x\) in the notation and consider choosing a scalar prediction \(q\) to minimize the expected pinball risk
+The previous paragraph gives the intuition; the next calculation shows the same fact from the expected-risk objective. For a fixed input \(x\), suppress \(x\) in the notation and consider choosing a scalar prediction \(q\) to minimize the expected pinball risk
 $$
 R_\alpha(q)=\mathbb{E}[\rho_\alpha(Y-q)].
 $$
@@ -97,7 +99,7 @@ $$
 \mathcal{A}=\{0.001,0.002,\ldots,0.999\}.
 $$
 
-True quantile functions are monotone in \(\alpha\). If \(\alpha_1<\alpha_2\), then
+Training each quantile separately raises one practical issue: the outputs must behave like a valid quantile function. True quantile functions are monotone in \(\alpha\). If \(\alpha_1<\alpha_2\), then
 $$
 \alpha_1<\alpha_2
 \quad\Rightarrow\quad
