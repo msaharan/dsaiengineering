@@ -21,6 +21,8 @@ This post starts a six-part miniseries on the architecture of TabICLv2. The goal
 
 Later posts cover target-aware embedding, column/row transformers, QASSMax, and the prediction heads.
 
+**Hands-on companion:** I will use the local [NanoTabICL implementation](../../nanotabicl/model.py) as the code companion for this miniseries. It lives in `nanotabicl/`, with the architecture concentrated in `nanotabicl/model.py`. NanoTabICL is not the full production TabICLv2 repository; it is a compact implementation that makes the main architectural ideas easier to read in code.
+
 ## Repeated feature grouping
 
 ### The problem: similar columns, different roles
@@ -39,9 +41,7 @@ In tabular data, two features can have similar marginal distributions,
 $$
 P_{X_a}\approx P_{X_b},
 $$
-*In words: same shape of values across rows—not necessarily the same predictive role.*
-
-where \(P_{X_j}\) denotes the marginal distribution of feature \(X_j\). Similar marginals do not imply similar predictive roles. For example, `days_since_signup` and `days_since_last_purchase` may both be positive, right-skewed variables, but their relationships to churn can be very different.
+where \(P_{X_j}\) denotes the marginal distribution of feature \(X_j\). *In words: same shape of values across rows—not necessarily the same predictive role.* Similar marginals do not imply similar predictive roles. For example, `days_since_signup` and `days_since_last_purchase` may both be positive, right-skewed variables, but their relationships to churn can be very different.
 
 One way to express this difference is through the feature-specific conditional relationship with the target:
 $$
@@ -135,9 +135,59 @@ E_1[\cdot,a]\not\approx E_1[\cdot,b].
 $$
 This is not a deterministic guarantee, because the learned linear map can still compress information. The point is that the model receives more context with which to distinguish otherwise similar columns.
 
-Beyond preserving the number of positions, the particular offsets also control which feature pairs are seen together. As an optional combinatorial detail: the shift pattern \((0,1,3)\) has a useful property—for \(m\geq7\) columns, no unordered pair of columns appears together in more than one group. This gives each feature several contextual views without repeatedly coupling the same feature pairs. For example, feature \(j\) is grouped with different companions across its repeated appearances instead of always being tied to the same neighboring column.
+The offset pattern also controls **which feature pairs co-occur** in a group. With the shift pattern \((0,1,3)\), for **\(\geq 7\)** columns no pair of columns appears together in more than one group. This gives each feature several contextual views without repeatedly coupling the same feature pairs. For example, feature \(j\) is grouped with different companions across its repeated appearances instead of always being tied to the same neighboring column.
 
 The result is a representation that helps break harmful feature symmetries while preserving \(m\) effective feature positions. Repeated feature grouping is therefore a small input-side change with a specific purpose: add feature context before the later column, row, and dataset-level transformer stages process the table.
+
+### Implementation in NanoTabICL
+
+In NanoTabICL, repeated feature grouping happens at the start of `NanoTabICLv2.forward`. The relevant model parameters are set during initialization:
+
+```python
+self.feature_group_size = feature_group_size
+self.x_embed = nn.Linear(feature_group_size, embed_dim)
+```
+
+The default `feature_group_size` is 3, so `self.x_embed` is a shared linear map from a 3-value feature group into the token dimension. This corresponds to the mathematical map
+$$
+\text{Lin}: \mathbb{R}^3\rightarrow\mathbb{R}^d.
+$$
+
+The grouping itself is implemented by indexing shifted versions of the column axis:
+
+```python
+idxs = torch.arange(n_cols, dtype=torch.long, device=x.device)
+x = torch.stack(
+    [x[:, :, (idxs + (2 ** i - 1)) % n_cols]
+     for i in range(self.feature_group_size)],
+    dim=-1,
+)
+emb = self.x_embed(x)
+```
+
+The expression `(2 ** i - 1)` is the code version of the offset pattern. With `feature_group_size=3`, the loop uses:
+
+| `i` | `(2 ** i - 1)` | Offset |
+|---:|---:|---:|
+| 0 | 0 | anchor column \(j\) |
+| 1 | 1 | shifted column \(j+1\) |
+| 2 | 3 | shifted column \(j+3\) |
+
+The modulo operation `% n_cols` is the circular wraparound. If `idxs = [0, 1, 2, 3, 4]`, then the offset `3` gives `[3, 4, 0, 1, 2]`, so the last columns wrap back to the beginning.
+
+The shape transition is the main thing to notice:
+
+| Step | Shape | Meaning |
+|---|---|---|
+| input `x` | `(batch, rows, cols)` | one scalar per row and original feature |
+| after `torch.stack(..., dim=-1)` | `(batch, rows, cols, 3)` | each feature position now holds a 3-column group |
+| after `self.x_embed(x)` | `(batch, rows, cols, embed_dim)` | each group is a learned token |
+
+So NanoTabICL keeps the same number of column positions, `cols`, but each position has already looked at a small circular group of neighboring columns. That is the implementation counterpart of preserving \(m\) effective feature slots while giving each slot local feature context.
+
+#### Note on implementations
+
+The TabICLv2 paper and NanoTabICL write the default offsets as \((0,1,3)\), implemented in NanoTabICL as `(idxs + (2**i - 1)) % n_cols`. The official `tabicl` repository uses the same circular family with a shifted anchor convention, stacking columns as `(idxs + 2**i) % m` for `i=0,1,2` (offsets \(1,2,4\) in column-index terms). The two patterns produce the same multiset of feature triples up to relabeling which output slot is called the anchor.
 
 ## Summary
 

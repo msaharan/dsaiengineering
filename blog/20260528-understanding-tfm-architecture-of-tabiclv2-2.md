@@ -17,7 +17,7 @@ The question is simple: once feature tokens are built, how does TabICLv2 inject 
 
 As a reminder, the full pipeline is below. **In this episode, focus on the step between repeated feature grouping and \(\text{TF}_\text{col}\).** Later posts cover column/row transformers, QASSMax, and the prediction heads.
 
-Given an input table \(X\in\mathbb{R}^{n\times m}\), with \(n\) rows and \(m\) original features, repeated feature grouping encodes columns into multiple feature groups via circular shifts. Target-aware embedding then adds observed target information to the grouped feature tokens for training rows. After that, \(\text{TF}_\text{col}\) embeds each grouped feature position through a set transformer, \(\text{TF}_\text{row}\) aggregates feature tokens into row representations \(h\), and \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}\).
+Given an input table \(X\in\mathbb{R}^{n\times m}\), with \(n\) rows and \(m\) original features, repeated feature grouping encodes columns into multiple feature groups via circular shifts. Target-aware embedding then adds observed target information to the grouped feature tokens for training rows. After that, \(\text{TF}_\text{col}\) embeds each grouped feature position through a set transformer, \(\text{TF}_\text{row}\) aggregates feature tokens into row representations \(h_i\), and \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}_i\).
 
 ![TabICLv2 pipeline; this post covers target-aware embedding (second block).](./20260528-understanding-tfm-architecture-of-tabiclv2-2.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 
@@ -49,7 +49,11 @@ Let
 $$
 \mathcal{I}_\text{train}\subseteq \{1,\ldots,n\}
 $$
-be the set of rows whose targets are observed. For \(i\in\mathcal{I}_\text{train}\), \(y_i\) denotes the observed target for row \(i\). Define a row-level target vector
+be the set of rows whose targets are observed, and let
+$$
+\mathcal{I}_\text{test}=\{1,\ldots,n\}\setminus\mathcal{I}_\text{train}
+$$
+be the complementary set of test rows whose targets must be predicted. For \(i\in\mathcal{I}_\text{train}\), \(y_i\) denotes the observed target for row \(i\). Define a row-level target vector
 $$
 u_i=
 \begin{cases}
@@ -72,7 +76,7 @@ $$
 while for a test row,
 $$
 E_2[i,j]=E_1[i,j],
-\qquad i\notin\mathcal{I}_\text{train},
+\qquad i\in\mathcal{I}_\text{test},
 $$
 so the true target is never inserted for rows whose labels are unknown.
 
@@ -103,13 +107,13 @@ For example, suppose row \(i\) is a training example with target \(y_i=1\) in a 
 
 Two implementation details, then back to the main idea. The embedding map depends on the prediction task. For classification, it maps discrete class labels to label vectors; for regression, it maps a scalar target to the token space.
 
-For classification with \(K\leq 10\) classes, where \(y_i\in\{0,\ldots,K-1\}\), \(\text{Embed}_\text{TAE}\) can be written as a learnable lookup table
+For classification with \(K\leq 10\) classes, where \(y_i\in\{0,\ldots,K-1\}\), \(\text{Embed}_\text{TAE}\) is a learned class-embedding interface. Mathematically, it can be written as a lookup table
 $$
 W_\text{cls}\in\mathbb{R}^{10\times d},
 \qquad
 \text{Embed}_\text{TAE}(y_i)=W_\text{cls}[y_i].
 $$
-Here \(W_\text{cls}\) stores one \(d\)-dimensional vector for each label supported by the pretrained label encoder. The active task may use only the first \(K\) labels. Tasks with more than 10 classes use an additional label-handling step in TabICLv2 (outside this post's \(K\leq 10\) lookup-table view).
+Here \(W_\text{cls}\) stores one \(d\)-dimensional vector for each label supported by the pretrained label encoder. The official implementation realizes this through a one-hot-plus-linear layer, which is equivalent to selecting a learned class vector. The active task may use only the first \(K\) labels. Tasks with more than 10 classes use an additional label-handling step in TabICLv2 (outside this post's \(K\leq 10\) view).
 
 For regression, where \(y_i\in\mathbb{R}\), the target embedding is a learned linear layer, which can be written as an affine map from the scalar target to the \(d\)-dimensional token space:
 $$
@@ -132,7 +136,7 @@ Keeping the shape fixed is the computational benefit. The representational benef
 $$
 (X_1,\ldots,X_m,Y).
 $$
-Here \(X_j\) is the \(j\)-th feature and \(Y\) is the target. Two features, say \(X_a\) and \(X_b\), can have similar marginal distributions,
+Here \(X_j\) is the \(j\)-th feature and \(Y\) is the target. As in post 1, two features, say \(X_a\) and \(X_b\), can have similar marginal distributions,
 $$
 P_{X_a}\approx P_{X_b},
 $$
@@ -158,11 +162,84 @@ E_1[i,\cdot]\approx \phi(x_i),
 \qquad
 E_2[i,\cdot]\approx \psi(x_i,y_i).
 $$
-Here \(E_1[i,\cdot]\) and \(E_2[i,\cdot]\) denote all grouped feature tokens for row \(i\), while \(\phi\) and \(\psi\) are informal names for feature-only and feature-target representation functions. This helps the downstream transformers learn how feature patterns co-vary with observed outcomes during in-context learning.
-
-Because test rows were left unchanged, labels shaped only the training-row tokens above. This is the **first** target injection; TabICLv2 injects targets again later during dataset-wise ICL.
+Here \(E_1[i,\cdot]\) and \(E_2[i,\cdot]\) denote all grouped feature tokens for row \(i\), while \(\phi\) and \(\psi\) are informal names for feature-only and feature-target representation functions. That feature-target encoding applies only to training rows; test rows still carry \(E_1\) only. This is the **first** target injection; TabICLv2 injects targets again later during dataset-wise ICL.
 
 **In one sentence:** TabICLv2 turns training-row feature tokens into feature-plus-target tokens by adding one learned target embedding to every grouped feature position in that row, while leaving test rows untouched.
+
+### Implementation in NanoTabICL
+
+NanoTabICL implements target-aware embedding with two pieces: a task-dependent target embedder and one masked in-place addition to the training rows.
+
+During initialization, the target embedder depends on whether the model is configured for classification or regression:
+
+```python
+self.y_embed_in = (
+    ClassEmbedding(max_classes, embed_dim)
+    if max_classes > 0
+    else nn.Linear(1, embed_dim)
+)
+```
+
+For classification, `ClassEmbedding` is a learnable lookup table:
+
+```python
+class ClassEmbedding(nn.Embedding):
+    def forward(self, y: torch.Tensor) -> torch.Tensor:
+        return super().forward(y.squeeze(-1).long())
+```
+
+The call to `long()` is the practical detail that turns labels such as `0`, `1`, or `2` into embedding-table indices. For regression, `nn.Linear(1, embed_dim)` implements the affine scalar-to-vector map \(a y_i+b\).
+
+The actual target-aware update is one line in `forward`:
+
+```python
+emb[:, :n_train] += self.y_embed_in(y[:, :, None, None])
+```
+
+Before this line, `emb` has shape:
+
+```text
+(batch, rows, cols, embed_dim)
+```
+
+The slice `emb[:, :n_train]` selects only labeled context rows:
+
+```text
+(batch, n_train, cols, embed_dim)
+```
+
+The target tensor `y` starts as:
+
+```text
+(batch, n_train)
+```
+
+After `y[:, :, None, None]`, it has singleton feature and scalar dimensions:
+
+```text
+(batch, n_train, 1, 1)
+```
+
+The embedder maps this to a target vector:
+
+```text
+(batch, n_train, 1, embed_dim)
+```
+
+PyTorch broadcasting then adds the same target vector across all `cols` grouped feature positions in that training row. This is exactly the code version of:
+$$
+E_2[i,j]=E_1[i,j]+\text{Embed}_\text{TAE}(y_i),
+\qquad i\in\mathcal{I}_\text{train}.
+$$
+
+The masking boundary is the important safety rule. NanoTabICL never indexes `emb[:, n_train:]` in this addition, so test rows remain feature-only at this stage:
+
+```text
+training rows: feature token + target embedding
+test rows:     feature token only
+```
+
+That single slice, `:n_train`, is what prevents target leakage in the implementation.
 
 ## Summary
 

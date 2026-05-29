@@ -4,9 +4,7 @@ ___
 
 Subtitle: Quantile predictions for regression
 ___
-For regression, TabICLv2 does not predict one number — it predicts an entire conditional distribution through 999 quantiles.
-
-The previous post covered many-class classification, where TabICLv2 handles large label spaces through mixed-radix ensembling and hierarchical classification. This post covers quantile predictions for regression, the strategy TabICLv2 uses to represent predictive uncertainty without discretizing the continuous target into classification bins.
+For regression, TabICLv2 does not predict one number — it predicts an entire conditional distribution through 999 quantiles. The previous post covered many-class classification; this post covers the regression head that attaches to the same \(\text{TF}_\text{icl}\) backbone.
 
 **What to watch for in this post**
 
@@ -15,9 +13,7 @@ The previous post covered many-class classification, where TabICLv2 handles larg
 - 999 quantile outputs, summed training loss, crossing at inference
 - Prediction intervals and point estimate via averaging
 
-For this post, focus on the **regression head**: same backbone as prior posts, but many quantile outputs per test row instead of class logits.
-
-As a reminder, TabICLv2 maps a table through column embedding, row aggregation, and in-context learning to row representations \(h\). The architecture figure is below.
+As a reminder, the full pipeline is below. **In this episode, focus on the regression head:** the same backbone as prior posts, but many quantile outputs per test row instead of class logits. Given an input table \(X\in\mathbb{R}^{n\times m}\), repeated feature grouping and target-aware embedding prepare grouped feature tokens, \(\text{TF}_\text{col}\) and \(\text{TF}_\text{row}\) compress them into row representations \(h_i\), \(\text{TF}_\text{icl}\) performs in-context learning over those rows, and the output MLP emits 999 conditional quantiles per test row.
 
 ![TabICLv2 pipeline; this post covers the regression head (quantile outputs).](./20260528-understanding-tfm-architecture-of-tabiclv2-6.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 
@@ -27,7 +23,11 @@ As a reminder, TabICLv2 maps a table through column embedding, row aggregation, 
 
 Tabular foundation models adopt different strategies for regression. TabPFNv2 and TabPFN-2.5 model the predictive distribution by discretizing the target space into bins and applying cross-entropy loss. TabICLv2 instead uses a separate regression model that directly predicts quantiles.
 
-The rest of this post has four parts: (1) what quantiles are, (2) pinball loss and why it targets them, (3) how TabICLv2 trains and fixes crossing quantiles, and (4) how those quantiles become intervals and a point prediction.
+The rest of this post has five parts: (1) where the regression head sits in the pipeline, (2) what quantiles are, (3) pinball loss and why it targets them, (4) how TabICLv2 trains and fixes crossing quantiles, and (5) how those quantiles become intervals and a point prediction.
+
+### Where this sits in the pipeline
+
+Posts 3 and 4 built the shared backbone: \(\text{TF}_\text{col}\) and \(\text{TF}_\text{row}\) compress target-aware feature tokens into row representations \(h_i\), and \(\text{TF}_\text{icl}\) lets test rows attend to labeled training rows. Post 5 covered the **classification head**—class logits, hierarchical decoding, and mixed-radix ensembling when \(C>10\). For regression, the same \(\text{TF}_\text{icl}\) stack runs unchanged; only the **output head** differs. Instead of `out_dim` class logits, the model emits \(|\mathcal{A}|=999\) scalars \(\hat{q}_\alpha(x)\) per test row through `out_mlp`, one for each probability level in \(\mathcal{A}\).
 
 ### What quantiles are
 
@@ -67,9 +67,7 @@ This gives a dense grid of estimated points on \(Q_x(\alpha)\), so the model pre
 
 ### Pinball loss
 
-*Each of the 999 outputs is trained with pinball loss. Here is what that penalty looks like.*
-
-Each quantile is trained with pinball loss, also called quantile loss or check loss. If the model predicts \(\hat{q}_\alpha(x)\) for level \(\alpha\) and the observed target is \(y\), define the residual
+*Each of the 999 outputs is trained with pinball loss — a tilted absolute-value penalty also called quantile loss or check loss.* If the model predicts \(\hat{q}_\alpha(x)\) for level \(\alpha\) and the observed target is \(y\), define the residual
 $$
 u=y-\hat{q}_\alpha(x).
 $$
@@ -126,7 +124,7 @@ This is the standard quantile interval condition.
 
 ### Training and fixing crossing quantiles
 
-For each training example \((x,y)\), TabICLv2 sums this loss over all levels in the grid \(\mathcal{A}\) defined above:
+After \(\text{TF}_\text{icl}\) produces row representations for test rows (posts 3–4), the regression head emits one scalar \(\hat{q}_\alpha(x)\) per level in \(\mathcal{A}\) via `out_mlp`. Training sums pinball loss over all levels. For each training example \((x,y)\), TabICLv2 computes:
 $$
 \mathcal{L}(x,y)
 =
@@ -142,7 +140,7 @@ Q_x(\alpha_1)\leq Q_x(\alpha_2).
 $$
 Neural networks do not automatically guarantee this ordering when each quantile is predicted as a separate output dimension, so predicted quantiles can cross.
 
-TabICLv2 handles crossing at inference time when it constructs a full predictive distribution. It first enforces monotonicity by sorting the predicted quantiles by default, or by using isotonic regression as an alternative (Barlow & Brunk, 1972; Busing, 2022).
+TabICLv2 handles crossing at inference time when it constructs a full predictive distribution. It first enforces monotonicity by sorting the predicted quantiles by default, or by using isotonic regression as an alternative (Barlow & Brunk, 1972; Busing, 2022). The official code also exposes this as a quantile-distribution postprocessing step, separate from the raw forward pass that emits the 999 quantile values.
 
 It then extrapolates beyond the smallest and largest predicted probability levels with parametric exponential tails and derives closed-form quantities such as the PDF (probability density function), CDF, and moments. Moments here mean summaries such as the mean and variance when they exist.
 
@@ -163,7 +161,7 @@ $$
 $$
 If the predicted quantiles are calibrated, such intervals should contain the true target approximately 90% of the time over repeated samples from the same data-generating process. This coverage is an empirical calibration property of the predictions, not something guaranteed merely by using pinball loss or by sorting the quantiles.
 
-For point estimation, TabICLv2 takes the average of the predicted quantiles. The reason this is sensible is the quantile-function identity
+For point estimation, TabICLv2 takes the average of the 999 predicted quantiles at \(\alpha\in\{0.001,\ldots,0.999\}\)—a fast summary of the conditional distribution. Monotonicity correction (sorting by default, or isotonic regression) is inference-time hygiene when building a full predictive distribution from those quantiles; the official distribution wrapper applies sorting before that average. The reason averaging is sensible is the quantile-function identity
 $$
 \mathbb{E}[Y\mid Z=x]=\int_0^1 Q_x(\alpha)\,d\alpha,
 $$
@@ -173,9 +171,87 @@ $$
 \approx
 \frac{1}{|\mathcal{A}|}\sum_{\alpha\in\mathcal{A}}\hat{q}_\alpha(x).
 $$
-Here \(\hat{\mu}(x)\) is the point prediction and \(|\mathcal{A}|=999\) is the number of predicted quantile levels. In practice, averaging the 999 quantiles is a fast, good point estimate — with one caveat for very heavy tails. Strictly speaking, the average over \(\mathcal{A}\) is an approximation to the integral over \((0,1)\), and it does not use the extrapolated tails outside \(0.001\) and \(0.999\). For ordinary cases this is a fast and effective point estimate; for very heavy-tailed conditional distributions, the extreme tails could matter more.
+Here \(\hat{\mu}(x)\) is the point prediction and \(|\mathcal{A}|=999\) is the number of predicted quantile levels. In practice, averaging the 999 quantiles is a fast point estimate — with one caveat for very heavy tails. Strictly speaking, the average over \(\mathcal{A}\) is an approximation to the integral over \((0,1)\), and the fast mean path does not integrate the extrapolated tails outside \(0.001\) and \(0.999\). For ordinary cases this is effective; for very heavy-tailed conditional distributions, the extreme tails could matter more.
 
 This explains the design tradeoff. The same regression head gives TabICLv2 a fast point estimate through averaging and richer distributional information through the reconstructed monotone quantile function.
+
+### Implementation in NanoTabICL
+
+NanoTabICL switches from classification to regression by setting `max_classes=0`. The README shows the intended regression-style configuration:
+
+```python
+model = NanoTabICLv2(
+    max_classes=0,
+    out_dim=999,
+    embed_dim=96,
+    col_num_blocks=2,
+    row_num_blocks=2,
+    icl_num_blocks=4,
+    col_nhead=4,
+    row_nhead=4,
+    icl_nhead=4,
+)
+y_train = torch.randn(batch_size, n_train)
+y_test_pred_quantiles = model(X_train_and_test, y_train)
+```
+
+The two key arguments are:
+
+| Argument | Meaning |
+|---|---|
+| `max_classes=0` | use regression target embedders instead of class lookup tables |
+| `out_dim=999` | emit 999 numbers per test row, one for each quantile level |
+
+The regression target embedders are selected in `__init__`:
+
+```python
+self.y_embed_in = (
+    ClassEmbedding(max_classes, embed_dim)
+    if max_classes > 0
+    else nn.Linear(1, embed_dim)
+)
+self.y_embed_icl = (
+    ClassEmbedding(max_classes, icl_dim)
+    if max_classes > 0
+    else nn.Linear(1, icl_dim)
+)
+```
+
+For regression, both target injections use linear maps from one scalar target value into the relevant token space:
+
+```text
+y_train scalar
+    -> nn.Linear(1, embed_dim)  for feature-token target-aware embedding
+    -> nn.Linear(1, icl_dim)    for row-token ICL embedding
+```
+
+The output head is configured by `out_dim`:
+
+```python
+self.out_mlp = get_mlp(icl_dim, icl_dim * 2, out_dim)
+```
+
+And the final forward pass applies it only to test-row outputs:
+
+```python
+emb = self.icl_blocks[-1](emb[:, n_train:], emb[:, :n_train])
+return self.out_mlp(self.out_ln(emb))
+```
+
+The shape transition is:
+
+```text
+after final ICL block: (batch, n_test, icl_dim)
+after output MLP:      (batch, n_test, out_dim)
+```
+
+With `out_dim=999`, this becomes:
+
+```text
+(batch, n_test, 999)
+```
+
+That is the architecture-level implementation of "predict 999 quantiles per test row." The compact repository demonstrates the forward-pass shape and the regression target embeddings. It does not include the full TabICLv2 regression training and post-processing stack: no pretraining loop, no pinball-loss implementation, no monotonic sorting, no isotonic regression option, and no parametric tail extrapolation. Those are part of the full paper-level system described above.
 
 ## Summary
 
