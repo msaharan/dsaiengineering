@@ -1,32 +1,20 @@
-# Understanding Tabular Foundation models: the architecture of TabICLv2-6
+[Mohit Saharan](https://linkedin.com/in/msaharan), P31, 20260528
+___
+# Understanding Tabular Foundation models: the architecture of TabICLv2 - 6
 
-Source: TabICLv2 paper. https://arxiv.org/pdf/2602.11139.
+Subtitle: Quantile predictions for regression
+___
+The previous post covered many-class classification, where TabICLv2 handles large label spaces through mixed-radix and hierarchical structure. This post covers quantile predictions for regression, the regression strategy TabICLv2 uses to model predictive uncertainty without discretizing the target into classification bins.
 
-In the previous post, we covered many-class classification, where TabICLv2 handles large label spaces through mixed-radix and hierarchical structure. In this post, we cover quantile predictions for regression, the regression strategy TabICLv2 uses to model predictive uncertainty without discretizing the target into classification bins.
+As a reminder, the architecture of TabICLv2 is illustrated in the following figure. Here, given an input \(X\in\mathbb{R}^{n\times m}\), repeated feature grouping encodes columns into multigroups via circular shifts to break feature symmetries, and target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each feature through a set transformer, \(\text{TF}_\text{row}\) aggregates features into row representations \(h\), and  \(\text{TF}_\text{icl}\) performs in-context learning tomorrow predict test targets \(\hat{y}\). QASSMax (query-aware scalable softmaxx), is applied in part of  \(\text{TF}_\text{col}\) where inducing points aggregate input information and  \(\text{TF}_\text{icl}\) to mitigate attention fading and improve long-context generalization. 
 
-## Illustration and summary
-
-The architecture of TabICLv2 is illustrated in the following figure. Here, given an input \(X\in\mathbb{R}^{n\times m}\), repeated feature grouping encodes columns into multigroups via circular shifts to break feature symmetries, and target-aware embedding injects target information from the beginning. \(\text{TF}_\text{col}\) embeds each feature through a set transformer, \(\text{TF}_\text{row}\) aggregates features into row representations \(h\), and  \(\text{TF}_\text{icl}\) performs in-context learning tomorrow predict test targets \(\hat{y}\). QASSMax (query-aware scalable softmaxx), is applied in part of  \(\text{TF}_\text{col}\) where inducing points aggregate input information and  \(\text{TF}_\text{icl}\) to mitigate attention fading and improve long-context generalization. 
-
-The following subsections elaborate on the summary.
-
-![Screenshot 2026-05-28 at 17.29.16](./20260528-understanding-tfm-architecture-of-tabiclv2-6.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
+![Screenshot 2026-05-28 at 17.29.16](./20260528-understanding-tfm-architecture-of-tabiclv2-2.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 
 ## Quantile predictions for regression
 
 TFMs adopt different strategiess for regression: TabPFNv2 and TabPFN-2.5 model the full predictive distribution by discretizing the target space into bins and applying cross-entropy loss. TabICLv2 trains separate models for classification and regression.
 
-It instead predicts 999 quantiles at probability levels $\alpha\in{0.001, 0.002, \dots, 0.999}$, trained with pinball loss summed across all quantiles. At inference, for point estimation, it takes the average of predicted quantiles, which is fast and effective. For probabilistic predictions, it constructs a full distribution from the quantiles by enforcing monotonicity via sorting (the default) or isotonic regression (Barlow & Brunk, 1972; Busing, 2022), extrapolating tails with parametric exponential models, and deriving closed-form PDF, CDF, and moments.
-
-## Summary
-
-For regression, TabICLv2 predicts a dense grid of conditional quantiles rather than a single scalar or a discretized target distribution. These quantiles support both point prediction through averaging and probabilistic prediction through a reconstructed monotone predictive distribution.
-
-#  Appendix
-
-### Pinball loss
-
-For a real-valued target \(Y\), the \(\alpha\)-quantile is the value \(q_\alpha\) such that
+Instead, it predicts quantiles. For a real-valued target \(Y\), the \(\alpha\)-quantile is the value \(q_\alpha\) such that
 $$
 P(Y\leq q_\alpha)\geq \alpha
 \quad\text{and}\quad
@@ -38,13 +26,21 @@ F_Y(q_\alpha)=\alpha,
 $$
 where \(F_Y\) is the cumulative distribution function (CDF). For example, \(q_{0.5}\) is the median, \(q_{0.9}\) is the 90th percentile, and \(q_{0.1}\) is the 10th percentile.
 
-In supervised regression, the target distribution usually depends on the input \(x\). The conditional \(\alpha\)-quantile is
+In supervised regression, the target distribution depends on the input \(x\). The conditional \(\alpha\)-quantile is
 $$
 q_\alpha(x)=F^{-1}_{Y\mid X=x}(\alpha).
 $$
-Predicting many such values, for \(\alpha=0.001,0.002,\ldots,0.999\), gives a discretized approximation to the full conditional predictive distribution \(Y\mid X=x\), not just a single point estimate.
+TabICLv2 predicts 999 such quantiles at probability levels
+$$
+\mathcal{A}=\{0.001,0.002,\ldots,0.999\}.
+$$
+This gives a dense approximation to the inverse CDF
+$$
+Q_x(\alpha)=F^{-1}_{Y\mid X=x}(\alpha),
+$$
+so the model learns more than a single point estimate. It learns many points of the conditional predictive distribution \(Y\mid X=x\).
 
-The pinball loss, also called quantile loss, trains a model to predict a chosen quantile. If the model predicts \(\hat{q}_\alpha(x)\) and the observed target is \(y\), define the residual
+Each quantile is trained with pinball loss, also called quantile loss. If the model predicts \(\hat{q}_\alpha(x)\) and the observed target is \(y\), define the residual
 $$
 u=y-\hat{q}_\alpha(x).
 $$
@@ -91,7 +87,7 @@ P(Y<q)\leq \alpha \leq P(Y\leq q).
 $$
 This is the standard quantile interval condition.
 
-When predicting multiple quantiles, the training loss sums the pinball losses over a grid of probability levels:
+TabICLv2 sums this loss over all predicted quantile levels:
 $$
 \mathcal{L}(x,y)
 =
@@ -100,17 +96,14 @@ $$
 \qquad
 \mathcal{A}=\{0.001,0.002,\ldots,0.999\}.
 $$
-This trains the model to approximate many points of the inverse CDF
-$$
-Q_x(\alpha)=F^{-1}_{Y\mid X=x}(\alpha).
-$$
-The inverse CDF should be monotone:
+
+These quantiles should be monotone in \(\alpha\). If \(\alpha_1<\alpha_2\), then
 $$
 \alpha_1<\alpha_2
 \quad\Rightarrow\quad
 Q_x(\alpha_1)\leq Q_x(\alpha_2).
 $$
-Neural networks do not automatically guarantee this ordering when each quantile is predicted as an output dimension, so predicted quantiles can cross. Sorting predicted quantiles or applying isotonic regression restores monotonicity before constructing a valid predictive distribution.
+Neural networks do not automatically guarantee this ordering when each quantile is predicted as a separate output dimension, so predicted quantiles can cross. For probabilistic predictions, TabICLv2 constructs a full distribution from the quantiles by enforcing monotonicity via sorting by default, or isotonic regression (Barlow & Brunk, 1972; Busing, 2022). It then extrapolates tails with parametric exponential models and derives closed-form PDF, CDF, and moments.
 
 Prediction intervals are a direct use of quantiles. A central \((1-\gamma)\) interval is
 $$
@@ -122,7 +115,7 @@ $$
 $$
 If the quantiles are calibrated, such intervals should contain the true target approximately 90% of the time over repeated samples.
 
-TabICLv2's point prediction by averaging quantiles can be interpreted through the identity
+For point estimation, TabICLv2 takes the average of the predicted quantiles. This can be interpreted through the identity
 $$
 \mathbb{E}[Y\mid X=x]=\int_0^1 Q_x(\alpha)\,d\alpha,
 $$
@@ -133,3 +126,7 @@ $$
 \frac{1}{|\mathcal{A}|}\sum_{\alpha\in\mathcal{A}}\hat{q}_\alpha(x).
 $$
 This explains why averaging many predicted quantiles can serve as a fast point estimate while preserving the richer distributional information needed for intervals, CDFs, PDFs, and moments.
+
+## Summary
+
+For regression, TabICLv2 predicts a dense grid of conditional quantiles rather than a single scalar or a discretized target distribution. These quantiles are trained with pinball loss, support point prediction through averaging, and support probabilistic prediction through a reconstructed monotone predictive distribution. This post completes the miniseries on the architecture of TabICLv2. 
