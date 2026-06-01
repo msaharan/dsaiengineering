@@ -1,8 +1,9 @@
-[Mohit Saharan](https://linkedin.com/in/msaharan), P26, 20260528, Draft 
-___
-# Understanding Tabular Foundation Models: the architecture of TabICLv2 - 1
+[Mohit Saharan](https://linkedin.com/in/msaharan), P26, 20260601
 
-Subtitle: Repeated feature grouping
+___
+# Architecture of TabICLv2: repeated feature grouping
+
+Subtitle: A technical guide to TabICLv2 repeated feature grouping: why similar columns confuse encoders, how circular shifts add context, with NanoTabICL implementation.
 
 ___
 
@@ -10,7 +11,7 @@ With this post, I am starting a six-part miniseries on the architecture of TabIC
 
 The following figure illustrates the architecture of TabICLv2. This post covers repeated feature grouping. Later posts will cover target-aware embedding, column/row transformers, QASSMax, and the prediction heads.
 
-![TabICLv2 architecture; this post covers only repeated feature grouping.](./20260528-understanding-tfm-architecture-of-tabiclv2-1.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
+![TabICLv2 architecture; this post covers only repeated feature grouping.](./20260601-understanding-tfm-architecture-of-tabiclv2-1.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 
 *TabICLv2 architecture; this post covers only repeated feature grouping.*
 
@@ -58,7 +59,7 @@ The issue here is that the marginal distribution is not the entire identity of a
 
 TabPFNv2 and TabPFN-2.5 mitigate this collapse by grouping multiple columns into single tokens. But, although grouping gives each feature token some neighboring-feature context, it also reduces the number of effective feature tokens, which can discard fine-grained feature information. The tradeoff is that one token now represents several original columns, so the model has fewer distinct feature positions to work with.
 
-Downstream attention layers then receive coarser tokens. Once fine-grained feature identity is weakened early, later layers must recover it from weaker signals. TabICLv2 uses repeated feature grouping to keep the contextualization benefit while preserving \(m\) effective feature positions.
+Downstream attention layers then operate on coarser tokens. If fine-grained feature identity is weakened early, later layers have less direct information with which to distinguish individual columns. TabICLv2 uses repeated feature grouping to keep the contextualization benefit while preserving \(m\) effective feature positions.
 
 ### TabICLv2's fix: grouping with circular shifts
 
@@ -84,7 +85,7 @@ For example, for \(m=5\) columns:
 
 Here, feature 1 appears as anchor in group 1, as offset \(+1\) in group 5, and as offset \(+3\) in group 3.
 
-![Repeated feature grouping by TabICLv2.](./20260528-understanding-tfm-architecture-of-tabiclv2-1.assets/Screenshot%202026-05-28%20at%2017.29.16%20copy%203.png)
+![Repeated feature grouping by TabICLv2.](./20260601-understanding-tfm-architecture-of-tabiclv2-1.assets/Screenshot%202026-05-28%20at%2017.29.16%20copy%203.png)
 
 *Repeated feature grouping by TabICLv2.*
 
@@ -149,10 +150,6 @@ The shape transition is the main thing to notice:
 | after `self.x_embed(x)` | `(batch, rows, cols, embed_dim)` | each group is a learned token |
 
 So NanoTabICL keeps the same number of column positions, `cols`, but each position has already looked at a small circular group of neighboring columns. That is the implementation counterpart of preserving \(m\) effective feature slots while giving each slot local feature context.
-
-#### Note on implementations
-
-The TabICLv2 paper and NanoTabICL write the default offsets as \((0,1,3)\), implemented in NanoTabICL as `(idxs + (2**i - 1)) % n_cols`. The official `tabicl` repository uses the same circular family with a shifted anchor convention, stacking columns as `(idxs + 2**i) % m` for `i=0,1,2` (offsets \(1,2,4\) in column-index terms). The two patterns produce the same multiset of feature triples up to relabeling which output slot is called the anchor.
 
 ## Summary
 
