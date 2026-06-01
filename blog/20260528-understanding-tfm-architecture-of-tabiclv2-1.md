@@ -1,4 +1,4 @@
-[Mohit Saharan](https://linkedin.com/in/msaharan), P26, 20260528, Draft
+[Mohit Saharan](https://linkedin.com/in/msaharan), P26, 20260528, Draft 
 ___
 # Understanding Tabular Foundation Models: the architecture of TabICLv2 - 1
 
@@ -6,7 +6,7 @@ Subtitle: Repeated feature grouping
 
 ___
 
-With this post, I am starting a six-part miniseries on the architecture of TabICLv2. The goal is to cover the architecture one subsection at a time, so each post can focus on the details needed to understand that component without making a single article too long. The reference for all posts in this miniseries is the [TabICLv2 paper (arXiv)](https://arxiv.org/pdf/2602.11139). For hands-on demo, I will use the [NanoTabICL implementation](https://github.com/soda-inria/nanotabicl/blob/main/model.py) as the code companion for this miniseries. It is a short (~170 lines of code) self-contained implementation of the TabICLv2 architecture for educational and experimental purposes. It's a good point to start before diving into full model's code.
+With this post, I am starting a six-part miniseries on the architecture of TabICLv2. The goal is to cover the architecture one subsection at a time, so each post can focus on the details needed to understand that component without making a single article too long. The reference for all posts in this miniseries is the [TabICLv2 paper (arXiv)](https://arxiv.org/pdf/2602.11139). For a hands-on demo, I will use the [NanoTabICL implementation](https://github.com/soda-inria/nanotabicl/blob/main/model.py) as the code companion for this miniseries. It is a short (~170 lines of code) self-contained implementation of the TabICLv2 architecture for educational and experimental purposes. It's a good point to start before diving into the full model code.
 
 The following figure illustrates the architecture of TabICLv2. This post covers repeated feature grouping. Later posts will cover target-aware embedding, column/row transformers, QASSMax, and the prediction heads.
 
@@ -52,15 +52,13 @@ $$
 $$
 Here \(\|\cdot\|_2\) is Euclidean distance and \(\cos(e_a,e_b)\) is cosine similarity. This is the representation-collapse problem: distinct features become nearly indistinguishable in representation space even though their semantics, correlations, or target relationships differ.
 
-The issue here is that the marginal disribution is not the entire identity of a feature. In reality, a feature is also characterized by its joint behaviour with other features and with the target. Therefore, individual feature embedding can underuse this context, and its relationship with other features and with the target should be taken into account.
+The issue here is that the marginal distribution is not the entire identity of a feature. In reality, a feature is also characterized by its joint behavior with other features and with the target. Individual feature embedding can underuse this context. Repeated feature grouping addresses the feature-feature part of that context; the next post covers how target information enters the representation.
 
 #### Grouping neighboring columns can lead to information loss
 
-TabPFNv2 and TabPFN-2.5 mitigate this collapse by grouping multiple columns into single tokens. But, although grouping gives each feature token some neighboring-feature context, it also reduces the number of effective feature tokens, which can discard fine-grained feature information. In other words, if two columns \(a\) and \(b\) share the same encoder \(\phi\) and similar value distributions, the model has little information with which to break the symmetry
-$$
-x_{\cdot a}\leftrightarrow x_{\cdot b}.
-$$
-Downstream attention layers then receive nearly interchangeable tokens. Once that happens early, later layers must recover feature identity from weak signals. TabICLv2 uses repeated feature grouping to keep the contextualization benefit while preserving \(m\) effective feature positions.
+TabPFNv2 and TabPFN-2.5 mitigate this collapse by grouping multiple columns into single tokens. But, although grouping gives each feature token some neighboring-feature context, it also reduces the number of effective feature tokens, which can discard fine-grained feature information. The tradeoff is that one token now represents several original columns, so the model has fewer distinct feature positions to work with.
+
+Downstream attention layers then receive coarser tokens. Once fine-grained feature identity is weakened early, later layers must recover it from weaker signals. TabICLv2 uses repeated feature grouping to keep the contextualization benefit while preserving \(m\) effective feature positions.
 
 ### TabICLv2's fix: grouping with circular shifts
 
@@ -104,7 +102,7 @@ E_1[i,j]=\text{Lin}(g_j(i)).
 $$
 The resulting tensor \(E_1\in\mathbb{R}^{n\times m\times d}\) contains one \(d\)-dimensional embedding for each row \(i\) and each group position \(j\). Put simply, one shared linear map turns each 3-value group into a \(d\)-dimensional token.
 
- With the shift pattern \((0,1,3)\), for **\(\geq 7\)** columns no pair of columns appears together in more than one group. This gives each feature several contextual views without repeatedly coupling the same feature pairs. The result is a representation that helps prevent feature symmetries between neighboring columns while preserving \(m\) effective feature positions.
+With the shift pattern \((0,1,3)\), for \(m \geq 7\) columns, no pair of columns appears together in more than one group. This gives each feature several contextual views without repeatedly coupling the same feature pairs. The result is a representation that helps prevent feature symmetries between neighboring columns while preserving \(m\) effective feature positions.
 
 ### Implementation in NanoTabICL
 
