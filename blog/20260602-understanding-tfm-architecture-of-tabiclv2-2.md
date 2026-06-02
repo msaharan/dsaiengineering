@@ -1,9 +1,9 @@
-[Mohit Saharan](https://linkedin.com/in/msaharan), P27, 20260602, Draft
+[Mohit Saharan](https://linkedin.com/in/msaharan), P27, 20260602
 
 ___
 # Architecture of TabICLv2: target-aware embedding
 
-Subtitle: How TabICLv2 injects observed targets into training-row tokens without leaking labels into test rows.
+Subtitle: How TabICLv2 uses target-aware embedding to add training labels to tabular in-context learning tokens while preventing label leakage in test rows.
 ___
 In the previous post, we looked at the first step in TabICLv2's architecture: repeated feature grouping. That step gives each feature position a small amount of neighboring-column context, helping the model avoid collapsing similar-looking columns into nearly identical representations while still preserving \(m\) effective feature positions.
 
