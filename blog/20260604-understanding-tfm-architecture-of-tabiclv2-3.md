@@ -1,24 +1,14 @@
-[Mohit Saharan](https://linkedin.com/in/msaharan), P28, 20260528, Draft
-___
-# Understanding Tabular Foundation Models: the architecture of TabICLv2 - 3
-Subtitle: Compression then ICL
-___
-TabICLv2 does not run in-context learning on every cell in the table. It first compresses \(n\times m\) feature tokens into \(n\) row vectors, then runs ICL over those rows. Labels enter twice: once inside feature tokens (the previous post) and again on row tokens before dataset-wise ICL.
+[Mohit Saharan](https://linkedin.com/in/msaharan), P28, 20260604, Draft
 
+___
+# Architecture of TabICLv2: compression-then-ICL
+Subtitle: 
+___
 The previous post covered target-aware embedding, where labels are injected into the feature tokens of training rows. This post covers what happens next: the compression-then-ICL pipeline.
 
-**What to watch for in this post**
+TabICLv2 does not run in-context learning on every cell in the table. It first compresses \(n\times m\) feature tokens into \(n\) row vectors, then runs ICL over those rows. Labels enter twice: once inside feature tokens (the previous post) and again on row tokens before dataset-wise ICL.
 
-- The tensor entering compression (\(E_2\))
-- Three stages: \(\text{TF}_\text{col}\) → \(\text{TF}_\text{row}\) → \(\text{TF}_\text{icl}\)
-- Two target injections (feature-token vs row-token)
-- Why staging avoids full cell-level attention
-
-As a reminder, the full pipeline is below. **In this episode, focus on \(\text{TF}_\text{col}\), \(\text{TF}_\text{row}\), and \(\text{TF}_\text{icl}\).** Later posts cover QASSMax and the prediction heads.
-
-Given an input table \(X\in\mathbb{R}^{n\times m}\), where \(n\) is the number of rows and \(m\) is the number of columns, repeated feature grouping encodes columns into grouped feature positions using circular shifts to reduce feature-order symmetries. Target-aware embedding then injects observed target information for training rows. After those preprocessing steps, \(\text{TF}_\text{col}\) embeds each grouped feature position across rows, \(\text{TF}_\text{row}\) aggregates grouped feature embeddings into row representations \(h_i\), and \(\text{TF}_\text{icl}\) performs in-context learning to predict test targets \(\hat{y}_i\). QASSMax (query-aware scalable softmax, covered in post 4) is used inside parts of \(\text{TF}_\text{col}\) and \(\text{TF}_\text{icl}\) to reduce attention fading when the context contains many rows.
-
-![TabICLv2 pipeline; this post covers the compression-then-ICL stack (middle blocks).](./20260528-understanding-tfm-architecture-of-tabiclv2-3.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
+![TabICLv2 pipeline; this post covers the compression-then-ICL stack (middle blocks).](./20260604-understanding-tfm-architecture-of-tabiclv2-3.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 
 *TabICLv2 pipeline; this post covers the compression-then-ICL stack (middle blocks).*
 
@@ -38,7 +28,7 @@ E_2[i,j]=E_1[i,j]+u_i,
 $$
 where \(E_1\) is the feature-only tensor from repeated feature grouping and \(u_i\) is the row-level target vector from target-aware embedding (see the previous post for \(\text{Embed}_\text{TAE}\) and the test-row masking rule). For a labeled row, the same target vector is broadcast across all grouped feature positions.
 
-The key fact for this post: compression does not operate on raw feature tokens. It operates on feature tokens that already contain training-label information. Labels first entered at the **feature-token** level in the previous post. A **second** target embedding is added later at the **row-token** level before dataset-wise ICL.
+Compression does not operate on raw feature tokens. It operates on feature tokens that already contain training-label information. Labels first entered at the feature-token level in the previous post. A second target embedding is added later at the row-token level before dataset-wise ICL.
 
 The compression-then-ICL pipeline explains what happens next. TabICLv2 must convert the \(n\times m\) grid of row-feature tokens into row-level representations that can be used for prediction. It does this in three stages:
 
@@ -49,7 +39,8 @@ The compression-then-ICL pipeline explains what happens next. TabICLv2 must conv
 Same three blocks, with tensor shapes at each step:
 
 ```mermaid
-flowchart LR
+flowchart TB
+
   E2["E_2: n x m x d"] --> TFcol["TF_col"]
   TFcol --> Etilde["E_tilde: n x m x d"]
   Etilde --> TFrow["TF_row"]
@@ -60,19 +51,13 @@ flowchart LR
 
 ### Stage 1: Column-wise embedding (TF_col)
 
-*Stage 1 — across rows, within one feature column.*
-
 The first stage processes each grouped feature position across rows. Conceptually, for each grouped feature index \(j\), the model sees the sequence
 $$
 (E_2[1,j],E_2[2,j],\ldots,E_2[n,j]).
 $$
-Induced attention uses a small set of learned summary tokens that attend only to training rows, then broadcasts those summaries back to all rows—so test rows cannot contaminate the column summaries, but every row still receives context anchored to labeled examples. \(\text{TF}_\text{col}\) uses this mechanism to compare how the same grouped feature behaves across rows, rather than applying full attention over all rows.
-
-Let \(\tilde{E}\in\mathbb{R}^{n\times m\times d}\) denote the output of the column-wise stage.
+Induced attention uses a small set of learned summary tokens that attend only to training rows, then broadcasts those summaries back to all rows—so test rows cannot contaminate the column summaries, but every row still receives context anchored to labeled examples. \(\text{TF}_\text{col}\) uses this mechanism to compare how the same grouped feature behaves across rows, rather than applying full attention over all rows. Let \(\tilde{E}\in\mathbb{R}^{n\times m\times d}\) denote the output of the column-wise stage.
 
 ### Stage 2: Row-wise compression (TF_row)
-
-*Stage 2 — across features, within one row. This is where compression happens.*
 
 The second stage aggregates feature information within each row. For a fixed row \(i\), the model has grouped feature embeddings
 $$
@@ -85,8 +70,6 @@ $$
 where \(d_\text{row}\) is the row-representation dimension. This is the main compression step: the model moves from \(n\times m\) feature tokens to \(n\) row representations.
 
 ### Stage 3: Dataset-wise ICL (TF_icl)
-
-*Stage 3 — across rows again, but now each row is one token.*
 
 The row representations
 $$
@@ -106,9 +89,7 @@ where \(z_i\in\mathbb{R}^{d_\text{row}}\) is the row token passed to \(\text{TF}
 
 ## Why this design?
 
-This staged design separates two kinds of structure. Column-wise and row-wise processing learn feature and row representations. Dataset-wise ICL performs the final train-test interaction.
-
-The model avoids doing expensive full cell-level attention throughout the entire pipeline. It still gives the prediction stage row-level context enriched by feature and target information.
+This staged design separates two kinds of structure. Column-wise and row-wise processing learn feature and row representations. Dataset-wise ICL performs the final train-test interaction. The model avoids doing expensive full cell-level attention throughout the entire pipeline. It still gives the prediction stage row-level context enriched by feature and target information.
 
 ### At a glance
 
@@ -231,7 +212,5 @@ def col_attn(self, q, kv=None, **kwargs):
 `row_attn` flattens `(batch, rows)` into one larger batch dimension, so standard sequence attention can run across columns inside each row. `col_attn` transposes rows and columns, reuses `row_attn`, and transposes back. This is the implementation trick that lets ordinary transformer blocks operate over a 2D table without writing a separate attention kernel for every axis.
 
 ## Summary
-
-**Takeaway:** TabICLv2 compresses \(n\times m\) target-aware feature tokens into \(n\) row representations, then runs dataset-wise ICL so test rows attend to labeled training rows.
 
 Compression then ICL separates feature processing from dataset-level prediction. TabICLv2 first contextualizes grouped feature positions across rows, then compresses each row into a fixed-dimensional representation, and finally lets test rows attend to labeled training rows through the ICL transformer. The next post covers query-aware scalable softmax, the attention-scaling mechanism TabICLv2 uses to preserve selective attention as the number of context samples grows.
