@@ -1,4 +1,5 @@
-[Mohit Saharan](https://linkedin.com/in/msaharan), P31, 20260528, Draft
+[Mohit Saharan](https://linkedin.com/in/msaharan), P31, 20260606, Draft
+
 ___
 # Understanding Tabular Foundation Models: the architecture of TabICLv2 - 6
 
@@ -15,7 +16,7 @@ For regression, TabICLv2 does not predict one number — it predicts an entire c
 
 As a reminder, the full pipeline is below. **In this episode, focus on the regression head:** the same backbone as prior posts, but many quantile outputs per test row instead of class logits. Given an input table \(X\in\mathbb{R}^{n\times m}\), repeated feature grouping and target-aware embedding prepare grouped feature tokens, \(\text{TF}_\text{col}\) and \(\text{TF}_\text{row}\) compress them into row representations \(h_i\), \(\text{TF}_\text{icl}\) performs in-context learning over those rows, and the output MLP emits 999 conditional quantiles per test row.
 
-![TabICLv2 pipeline; this post covers the regression head (quantile outputs).](./20260528-understanding-tfm-architecture-of-tabiclv2-6.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
+![TabICLv2 pipeline; this post covers the regression head (quantile outputs).](./20260606-understanding-tfm-architecture-of-tabiclv2-6.assets/Screenshot%202026-05-28%20at%2017.29.16.png)
 
 *TabICLv2 pipeline; this post covers the regression head (quantile outputs).*
 
@@ -88,7 +89,7 @@ $$
 $$
 Here \(\hat{q}\) is shorthand for \(\hat{q}_\alpha(x)\), and \(\mathbf{1}\{y<\hat{q}\}\) is an indicator that equals \(1\) when \(y<\hat{q}\) and \(0\) otherwise. The loss is shaped like a tilted absolute-value function. Underprediction means \(y>\hat{q}\), so \(u>0\), and the penalty slope with respect to the residual \(u\) is \(\alpha\). Overprediction means \(y<\hat{q}\), so \(u<0\), and the penalty slope magnitude is \(1-\alpha\).
 
-![Pinball loss for α=0.5 and α=0.9: asymmetric slopes penalize under- and over-prediction differently.](./20260528-understanding-tfm-architecture-of-tabiclv2-6.assets/pinball-loss.png)
+![Pinball loss for α=0.5 and α=0.9: asymmetric slopes penalize under- and over-prediction differently.](./20260606-understanding-tfm-architecture-of-tabiclv2-6.assets/pinball-loss.png)
 
 *Pinball loss for α=0.5 and α=0.9: asymmetric slopes penalize under- and over-prediction differently.*
 
@@ -151,7 +152,7 @@ $$
 \left[\hat{q}_{\gamma/2}(x),\ \hat{q}_{1-\gamma/2}(x)\right].
 $$
 
-![90% central prediction interval from the 5th and 95th predicted quantiles.](./20260528-understanding-tfm-architecture-of-tabiclv2-6.assets/quantile-prediction-interval.png)
+![90% central prediction interval from the 5th and 95th predicted quantiles.](./20260606-understanding-tfm-architecture-of-tabiclv2-6.assets/quantile-prediction-interval.png)
 
 *90% central prediction interval from the 5th and 95th predicted quantiles.*
 
@@ -255,15 +256,3 @@ That is the architecture-level implementation of "predict 999 quantiles per test
 
 ## Summary
 
-**Takeaway:** TabICLv2 predicts a dense grid of conditional quantiles rather than discretizing the target into bins. The same contextual backbone supports both a fast point estimate (average of quantiles) and richer probabilistic predictions (reconstructed monotone distribution).
-
-**Miniseries index**
-
-- [Post 1 — Repeated feature grouping](20260528-understanding-tfm-architecture-of-tabiclv2-1.md)
-- [Post 2 — Target-aware embedding](20260528-understanding-tfm-architecture-of-tabiclv2-2.md)
-- [Post 3 — Compression then ICL](20260528-understanding-tfm-architecture-of-tabiclv2-3.md)
-- [Post 4 — QASSMax](20260528-understanding-tfm-architecture-of-tabiclv2-4.md)
-- [Post 5 — Many-class classification](20260528-understanding-tfm-architecture-of-tabiclv2-5.md)
-- [Hub — TabICLv2 under the hood](20260528-understanding-tfm-tabiclv2-under-the-hood.md)
-
-This post completes the six-part architecture miniseries on TabICLv2.
